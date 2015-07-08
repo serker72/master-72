@@ -1,5 +1,6 @@
 <?php
 require_once(dirname(__FILE__) . '/app.php');
+require_once(dirname(__FILE__) . '/lib/ksk_functions.php');
 
 need_login(true);
 
@@ -9,6 +10,8 @@ $d_end = date('t');
 $d_start = '01';
 $y_now = date('Y');
 $m_now = date('m');
+
+$sms_api_options = get_sms_api_options();
 
 $start_time = mysql_real_escape_string($d_start.'.'.$m_now.'.'.$y_now);
 $end_time = mysql_real_escape_string($d_end.'.'.$m_now.'.'.$y_now);

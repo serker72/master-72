@@ -14,7 +14,9 @@ function date_diff_f($date1, $date2){
 
 $now = date("Y-m-d");
 
-$orders = DB::GetQueryResult("SELECT * FROM `order` WHERE time_date != '' AND time_time != '' AND master_name != 0 AND street != ''", false);
+//$orders = DB::GetQueryResult("SELECT * FROM `order` WHERE time_date != '' AND time_time != '' AND master_name != 0 AND street != ''", false);
+// TEST
+$orders = DB::GetQueryResult("SELECT * FROM `order` WHERE id > 959 AND time_date != '' AND time_time != '' AND master_name != 0 AND street != ''", false);
 
 foreach ($orders as $one) {
 	$date_f = date_diff_f($now, $one['time_date']);

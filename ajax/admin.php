@@ -191,9 +191,11 @@ if($action == "list"){
 	foreach ($user_man as $one) {
 		$sum = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `order` WHERE STR_TO_DATE(time_date, '%d.%m.%Y') BETWEEN STR_TO_DATE('".$start_time."', '%d.%m.%Y') AND STR_TO_DATE('".$end_time."', '%d.%m.%Y') AND user_id =".$one['id']." AND cost != 0", true);
 		$zp = ($sum['summ']*$one['stavka'])/100;
-		$array_man[$one['id']]['id'] = $one['id'];
-		$array_man[$one['id']]['name'] = $one['realname'].'('.$one['username'].')';
-		$array_man[$one['id']]['zp'] = $zp;
+                if ($zp > 0) {
+                    $array_man[$one['id']]['id'] = $one['id'];
+                    $array_man[$one['id']]['name'] = $one['realname'].'('.$one['username'].')';
+                    $array_man[$one['id']]['zp'] = $zp;
+                }
 	}
 
 		$html .= '<h4>Подсчет з/п - Менеджеров</h4>';

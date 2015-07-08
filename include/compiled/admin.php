@@ -1,4 +1,6 @@
-<?php include template("header_admin"); ?>
+<?php 
+    include template("header_admin"); 
+?>
 	<script type="text/javascript" src="/static/js/datepicker/js/bootstrap-datepicker.js"></script>
 	<script type="text/javascript" src="/static/js/datepicker/js/bootstrap-datepicker.ru.js"></script>
 	<script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>
@@ -21,13 +23,19 @@
 		            <option value="manager">Менеджер</option>
 		            <option value="master">Мастер</option>        
 		        </select><br/>
-		        Телефон: <input type="text" name="phone" id="phone" />
+		        <!--Телефон: <input type="text" name="phone" id="phone" />
 		        Договор: <input type="text" name="dogovor" id="dogovor" />
-		        Адрес: <input type="text" name="address" id="address" />
+		        Адрес: <input type="text" name="address" id="address" />-->
 		        <button type="submit" id="LoadRecordsButton">Фильтровать</button>
 		    </form>
 		</div>	
 		<div id="PeopleTableContainer" style="float: left; margin-right: 20px; margin-left: 20px;"></div>
+	</div>
+	<div class="info-block" style="float:left; width: 100%;">
+		<div id="sms-api-manager">
+			<h4>SMS API</h4>
+			<a href="#mySmsApiOptions" role="button"  style="font-weight:normal;" class="btn" data-toggle="modal">Изменить</a>
+		</div>
 	</div>
 	<div class="info-block" style="float:left; width: 100%;">
 		<div id="city-manager">
@@ -160,7 +168,10 @@
 					$.ajax({
 						type: "GET",
 						url: "/ajax/admin.php?action=pay&date1="+pay_date1+"&date2="+pay_date2,
-						success: function(data){ $('#orders_pay').empty().append($(data)); }
+						success: function(data){
+                                                    alert(data);
+                                                    $('#orders_pay').empty().append($(data)); 
+                                                }
 					});
 				}		
 				return false;
@@ -283,13 +294,15 @@
 				})
 
 				$('#pay_date3').datepicker({
-					format: 'yyyy-mm-dd',
+					format: 'dd.mm.yyyy',
+					//format: 'yyyy-mm-dd',
 					language: 'ru',
 					autoclose: true
 				})
 
 				$('#pay_date4').datepicker({
-					format: 'yyyy-mm-dd',
+					format: 'dd.mm.yyyy',
+					//format: 'yyyy-mm-dd',
 					language: 'ru',
 					autoclose: true
 				})				
@@ -350,14 +363,17 @@
 							title: 'СМС',
 							width: '5%',
 							options: { '0': 'Нет', '1': 'Да' },
+							list: false
 						},
 						dogovor: {
 							title: 'Договор',
-							width: '10%'
+							width: '10%',
+							list: false
 						},
 						address: {
 							title: 'Адрес',
-							width: '40%'
+							width: '40%',
+							list: false
 						},
 						company: {
 							title: 'Компания',
@@ -434,6 +450,23 @@
 		    <button class="btn btn-primary" onClick="onCityadd();">Добавить</button>
 		  </div>
 		</div>
+
+		<!-- Modal -->
+		<div id="mySmsApiOptions" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		  <div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		    <h4 id="myModalLabel">Изменить настройки API для отправки SMS</h4>
+		  </div>
+		  <div class="modal-body">
+                      <p>Логин: <input type="text" id="name" name="sms_api_username" value="<?php echo $sms_api_options['sms_api_username']; ?>"></p>
+		    <p>Пароль: <input type="text" id="name" name="sms_api_password" value="<?php echo $sms_api_options['sms_api_password']; ?>"></p>
+		    <p>Номер телефона: <input type="text" id="name" name="sms_api_phone" value="<?php echo $sms_api_options['sms_api_phone']; ?>"></p>
+		  </div>
+		  <div class="modal-footer">
+		    <button class="btn btn-primary" onClick="">Изменить</button>
+		  </div>
+		</div>
+
 
 		<!-- Modal -->
 		<div id="myPunkt" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

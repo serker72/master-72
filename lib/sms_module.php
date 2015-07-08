@@ -4,8 +4,8 @@
 class Sms
 {
     protected $baseurl = "http://api.comtube.ru/scripts/api/sms.php";          //адрес сервиса - для отправки запроса
-    protected $username = "Guest";                                      //логин
-    protected $password = "qwerty";                                      //пароль
+    protected $username = ""; //"Guest";                                      //логин
+    protected $password = ""; //"qwerty";                                      //пароль
 
     protected $params = array();                                               //массив переданных параметров
     protected $encode_params = "";                                             //преобразованные параметры, готовые к отправке
@@ -28,12 +28,12 @@ class Sms
      * @param строка - пароль
      * @return ComtubeSMS - объект, посредством которого осуществляется отправка SMS
      */
-//    public function __construct($login, $password)
-//    {
-//        $this->login = $login;
-//        $this->password = $password;
-//    }
-//
+    public function __construct($login, $password)
+    {
+        if ($login && ($login !== '') && (strlen($login) > 0)) $this->username = $login;
+        if ($password && ($password !== '') && (strlen($password) > 0)) $this->password = $password;
+    }
+
     /**
      * Метод, отвечающий за формирование и отправку письма тем или иным методом
      *

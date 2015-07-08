@@ -1,0 +1,24 @@
+.darkbg{
+	background:#ddd !important;
+}
+#status{
+	font-family:Arial;
+}
+ul#files{ list-style:none; padding:0; margin:0; }
+ul#files li{ padding:10px; margin-bottom:2px; width:160px; float:left; margin-right:10px; text-align: center;}
+ul#files li img{ max-width:180px; max-height:150px; }
+
+.success{ background:#99f099; border:1px solid #339933; }
+.error{ background:#f0c6c3; border:1px solid #cc6622; }
+
+ul#files1{ list-style:none; padding:0; margin:0; }
+ul#files1 li{ padding:10px; margin-bottom:2px; width:160px; float:left; margin-right:10px; text-align: center;}
+ul#files1 li img{ max-width:180px; max-height:150px; }
+
+ul#files2{ list-style:none; padding:0; margin:0; }
+ul#files2 li{ padding:10px; margin-bottom:2px; width:160px; float:left; margin-right:10px; text-align: center;}
+ul#files2 li img{ max-width:180px; max-height:150px; }
+
+ul#files3{ list-style:none; padding:0; margin:0; }
+ul#files3 li{ padding:10px; margin-bottom:2px; width:160px; float:left; margin-right:10px; text-align: center;}
+ul#files3 li img{ max-width:180px; max-height:150px; }

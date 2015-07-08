@@ -1,0 +1,157 @@
+body{
+	background-image: url('../img/bg/bg.png');
+	background-position: center top;
+	background-repeat: repeat-y;
+}
+
+.main-operator{
+	width: 845px;
+	/*background-image: url('../img/bg/bg.png');
+	background-position: center top;
+	background-repeat: repeat-y;
+	*/
+	margin: 0 auto;
+}
+
+#top-link-block {
+	height: 27px;
+	line-height: 27px;
+	text-align: right;
+	padding-right: 20px;
+	vertical-align: bottom;
+	position: relative;
+	top: 7px;
+}
+
+#top-link-block ul.menu {
+	margin: 0px;
+	padding: 0px;
+}
+
+#top-link-block .menu li {
+	display: inline;
+	list-style: none;
+	background: url('../img/bg/flag.gif') left 5px no-repeat;
+	padding-right: 20px;
+	padding-left: 12px;
+}
+
+#top-link-block .menu a {
+	color: #939393;
+	text-decoration: underline;
+}
+
+#top-menu {
+	background: url('../img/bg/menu_bg.jpg') no-repeat bottom right;
+	height: 49px;
+	padding: 0px;
+	margin: 0px;
+	vertical-align: top;
+	display: inline-block;
+	width: 515px;
+}
+
+#top-menu-company
+{
+	width: 115px;
+}
+
+#top-menu-vacancies
+{
+	width: 93px;
+}
+
+#top-menu-about
+{
+	width: 67px;
+}
+
+#top-menu-pricelist
+{
+	width: 124px;
+}
+
+#top-menu-contacts
+{
+	width: 116px;
+}
+
+#top2_main {
+	visibility: hidden;
+}
+
+.top-menu-item {
+	background: url('../img/bg/menu_flag.gif') center 11px no-repeat;
+	display: inline-block;
+	height: 49px;
+	padding-top: 24px;
+	line-height: 20px;
+	text-align: center;
+	color: white;
+	vertical-align: bottom;
+	text-transform: uppercase;
+	font-size: 12px;
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+.main-operator table td{
+	vertical-align: top;
+}
+
+table.jtable{
+	margin: 0!important;
+}
+
+.main-operator table, #offers, .info-block {
+	margin: 0px 20px 20px 20px;
+}
+
+#orders {
+	border: 1px #BBB solid;
+	background: white;
+	margin: 0px 20px 20px 20px;
+	max-height: 400px;
+	overflow-y: scroll;
+}
+
+#orders table{
+	margin: 0;
+}
+
+#orders table tr td.activetd{
+	background-color: #6DD900;
+}
+
+#orders_done {
+	border: 1px #BBB solid;
+	background: white;
+	margin: 0px 20px 20px 20px;
+	max-height: 400px;
+	overflow-y: scroll;
+}
+
+#orders_done table{
+	margin: 0;
+}
+
+#orders_done table tr td.activetd{
+	background-color: #6DD900;
+}
+
+.admin-people{
+	height:800px;
+	overflow-y: auto;
+	float: left;
+}
+
+.div-manager-zp{
+	height: 400px;
+	width: 418px;
+	overflow-y: auto;
+	float: left; 
+}
+
+.div-manager-zp table{
+	width:380px;
+}

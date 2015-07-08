@@ -194,6 +194,23 @@
 				return false;
 			}
 
+                        function onSmsApiOptionsChange() {
+				var sms_api_username = $('#sms_api_username').val();
+				var sms_api_password = $('#sms_api_password').val();
+				var sms_api_phone = $('#sms_api_phone').val();
+
+				if ((sms_api_username == '') || (sms_api_password == '') || (sms_api_phone == '')) {
+					alert('Заполните все поля');
+				}else{
+					$.ajax({
+						type: "GET",
+						url: "/ajax/admin.php?action=sms_api_options_change&sms_api_username="+sms_api_username+'&sms_api_password='+sms_api_password+'&sms_api_phone='+sms_api_phone,
+						success: function(data){ alert("Успешно изменены параметры SMS API !"); }
+					});
+				}		
+				return false;
+                        }
+                        
 			function onCityadd(){
 				var name = $('#name').val();
 
@@ -458,12 +475,12 @@
 		    <h4 id="myModalLabel">Изменить настройки API для отправки SMS</h4>
 		  </div>
 		  <div class="modal-body">
-                      <p>Логин: <input type="text" id="name" name="sms_api_username" value="<?php echo $sms_api_options['sms_api_username']; ?>"></p>
-		    <p>Пароль: <input type="text" id="name" name="sms_api_password" value="<?php echo $sms_api_options['sms_api_password']; ?>"></p>
-		    <p>Номер телефона: <input type="text" id="name" name="sms_api_phone" value="<?php echo $sms_api_options['sms_api_phone']; ?>"></p>
+                      <p>Логин: <input type="text" id="sms_api_username" name="sms_api_username" value="<?php echo $sms_api_options['sms_api_username']; ?>"></p>
+		    <p>Пароль: <input type="text" id="sms_api_password" name="sms_api_password" value="<?php echo $sms_api_options['sms_api_password']; ?>"></p>
+		    <p>Номер телефона: <input type="text" id="sms_api_phone" name="sms_api_phone" value="<?php echo $sms_api_options['sms_api_phone']; ?>"></p>
 		  </div>
 		  <div class="modal-footer">
-		    <button class="btn btn-primary" onClick="">Изменить</button>
+		    <button class="btn btn-primary" onClick="onSmsApiOptionsChange();">Изменить</button>
 		  </div>
 		</div>
 

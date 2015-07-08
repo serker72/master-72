@@ -5,6 +5,7 @@ ini_set("display_startup_errors","1");
 ini_set('error_reporting', E_ALL);
 
 require_once(dirname(dirname(__FILE__)) . '/app.php');
+require_once(dirname(dirname(__FILE__)) . '/lib/ksk_functions.php');
 
 function GenPassword($p) {
 	return md5($p.'@4!@#$%@');
@@ -336,6 +337,15 @@ if($action == "list"){
 		'name' => $name,
 		'city_id' => $punkt
 	));
+
+	die();
+} elseif($action == 'sms_api_options_change'){
+	
+	$sms_api_username = strval($_GET['sms_api_username']);
+	$sms_api_password = strval($_GET['sms_api_password']);
+	$sms_api_phone    = strval($_GET['sms_api_phone']);
+        
+        $ret_flag = set_sms_api_options($sms_api_username, $sms_api_password, $sms_api_phone);
 
 	die();
 }

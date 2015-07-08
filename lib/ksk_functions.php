@@ -28,9 +28,9 @@ function get_sms_api_options() {
 // Запись в БД параметров API для отправки SMS
 function set_sms_api_options($sms_api_username, $sms_api_password, $sms_api_phone) {
     if (($sms_api_username !== '') && ($sms_api_password !== '') && ($sms_api_phone !== '')) {
-        $fl1 = DB::Update('settings', 'sms_api_username', array('sms_api_username' => $sms_api_username), 'name');
-        $fl2 = DB::Update('settings', 'sms_api_password', array('sms_api_password' => $sms_api_password), 'name');
-        $fl3 = DB::Update('settings', 'sms_api_phone', array('sms_api_phone' => $sms_api_phone), 'name');
+        $fl1 = DB::Update('settings', 'sms_api_username', array('var' => $sms_api_username), 'name');
+        $fl2 = DB::Update('settings', 'sms_api_password', array('var' => $sms_api_password), 'name');
+        $fl3 = DB::Update('settings', 'sms_api_phone', array('var' => $sms_api_phone), 'name');
         
         return ($fl1 && $fl2 && $fl3);
     } else {

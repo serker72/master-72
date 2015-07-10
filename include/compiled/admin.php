@@ -8,8 +8,10 @@
 	<link href="/static/js/datepicker/css/datepicker.css" rel="stylesheet">
 	
 	<div class="info-block" id="status-bar-add" style="display:block; float: left;"><b>Панель управления</b></div>
-	<div style="float:right; margin-right: 20px;"><a href="/logout.php" class="btn">Выйти</a></div>
-	<div style="float:right; margin-right: 20px;"><a href="/operator.php" class="btn">Заказы</a></div>
+	<div style="float:right; margin-right: 5px;"><a href="/logout.php" class="btn">Выйти</a></div>
+	<div style="float:right; margin-right: 5px;"><a href="/operator.php" class="btn">Заказы</a></div>
+	<div style="float:right; margin-right: 5px;"><a id="download" href="/ajax/main.php?action=download<?php if(is_manager()){ echo '&user_id='.$login_user['id']; } ?>" target="_blank" class="btn">Скачать файл заказов</a></div>
+        
 	<div class="admin-people" style="margin-top: 20px;">
 		<div class="filtering" style="float: left; margin-left: 20px;">
 		    <form>

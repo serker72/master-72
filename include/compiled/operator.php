@@ -5,6 +5,7 @@
 
 <script type="text/javascript" src="/static/js/datepicker/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="/static/js/datepicker/js/bootstrap-datepicker.ru.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>
 <link href="/static/js/datepicker/css/datepicker.css" rel="stylesheet">
 
 <script type="text/javascript" src="/static/js/jquery.autocomplete.js"></script>
@@ -34,10 +35,12 @@
 		border-width: 1px;
 	}
 </style>
-<div style="float:right; margin-right: 20px;"><a href="/logout.php" class="btn">Выйти</a></div>
-<?php if($login_user['rang'] == 'admin'){ ?><div style="float:right; margin-right: 20px;"><a href="/admin.php" class="btn">Админка</a></div><?php } ?>
-	<div style="float:right; margin-right: 20px;"><a href="/message.php" class="btn">Сообщения</a></div>
-<?php if($login_user['rang'] == 'manager'){ ?><div style="float:right; margin-right: 20px;"><a href="/account.php" class="btn">Личный кабинет</a></div><?php } ?>
+<div style="float:right; margin-right: 5px;"><a href="/logout.php" class="btn">Выйти</a></div>
+<?php if($login_user['rang'] == 'admin'){ ?><div style="float:right; margin-right: 5px;"><a href="/admin.php" class="btn">Админка</a></div><?php } ?>
+	<div style="float:right; margin-right: 5px;"><a href="/message.php" class="btn">Сообщения</a></div>
+<?php if($login_user['rang'] == 'manager'){ ?><div style="float:right; margin-right: 5px;"><a href="/account.php" class="btn">Личный кабинет</a></div><?php } ?>
+<div style="float:right; margin-right: 5px;"><a id="mySearchModalButton" href="#mySearchModal" class="btn" role="button" data-toggle="modal">Поиск</a></div>
+	<div style="float:right; margin-right: 5px;"><a href="#" class="btn">Добавить заказ</a></div>
 <div class="info-block" id="status-bar-add" style="display:block; float: left;"><b>Добавление нового заказа (нажмите на "Сохранить" для добавления)</b></div>
 <div class="info-block" id="status-bar-search" style="display:none; float: left;"><b>Поиск заказа</b></div>
 <div class="info-block" id="status-bar-edit" style="display:none; float: left;"><b>Редактирование заказа</b></div>
@@ -251,9 +254,6 @@
 				<input type="submit" id="submit" value="Сохранить" name="commit" class="btn"/>
 			</div>
 	</div>
-	<div class="info-block" style="width: 816px; float:left;">
-		<a id="download" href="/ajax/main.php?action=download<?php if(is_manager()){ echo '&user_id='.$login_user['id']; } ?>" target="_blank" class="btn">Скачать файл заказов</a>
-	</div>
 	</form>
 
 	<div class="info-block" style="width: 816px; float:left;">
@@ -287,7 +287,179 @@
 	</div>
 	<div id="orders_done" style="width: 816px; float:left;"></div>
 
-<script type="text/javascript">  
+<!--------------------------------------------------------------------------------------->
+    <!-- Modal -->
+    <div id="mySearchModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width: 600px; margin-left: -300px;">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Поиск заказов</h3>
+        </div>
+        <div class="modal-body">
+            <form method="post" action="/ajax/post.php" class="validator" id="form" style="float:left;">	
+                <input type="hidden" id="action" name="action" value="search" />
+                <input type="hidden" id="order_id" name="order_id" value="0" />
+                <table style="float:left;">
+                    <tr>
+			<td style="width:270px;">
+                            <!--div style="width:260px; float:left;">Дата регистрации</div-->
+                            <div style="float:left;">
+                                    <div class="title">Дата</div>
+                                    <input type="text" id="datetime" name="date" style="width: 100px;" <?php if(is_manager()){ echo 'disabled'; } ?>>
+                            </div>
+                            <div style="float:left; margin-left: 5px;">
+                                    <div class="title">Время</div>
+                                    <input type="text" id="time" name="time" style="width: 60px;" <?php if(is_manager()){ echo 'disabled'; } ?>>
+                            </div>
+			</td>
+			<td>
+                            <!--div style="width:260px; float:left;">Желаемое время</div>
+                            <div style="float:left;">
+                                    <div class="title">Дата</div>
+                                    <input type="text" id="datetime_hope" name="date_hope" style="width: 100px;">
+                            </div>
+                            <div style="float:left; margin-left: 5px;">
+                                    <div class="title">Время</div>
+                                    <input type="text" id="time_hope" name="time_hope" style="width: 60px;">
+                            </div-->
+				<div class="title">Тип работ</div>
+				<select name="work_type" id="work_type">
+					<option value="" selected="selected">Выбрать</option>
+					<?php foreach ($work_types as $one) {
+						echo '<option value="'.$one['id'].'">'.$one['name'].'</option>';
+					} ?>
+				</select>
+			</td>
+                    </tr>
+                    <tr>
+			<td>
+				<div class="title">Мастер</div>
+				<select name="master" id="master">
+					<option value="" selected="selected">Выбрать</option>
+					<?php foreach ($master as $one) {
+						echo '<option value="'.$one['id'].'">'.$one['name'].'</option>';
+					} ?>
+				</select>
+			</td>
+			<td>
+                            <div <?php if(is_manager()){ echo 'style="display:none;"'; } ?>>
+                                    <div class="title">ФИО мастера 1</div>
+                                    <select id="master-name" name="master-name" <?php if(is_manager()){ echo 'disabled'; } ?>>
+                                            <option value="" selected="selected">Выбрать</option>
+                                            <?php foreach($users_master as $one){
+                                                    echo '<option value="'.$one['id'].'">'.$one['realname'].'</option>';
+                                            } ?>
+                                    </select>
+                                    <!--div class="title">ФИО мастера 2</div>
+                                    <select id="master-name-two" name="master-name-two" <?php if(is_manager()){ echo 'disabled'; } ?>>
+                                            <option value="" selected="selected">Выбрать</option>
+                                            <?php //foreach($users_master as $one){
+                                                    //echo '<option value="'.$one['id'].'">'.$one['realname'].'</option>';
+                                            //} ?>
+                                    </select>	
+                                    <div class="title">ФИО мастера 2</div>
+                                    <select id="master-name-th" name="master-name-th" <?php if(is_manager()){ echo 'disabled'; } ?>>
+                                            <option value="" selected="selected">Выбрать</option>
+                                            <?php //foreach($users_master as $one){
+                                                    //echo '<option value="'.$one['id'].'">'.$one['realname'].'</option>';
+                                            //} ?>
+                                    </select-->										
+                            </div>
+			</td>
+		</tr>
+		<!--tr>
+			<td>
+				<div class="title">Город</div>
+				<select name="city" id="city">
+					<option value="" selected="selected">Выбрать</option>
+					<?php /*foreach ($city as $one) {
+						echo '<option value="'.$one['id'].'">'.$one['name'].'</option>';
+					}*/ ?>
+				</select>
+			</td>
+			<td>
+				<div class="title">Населенный пункт</div>
+				<select name="city2" id="city2">
+					<option value="" selected="selected">Не выбран город</option>
+				</select>
+			</td>		
+		</tr-->
+		<tr>
+			<td>
+				<div class="title">Улица</div>
+				<input type="text" id="street" name="street">
+			</td>
+			<td>
+				<table style="width:100%; margin:0;">
+					<tr>
+						<td><div class="title">Дом</div></td>
+						<td><div class="title">Корп.</div></td>
+						<td><div class="title">Кв.</div></td>
+					</tr>
+					<tr>
+						<td><input type="text" id="house" name="house" style="width: 50px;"></td>
+						<td><input type="text" id="corpus" name="corpus" style="width: 50px;"></td>
+						<td><input type="text" id="flat" name="flat" style="width: 50px;"></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td rowspan="3">
+				<div class="title">Особые отметки</div>
+				<textarea cols="35" rows="8" id="customer-details" name="customer-details" 
+                                          style="margin-left: 0px; margin-right: 0px; width: 250px; margin-top: 0px; margin-bottom: 0px; height: 140px; padding: 3px;"></textarea>
+			</td>
+			<td>
+				<div class="title">Телефон заказчика</div>
+				<input type="text" class="custom-phone" id="customer-phone" name="customer-phone">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="title">ФИО заказчика</div>
+				<input type="text" id="customer-name" name="customer-name">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="title">Сумма заказа</div>
+				<input type="text" id="cost" name="cost" <?php if(is_manager()){ echo 'disabled'; } ?>>
+			</td>
+		</tr>
+                </table>
+            </form>
+			<!--td>
+                            <div id="note_div" <?php //if(is_manager()){ echo 'style="display:none;"'; } ?>>
+                                    <div class="title">Примечания</div>
+                                    <input type="text" id="note" name="note" <?php //if(is_manager()){ echo 'disabled'; } ?>>
+                            </div>				
+			</td-->
+			<!--td>
+				<div class="title">Номер акта</div>
+				<input type="text" id="offer-number" name="offer-number" <?php if(is_manager()){ echo 'disabled'; } ?>>
+			</td-->
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onClick="ksk_onSearch();">Поиск</button>
+        </div>
+    </div>
+
+<!--------------------------------------------------------------------------------------->
+
+<script type="text/javascript">
+    
+    function ksk_onSearch() {
+        $("#mySearchModal #form").ajaxSubmit({
+            target: "#orders",
+            beforeSubmit: showRequest,
+            timeout: 3000,
+            success: function() {
+                showResponse();
+            }
+        });
+        $("#mySearchModal").modal('hide');
+    }
+    
 $(function() {  
 	// Телефоны
 	$(".custom-phone").mask("+79999999999");
@@ -371,6 +543,15 @@ function dofilter(type){
 
 //Отправка формы
 $(document).ready(function(){
+
+    // #mySearchModal datepicker
+    $('#mySearchModal #datetime, #datetime_hope').datepicker({
+            format: 'dd.mm.yyyy',
+            language: 'ru',
+            autoclose: true
+    });
+    
+    $('#mySearchModalButton').on('click', function() { dosearch(); });
 
 	timer_update();
 
@@ -485,7 +666,9 @@ function showResponse(responseText, statusText)  {
 		$('#ajax_load').hide();
 		doadd();
 		alert("Запись успешно обновлена!");
-	}
+	} else {
+            $('#ajax_load').hide();
+        }
 }
 //Закончилась отправка формы
 

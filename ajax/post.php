@@ -309,7 +309,7 @@ if ($_POST) {
 
 		//die($order_id);
 
-	}elseif($_POST['action'] == 'search'){
+	} elseif($_POST['action'] == 'search'){
 
 		$query = '';
 		if($_POST['date'] != ''){
@@ -331,23 +331,27 @@ if ($_POST) {
 			$query .= ' AND cost = '.$_POST['cost'];
 		}
 		if($_POST['customer-name'] != ''){
-			$query .= ' AND client_fio LIKE "%'.$_POST['customer-name'].'%"';
+			$query .= ' AND ((client_fio LIKE "%'.$_POST['customer-name'].'%")';
+			$query .= ' OR (client_fio2 LIKE "%'.$_POST['customer-name'].'%")';
+			$query .= ' OR (client_fio3 LIKE "%'.$_POST['customer-name'].'%"))';
 		}
-		if($_POST['customer-name2'] != ''){
+		/*if($_POST['customer-name2'] != ''){
 			$query .= ' AND client_fio2 LIKE "%'.$_POST['customer-name2'].'%"';
 		}		
 		if($_POST['customer-name3'] != ''){
 			$query .= ' AND client_fio3 LIKE "%'.$_POST['customer-name3'].'%"';
-		}				
+		}*/				
 		if($_POST['customer-phone'] != ''){
-			$query .= ' AND phone LIKE "%'.$_POST['customer-phone'].'%"';
+			$query .= ' AND ((phone LIKE "%'.$_POST['customer-phone'].'%")';
+			$query .= ' OR (phone2 LIKE "%'.$_POST['customer-phone'].'%")';
+			$query .= ' OR (phone3 LIKE "%'.$_POST['customer-phone'].'%"))';
 		}
-		if($_POST['customer-phone2'] != ''){
+		/*if($_POST['customer-phone2'] != ''){
 			$query .= ' AND phone2 LIKE "%'.$_POST['customer-phone2'].'%"';
 		}
 		if($_POST['customer-phone3'] != ''){
 			$query .= ' AND phone3 LIKE "%'.$_POST['customer-phone3'].'%"';
-		}				
+		}*/				
 		if($_POST['street'] != ''){
 			$query .= ' AND street LIKE "%'.$_POST['street'].'%"';
 		}
@@ -378,7 +382,15 @@ if ($_POST) {
 		$works = Table::Fetch('work_type', $work_id);
 
 		if($orders){foreach($orders as $one) {
-		    $table .= '<tr id="tr_id_'.$one['id'].'"><td onClick="editpost('.$one['id'].');">'.$one['time_date'].' '.$works[$one['work_type']]['name'].' '.$masters[$one['master']]['name'].' '.$city[$one['city_id']]['name'].', '.$one['street'].', д.'.$one['house'].', корпус '.$one['corpus'].', кв.'.$one['flat'].', тел: '.$one['phone'].'</td></tr>';
+		    $table .= '<tr id="tr_id_'.$one['id'].'"><td onClick="editpost('.$one['id'].');">';
+                    if ($one['cost'] == 0) {
+                        $table .= '<font color="red">';
+                    }
+                    $table .= $one['time_date'].' '.$works[$one['work_type']]['name'].' '.$masters[$one['master']]['name'].' '.$city[$one['city_id']]['name'].', '.$one['street'].', д.'.$one['house'].', корпус '.$one['corpus'].', кв.'.$one['flat'].', тел: '.$one['phone'].', сумма '.$one['cost'];
+                    if ($one['cost'] == 0) {
+                        $table .= '</font>';
+                    }
+                    $table .= '</td></tr>';
 		    $i++;
 		}}
 		$table .= '</table>';

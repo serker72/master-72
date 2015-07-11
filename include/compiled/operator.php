@@ -59,18 +59,6 @@
 					<div class="title">Время</div>
 					<input type="text" id="time" name="time" style="width: 60px;" <?php if(is_manager()){ echo 'disabled'; } ?>>
 				</div>
-
-				<div id="hope">
-					<div style="width:280px; float:left;">Желаемое время</div>
-					<div style="float:left;">
-						<div class="title">Дата</div>
-						<input type="text" id="datetime_hope" name="date_hope" style="width: 100px;">
-					</div>
-					<div style="float:left; margin-left: 5px;">
-						<div class="title">Время</div>
-						<input type="text" id="time_hope" name="time_hope" style="width: 60px;">
-					</div>
-				</div>
 			</td>
 			<td>
 				<div class="title">Тип работ</div>
@@ -93,6 +81,19 @@
 		</tr>
 		<tr>
 			<td>
+				<div id="hope">
+					<div style="width:280px; float:left;">Желаемое время</div>
+					<div style="float:left;">
+						<div class="title">Дата</div>
+						<input type="text" id="datetime_hope" name="date_hope" style="width: 100px;">
+					</div>
+					<div style="float:left; margin-left: 5px;">
+						<div class="title">Время</div>
+						<input type="text" id="time_hope" name="time_hope" style="width: 60px;">
+					</div>
+				</div>
+			</td>
+			<td>
 				<div class="title">Город</div>
 				<select name="city" id="city">
 					<option value="" selected="selected">Выбрать</option>
@@ -106,9 +107,13 @@
 				<select name="city2" id="city2">
 					<option value="" selected="selected">Не выбран город</option>
 				</select>
+			</td>		
+		</tr>
+		<tr>
+			<td>
 				<div class="title">Улица</div>
 				<input type="text" id="street" name="street">
-			</td>		
+			</td>
 			<td>
 				<table style="width:100%; margin:0;">
 					<tr>
@@ -122,6 +127,10 @@
 						<td><input type="text" id="flat" name="flat" style="width: 50px;"></td>
 					</tr>
 				</table>
+			</td>
+			<td>
+				<div class="title">Особые отметки</div>
+				<textarea cols="38" rows="4" id="customer-details" name="customer-details" style="margin-left: 0px; margin-right: 0px; width: 250px; margin-top: 0px; margin-bottom: 0px; height: 59px; padding: 3px;"></textarea>
 			</td>
 		</tr>
 		<tr>
@@ -142,24 +151,6 @@
 				<input type="text" id="customer-name2" name="customer-name2">
 				<div class="title">ФИО заказчика 3</div>
 				<input type="text" id="customer-name3" name="customer-name3">
-			</td>
-			<td>
-				<div class="title">Особые отметки</div>
-				<textarea cols="38" rows="4" id="customer-details" name="customer-details" style="margin-left: 0px; margin-right: 0px; width: 250px; margin-top: 0px; margin-bottom: 0px; height: 59px; padding: 3px;"></textarea>
-				<div id="note_div" <?php if(is_manager()){ echo 'style="display:none;"'; } ?>>
-					<div class="title">Примечания</div>
-					<input type="text" id="note" name="note" <?php if(is_manager()){ echo 'disabled'; } ?>>
-				</div>				
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<div class="title">Номер акта</div>
-				<input type="text" id="offer-number" name="offer-number" <?php if(is_manager()){ echo 'disabled'; } ?>>
-			</td>
-			<td>
-				<div class="title">Сумма заказа</div>
-				<input type="text" id="cost" name="cost" <?php if(is_manager()){ echo 'disabled'; } ?>>
 			</td>
 			<td>
 				<div <?php if(is_manager()){ echo 'style="display:none;"'; } ?>>
@@ -186,6 +177,22 @@
 					</select>										
 				</div>
 
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="title">Номер акта</div>
+				<input type="text" id="offer-number" name="offer-number" <?php if(is_manager()){ echo 'disabled'; } ?>>
+			</td>
+			<td>
+				<div class="title">Сумма заказа</div>
+				<input type="text" id="cost" name="cost" <?php if(is_manager()){ echo 'disabled'; } ?>>
+			</td>
+			<td>
+				<div id="note_div" <?php if(is_manager()){ echo 'style="display:none;"'; } ?>>
+					<div class="title">Примечания</div>
+					<input type="text" id="note" name="note" <?php if(is_manager()){ echo 'disabled'; } ?>>
+				</div>				
 			</td>
 		</tr>
 		<?php if($login_user['rang'] == 'admin' || $login_user['rang'] == 'operator'){ ?>
@@ -365,8 +372,8 @@
                                     </select-->										
                             </div>
 			</td>
-		</tr>
-		<!--tr>
+                    </tr>
+                    <!--tr>
 			<td>
 				<div class="title">Город</div>
 				<select name="city" id="city">
@@ -382,8 +389,8 @@
 					<option value="" selected="selected">Не выбран город</option>
 				</select>
 			</td>		
-		</tr-->
-		<tr>
+                    </tr-->
+                    <tr>
 			<td>
 				<div class="title">Улица</div>
 				<input type="text" id="street" name="street">
@@ -402,30 +409,40 @@
 					</tr>
 				</table>
 			</td>
-		</tr>
-		<tr>
-			<td rowspan="3">
+                    </tr>
+                    <tr>
+			<td>
+				<div class="title">Статус</div>
+				<select name="status" id="status">
+					<option value="0" selected="selected">Выбрать</option>
+					<option value="1">Выполнен</option>
+					<option value="2">Отменен</option>
+					<option value="3">Отказ</option>
+					<option value="4">Отсутствие заказчика</option>
+				</select>
+			</td>
+			<td>
+				<div class="title">Сумма заказа</div>
+				<input type="text" id="cost" name="cost" <?php if(is_manager()){ echo 'disabled'; } ?>>
+			</td>
+                    </tr>
+                    <tr>
+			<td rowspan="2">
 				<div class="title">Особые отметки</div>
 				<textarea cols="35" rows="8" id="customer-details" name="customer-details" 
-                                          style="margin-left: 0px; margin-right: 0px; width: 250px; margin-top: 0px; margin-bottom: 0px; height: 140px; padding: 3px;"></textarea>
+                                          style="margin-left: 0px; margin-right: 0px; width: 250px; margin-top: 0px; margin-bottom: 0px; height: 100px; padding: 3px;"></textarea>
 			</td>
 			<td>
 				<div class="title">Телефон заказчика</div>
 				<input type="text" class="custom-phone" id="customer-phone" name="customer-phone">
 			</td>
-		</tr>
-		<tr>
+                    </tr>
+                    <tr>
 			<td>
 				<div class="title">ФИО заказчика</div>
 				<input type="text" id="customer-name" name="customer-name">
 			</td>
-		</tr>
-		<tr>
-			<td>
-				<div class="title">Сумма заказа</div>
-				<input type="text" id="cost" name="cost" <?php if(is_manager()){ echo 'disabled'; } ?>>
-			</td>
-		</tr>
+                    </tr>
                 </table>
             </form>
 			<!--td>
@@ -898,6 +915,31 @@ function editpost(id, type){
 			$('#status-bar-search').hide();
 			$('#status-bar-edit').show();
 			$('#upload_img').show();
+                        
+                        // Кол-во img
+                        img_count = 0;
+                        if ($("#img").val() != '') img_count++;
+                        if ($("#img1").val() != '') img_count++;
+                        if ($("#img2").val() != '') img_count++;
+                        if ($("#img3").val() != '') img_count++;
+                        if ($("#img4").val() != '') img_count++;
+                        if ($("#img5").val() != '') img_count++;
+                        if ($("#img6").val() != '') img_count++;
+                        if ($("#img7").val() != '') img_count++;
+                        
+                        alert('img_count='+img_count);
+                        if (img_count < 7) {
+                            $("#upload").show();
+                            for(i=1;i <= img_count;i++) 
+                                $("#upload"+i).show();
+                            
+                            for(i=img_count+1;i < 8;i++) 
+                                $("#upload"+i).hide();
+                        } else {
+                            $("#upload").show();
+                            for(i=1;i < 8;i++) 
+                                $("#upload"+i).show();
+                        }
 			
 			if(type != 'manager'){
 				$('#submit').show();
@@ -943,6 +985,9 @@ $(function(){
 				$('#img').val(name);
 				$('<li></li>').appendTo('#files').html(' Файл '+file+' успешно загружен!').addClass('success');
 				$('#upload').hide();
+                                $("#upload1").show();
+                                for(i=2;i < 8;i++) 
+                                    $("#upload"+i).hide();
 			} else{
 				$('<li></li>').appendTo('#files').text(file).addClass('error');
 			}
@@ -974,6 +1019,9 @@ $(function(){
 				$('#img1').val(name);
 				$('<li></li>').appendTo('#files1').html(' Файл '+file+' успешно загружен!').addClass('success');
 				$('#upload1').hide();
+                                $("#upload2").show();
+                                for(i=3;i < 8;i++) 
+                                    $("#upload"+i).hide();
 			} else{
 				$('<li></li>').appendTo('#files1').text(file).addClass('error');
 			}
@@ -1005,6 +1053,9 @@ $(function(){
 				$('#img2').val(name);
 				$('<li></li>').appendTo('#files2').html(' Файл '+file+' успешно загружен!').addClass('success');
 				$('#upload2').hide();
+                                $("#upload3").show();
+                                for(i=4;i < 8;i++) 
+                                    $("#upload"+i).hide();
 			} else{
 				$('<li></li>').appendTo('#files2').text(file).addClass('error');
 			}
@@ -1036,6 +1087,9 @@ $(function(){
 				$('#img3').val(name);
 				$('<li></li>').appendTo('#files3').html(' Файл '+file+' успешно загружен!').addClass('success');
 				$('#upload3').hide();
+                                $("#upload4").show();
+                                for(i=5;i < 8;i++) 
+                                    $("#upload"+i).hide();
 			} else{
 				$('<li></li>').appendTo('#files3').text(file).addClass('error');
 			}
@@ -1067,6 +1121,9 @@ $(function(){
 				$('#img4').val(name);
 				$('<li></li>').appendTo('#files4').html(' Файл '+file+' успешно загружен!').addClass('success');
 				$('#upload4').hide();
+                                $("#upload5").show();
+                                for(i=6;i < 8;i++) 
+                                    $("#upload"+i).hide();
 			} else{
 				$('<li></li>').appendTo('#files4').text(file).addClass('error');
 			}
@@ -1098,6 +1155,9 @@ $(function(){
 				$('#img5').val(name);
 				$('<li></li>').appendTo('#files5').html(' Файл '+file+' успешно загружен!').addClass('success');
 				$('#upload5').hide();
+                                $("#upload6").show();
+                                for(i=7;i < 8;i++) 
+                                    $("#upload"+i).hide();
 			} else{
 				$('<li></li>').appendTo('#files5').text(file).addClass('error');
 			}
@@ -1129,6 +1189,7 @@ $(function(){
 				$('#img6').val(name);
 				$('<li></li>').appendTo('#files6').html(' Файл '+file+' успешно загружен!').addClass('success');
 				$('#upload6').hide();
+                                $("#upload7").show();
 			} else{
 				$('<li></li>').appendTo('#files6').text(file).addClass('error');
 			}

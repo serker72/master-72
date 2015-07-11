@@ -145,13 +145,13 @@ table.jtable{
 	float: left;
 }
 
-.div-manager-zp{
-	height: 400px;
-	width: 418px;
+.div-manager-zp, .div-master-zp {
+	max-height: 400px;
+	width: 650px;
 	overflow-y: auto;
 	float: left; 
 }
 
-.div-manager-zp table{
-	width:380px;
+.div-manager-zp table, .div-master-zp table {
+	width:600px;
 }

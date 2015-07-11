@@ -36,6 +36,7 @@
 	<div class="info-block" style="float:left; width: 100%;">
 		<div id="sms-api-manager">
 			<h4>SMS API</h4>
+                        <div id="sms-api-manager-table"></div><br>
 			<a href="#mySmsApiOptions" role="button"  style="font-weight:normal;" class="btn" data-toggle="modal">Изменить</a>
 		</div>
 	</div>
@@ -57,62 +58,79 @@
 			<a href="#myStreet" role="button"  style="font-weight:normal;" class="btn" data-toggle="modal">Добавить</a>
 		</div>
 	</div>		
-	<div class="info-block" style="float:left;">
+	<div class="info-block" style="float:left; width=650px;">
 		<div id="table-manager">
 			<h4>Подсчет з/п - Менеджеров</h4>
 			<div class="div-manager-zp">
-				Даты: с <input type="text" id="date1" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none; margin-top: 10px;" value="<?php echo $start_time; ?>"> по <input type="text" id="date2" style="width:100px; border: none; background: transparent; margin-top: 10px; text-decoration: none;cursor: pointer; box-shadow:none;" value="<?php echo $end_time; ?>"><br/>
+				<!--Даты: с <input type="text" id="date1" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none; margin-top: 10px;" value="<?php //echo $start_time; ?>"> по <input type="text" id="date2" style="width:100px; border: none; background: transparent; margin-top: 10px; text-decoration: none;cursor: pointer; box-shadow:none;" value="<?php //echo $end_time; ?>"><br/>-->
 				Имя: <input type="text" id="manager-zp" name="manager-zp" value="" /><a class="btn" href="#" onClick="onManager(); return false;" style="font-weight:normal; margin-top: -11px; margin-left: 20px;">Показать</a>
 				<a class="btn" href="#" onClick="get_xls('manager'); return false;">Скачать</a>
 			<table id="table-manager" class="table table-bordered">
+                            <thead>
 				<tr>
 					<td>ФИО</td>
+					<td>Рассчитано</td>
+					<td>Выплачено</td>
 					<td>З/П</td>
 				</tr>
+                            </thead>
+                            <tbody>
 				<?php foreach ($array_man as $two) { ?>
 					<tr>
 						<td id="name_<?=$two['id']?>"><?php echo $two['name']; ?></td>
-						<td id="zp_<?=$two['id']?>">
-							<?php echo $two['zp']; ?>
-							<input type="hidden" name="date_start_<?=$two['id']?>" value="<?php echo $start_time; ?>">
-							<input type="hidden" name="date_end_<?=$two['id']?>" value="<?php echo $end_time; ?>">
+						<td id="zp_calc_<?=$two['id']?>"><?php echo $two['zp_calc']; ?></td>
+						<td id="zp__pay<?=$two['id']?>"><?php echo $two['zp_pay']; ?></td>
+						<td id="zp_<?=$two['id']?>"><?php echo $two['zp']; ?>
+							<!--input type="hidden" name="date_start_<?$two['id']?>" value="<?php //echo $start_time; ?>"-->
+							<!--input type="hidden" name="date_end_<?$two['id']?>" value="<?php //echo $end_time; ?>"-->
 						</td>
 					</tr>
 				<?php } ?>
+                            </tbody>
 			</table>
 			</div>
 		</div>
 	</div>
-	<div class="info-block" style="float:left;">
+	<div class="info-block" style="float:left; width=650px;">
 		<div id="table-master">
-			<h4>Подсчет з/п - Мастеров с 
-			<input type="text" id="date3" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none; margin-top: 10px;" value="<?php echo $start_time; ?>"> по <input type="text" id="date4" style="width:100px; border: none; background: transparent; margin-top: 10px; text-decoration: none;cursor: pointer; box-shadow:none;" value="<?php echo $end_time; ?>">
-			<a class="btn" href="#" onClick="onMaster(); return false;" style="font-weight:normal;">Показать</a></h4>
+			<h4>Подсчет з/п - Мастеров</h4>
+                    <div class="div-master-zp">
+			<!--input type="text" id="date3" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none; margin-top: 10px;" value="<?php //echo $start_time; ?>"> по <input type="text" id="date4" style="width:100px; border: none; background: transparent; margin-top: 10px; text-decoration: none;cursor: pointer; box-shadow:none;" value="<?php //echo $end_time; ?>"-->
+			<a class="btn" href="#" onClick="onMaster(); return false;" style="font-weight:normal;">Показать</a>
 			<a class="btn" href="#" onClick="get_xls('master'); return false;">Скачать</a>
-			<table class="table table-bordered">
+			<table  id="table-master" class="table table-bordered">
+                            <thead>
 				<tr>
 					<td>ФИО</td>
+					<td>Рассчитано</td>
+					<td>Выплачено</td>
 					<td>З/П</td>
 				</tr>
+                            </thead>
+                            <tbody>
 			<?php foreach ($array_mas as $two) { ?>
 				<tr>
 					<td><?php echo $two['name']; ?></td>
+					<td><?php echo $two['zp_calc']; ?></td>
+					<td><?php echo $two['zp_pay']; ?></td>
 					<td><?php echo $two['zp']; ?></td>
 				</tr>
 			<?php } ?>
+                            </tbody>
 			</table>
+                    </div>
 		</div>
 	</div>	
-	<div class="info-block" style="float:left;">
+	<div class="info-block" style="float:left; width: 800px;">
 		<div id="table-master">
 			<h4>Выплаты с <input type="text" id="pay_date3" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none; margin-top: 10px;" value="<?php echo $start_time; ?>"> по <input type="text" id="pay_date4" style="width:100px; border: none; background: transparent; margin-top: 10px; text-decoration: none;cursor: pointer; box-shadow:none;" value="<?php echo $end_time; ?>"><a class="btn" href="#" onClick="onPay(); return false;" style="font-weight:normal;margin-right:10px;">Показать</a><a href="#myModal" role="button"  style="font-weight:normal;" class="btn" data-toggle="modal">Добавить</a></h4>
-			<div id="orders_pay" style="min-height:200px; width: 100%;"></div>
+			<div id="orders_pay" style="min-height:200px; width: 98%;"></div>
 		</div>
 	</div>	
 	
 		<script type="text/javascript">
 			function get_xls(rang){
-				if(rang == 'manager'){
+				/*if(rang == 'manager'){
 					var date1 = $('#date1').val();
 					var date2 = $('#date2').val();
 				}else{
@@ -121,43 +139,52 @@
 				}
 				if(date1 == '' || date2 == ''){
 					alert('Заполните даты');
-				}else{
+				}else{*/
 					var a = document.createElement('a');
-					a.href='/get_xls.php?action='+rang+'&date1='+date1+'&date2='+date2;
+					//a.href='/get_xls.php?action='+rang+'&date1='+date1+'&date2='+date2;
+					a.href='/get_xls.php?action='+rang;
 					a.target = '_blank';
 					document.body.appendChild(a);
 					a.click();
-				}
+				//}
 			}
 
 
 			function onManager(){
-				var date1 = $('#date1').val();
-				var date2 = $('#date2').val();
+				//var date1 = $('#date1').val();
+				//var date2 = $('#date2').val();
 				var name = $('#manager-zp').val();
-				if(date1 == '' || date2 == ''){
-					alert('Заполните даты');
-				}else{
+				//if(date1 == '' || date2 == ''){
+				//	alert('Заполните даты');
+				//}else{
 					$.ajax({
 						type: "GET",
-						url: "/ajax/admin.php?action=onmanager&date1="+date1+"&date2="+date2+"&name="+name,
-						success: function(data){ $('#table-manager').empty().append($(data)); }
+						//url: "/ajax/admin.php?action=onmanager&date1="+date1+"&date2="+date2+"&name="+name,
+						url: "/ajax/admin.php?action=onmanager&name="+name,
+						success: function(data){ 
+                                                    //$('#table-manager').empty().append($(data)); 
+                                                    $('table#table-manager tbody').html($(data)); 
+                                                }
 					});
-				}		
+				//}		
 			}
 
 			function onMaster(){
-				var date3 = $('#date3').val();
-				var date4 = $('#date4').val();
-				if(date3 == '' || date4 == ''){
-					alert('Заполните даты');
-				}else{
+				//var date3 = $('#date3').val();
+				//var date4 = $('#date4').val();
+				//if(date3 == '' || date4 == ''){
+				//	alert('Заполните даты');
+				//}else{
 					$.ajax({
 						type: "GET",
-						url: "/ajax/admin.php?action=onmaster&date1="+date3+"&date2="+date4,
-						success: function(data){ $('#table-master').empty().append($(data)); }
+						//url: "/ajax/admin.php?action=onmaster&date1="+date3+"&date2="+date4,
+						url: "/ajax/admin.php?action=onmaster",
+						success: function(data){ 
+                                                    //$('#table-master').empty().append($(data)); 
+                                                    $('table#table-master tbody').html($(data)); 
+                                                }
 					});	
-				}
+				//}
 				return false;
 			}
 
@@ -171,7 +198,7 @@
 						type: "GET",
 						url: "/ajax/admin.php?action=pay&date1="+pay_date1+"&date2="+pay_date2,
 						success: function(data){
-                                                    alert(data);
+                                                    //alert(data);
                                                     $('#orders_pay').empty().append($(data)); 
                                                 }
 					});
@@ -207,9 +234,13 @@
 					$.ajax({
 						type: "GET",
 						url: "/ajax/admin.php?action=sms_api_options_change&sms_api_username="+sms_api_username+'&sms_api_password='+sms_api_password+'&sms_api_phone='+sms_api_phone,
-						success: function(data){ alert("Успешно изменены параметры SMS API !"); }
+						success: function(data){ 
+                                                    //alert("Успешно изменены параметры SMS API !");
+                                                    $("#sms-api-manager-table").html($(data));
+                                                }
 					});
-				}		
+                                        $("#mySmsApiOptions").modal('hide');
+				}
 				return false;
                         }
                         

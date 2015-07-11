@@ -340,32 +340,41 @@ if ($action == 'get_cities') {
 }elseif($action == 'get_imgs'){
 
 	if($_GET['id']){
+                $img_count = 0;
 		$id = intval($_GET['id']);
 		$img = DB::GetQueryResult("SELECT * FROM `order` WHERE id=".$id, true);
-		$data = '<div class="info-block">';
+		$data = '<div id="img_done_link" class="info-block">';
 		if($img['img'] != ''){
 			$data .= '<a href="/static/uploads/'.$img['img'].'" target="_blank">Cтраница 1</a><br/>';
+                        $img_count++;
 		}
 		if($img['img1'] != ''){
 			$data .= '<a href="/static/uploads/'.$img['img1'].'" target="_blank">Cтраница 2</a><br/>';
+                        $img_count++;
 		}
 		if($img['img2'] != ''){
 			$data .= '<a href="/static/uploads/'.$img['img2'].'" target="_blank">Cтраница 3</a><br/>';
+                        $img_count++;
 		}
 		if($img['img3'] != ''){
 			$data .= '<a href="/static/uploads/'.$img['img3'].'" target="_blank">Cтраница 4</a><br/>';
+                        $img_count++;
 		}
 		if($img['img4'] != ''){
 			$data .= '<a href="/static/uploads/'.$img['img4'].'" target="_blank">Cтраница 5</a><br/>';
+                        $img_count++;
 		}		
 		if($img['img5'] != ''){
 			$data .= '<a href="/static/uploads/'.$img['img5'].'" target="_blank">Cтраница 6</a><br/>';
+                        $img_count++;
 		}
 		if($img['img6'] != ''){
 			$data .= '<a href="/static/uploads/'.$img['img6'].'" target="_blank">Cтраница 7</a><br/>';
+                        $img_count++;
 		}
 		if($img['img7'] != ''){
 			$data .= '<a href="/static/uploads/'.$img['img7'].'" target="_blank">Cтраница 8</a><br/>';
+                        $img_count++;
 		}												
 		$data .= '</div>';
 		die($data);

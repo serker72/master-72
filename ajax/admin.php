@@ -186,20 +186,35 @@ if($action == "list"){
 
 	$array_man = array();
 
-	$start_time = mysql_real_escape_string($_GET['date1']);
-	$end_time = mysql_real_escape_string($_GET['date2']);
+	//$start_time = mysql_real_escape_string($_GET['date1']);
+	//$end_time = mysql_real_escape_string($_GET['date2']);
+        
+        $html = '';
 
 	foreach ($user_man as $one) {
-		$sum = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `order` WHERE STR_TO_DATE(time_date, '%d.%m.%Y') BETWEEN STR_TO_DATE('".$start_time."', '%d.%m.%Y') AND STR_TO_DATE('".$end_time."', '%d.%m.%Y') AND user_id =".$one['id']." AND cost != 0", true);
-		$zp = ($sum['summ']*$one['stavka'])/100;
-                if ($zp > 0) {
+		//$sum = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `order` WHERE STR_TO_DATE(time_date, '%d.%m.%Y') BETWEEN STR_TO_DATE('".$start_time."', '%d.%m.%Y') AND STR_TO_DATE('".$end_time."', '%d.%m.%Y') AND user_id =".$one['id']." AND cost != 0", true);
+		$sum = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `order` WHERE user_id = ".$one['id']." AND cost != 0", true);
+		$sum_pay = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `pay` WHERE user_id =".$one['id']." AND cost != 0", true);
+		$zp_calc = ($sum['summ']*$one['stavka'])/100;
+                if ($zp_calc > 0) {
+                    $zp = $zp_calc - $sum_pay['summ'];
+                    
                     $array_man[$one['id']]['id'] = $one['id'];
                     $array_man[$one['id']]['name'] = $one['realname'].'('.$one['username'].')';
+                    $array_man[$one['id']]['zp_calc'] = $zp_calc;
+                    $array_man[$one['id']]['zp_pay'] = $sum_pay['summ'];
                     $array_man[$one['id']]['zp'] = $zp;
+                    
+                    $html .= '<tr>';
+                    $html .= '<td id="name_'.$one['id'].'">'.$one['realname'].' ('.$one['username'].')</td>';
+                    $html .= '<td id="zp_calc_'.$one['id'].'">'.$zp_calc.'</td>';
+                    $html .= '<td id="zp_pay_'.$one['id'].'">'.$sum_pay['summ'].'</td>';
+                    $html .= '<td id="zp_'.$one['id'].'">'.$zp.'</td>';
+                    $html .= '</tr>';
                 }
 	}
 
-		$html .= '<h4>Подсчет з/п - Менеджеров</h4>';
+		/*$html .= '<h4>Подсчет з/п - Менеджеров</h4>';
 		$html .= '<div class="div-manager-zp">';
 		$html .= 'Даты: с <input type="text" id="date1" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none; margin-top: 10px;" value="'.$start_time.'"> по <input type="text" id="date2" style="width:100px; border: none; background: transparent; margin-top: 10px; text-decoration: none;cursor: pointer; box-shadow:none;" value="'.$end_time.'"><br/>Имя: <input type="text" id="manager-zp" name="manager-zp" value="'.$_GET['name'].'" /><a class="btn" href="#" onClick="onManager(); return false;" style="font-weight:normal; margin-top: -11px; margin-left: 20px;">Показать</a>';
 		$html .= '<a class="btn" href="#" onClick="get_xls(\'manager\'); return false;">Скачать</a>';
@@ -220,7 +235,7 @@ if($action == "list"){
 		$html .= '</div>';
 		$html .= '<script type="text/javascript">';
 		$html .= '$(document).ready(function () { $(\'#date1\').datepicker({format: \'dd.mm.yyyy\'}); $(\'#date2\').datepicker({format: \'dd.mm.yyyy\'}) });';
-		$html .= '</script>';
+		$html .= '</script>';*/
 
 		echo $html;
 }elseif($action == 'onmaster'){
@@ -228,18 +243,34 @@ if($action == "list"){
 	$user_mas = DB::GetQueryResult("SELECT * FROM `user` WHERE rang = 'master' AND id != 0 ", false);
 	$array_mas = array();
 
-	$start_time = mysql_real_escape_string($_GET['date1']);
-	$end_time = mysql_real_escape_string($_GET['date2']);
+	//$start_time = mysql_real_escape_string($_GET['date1']);
+	//$end_time = mysql_real_escape_string($_GET['date2']);
 
 	foreach ($user_mas as $two) {
-		$sum = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `order` WHERE STR_TO_DATE(time_date, '%d.%m.%Y') BETWEEN STR_TO_DATE('".$start_time."', '%d.%m.%Y') AND STR_TO_DATE('".$end_time."', '%d.%m.%Y') AND master_name =".$two['id'], true);
-		$zp = ($sum['summ']*$two['stavka'])/100;
-		$array_mas[$two['id']]['id'] = $two['id'];
-		$array_mas[$two['id']]['name'] = $two['realname'].'('.$two['username'].')';
-		$array_mas[$two['id']]['zp'] = $zp;
+		//$sum = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `order` WHERE STR_TO_DATE(time_date, '%d.%m.%Y') BETWEEN STR_TO_DATE('".$start_time."', '%d.%m.%Y') AND STR_TO_DATE('".$end_time."', '%d.%m.%Y') AND master_name =".$two['id'], true);
+		$sum = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `order` WHERE master_name =".$two['id'], true);
+		$sum_pay = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `pay` WHERE user_id =".$two['id']." AND cost != 0", true);
+		$zp_calc = ($sum['summ']*$two['stavka'])/100;
+                
+                if ($zp_calc > 0) {
+                    $zp = $zp_calc - $sum_pay['summ'];
+                    
+                    $array_mas[$two['id']]['id'] = $two['id'];
+                    $array_mas[$two['id']]['name'] = $two['realname'].'('.$two['username'].')';
+                    $array_man[$two['id']]['zp_calc'] = $zp_calc;
+                    $array_man[$two['id']]['zp_pay'] = $sum_pay['summ'];
+                    $array_mas[$two['id']]['zp'] = $zp;
+                    
+                    $html .= '<tr>';
+                    $html .= '<td id="name_'.$two['id'].'">'.$two['realname'].' ('.$two['username'].')</td>';
+                    $html .= '<td id="zp_calc_'.$two['id'].'">'.$zp_calc.'</td>';
+                    $html .= '<td id="zp_pay_'.$two['id'].'">'.$sum_pay['summ'].'</td>';
+                    $html .= '<td id="zp_'.$two['id'].'">'.$zp.'</td>';
+                    $html .= '</tr>';
+                }
 	}
 
-		$html .= '<h4>Подсчет з/п - Мастеров с <input type="text" id="date3" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none; margin-top: 10px;" value="'.$start_time.'"> по <input type="text" id="date4" style="width:100px; border: none; background: transparent; margin-top: 10px; text-decoration: none;cursor: pointer; box-shadow:none;" value="'.$end_time.'"><a class="btn" href="#" onClick="onMaster(); return false;" style="font-weight:normal;">Показать</a></h4>';
+		/*$html .= '<h4>Подсчет з/п - Мастеров с <input type="text" id="date3" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none; margin-top: 10px;" value="'.$start_time.'"> по <input type="text" id="date4" style="width:100px; border: none; background: transparent; margin-top: 10px; text-decoration: none;cursor: pointer; box-shadow:none;" value="'.$end_time.'"><a class="btn" href="#" onClick="onMaster(); return false;" style="font-weight:normal;">Показать</a></h4>';
 		$html .= '<a class="btn" href="#" onClick="get_xls(\'master\'); return false;">Скачать</a>';
 		$html .='<table id="table-manager" class="table table-bordered">
 				<tr>
@@ -257,9 +288,10 @@ if($action == "list"){
 		$html	.= '</table>';
 		$html .= '<script type="text/javascript">';
 		$html .= '$(document).ready(function () { $(\'#date3\').datepicker({format: \'dd.mm.yyyy\'}); $(\'#date4\').datepicker({format: \'dd.mm.yyyy\'}) });';
-		$html .= '</script>';
+		$html .= '</script>';*/
 
-		echo $html;
+		//echo $html;
+		die($html);
 }elseif($action == 'pay'){
 
 	$start_time = mysql_real_escape_string($_GET['date1']);
@@ -346,8 +378,32 @@ if($action == "list"){
 	$sms_api_phone    = strval($_GET['sms_api_phone']);
         
         $ret_flag = set_sms_api_options($sms_api_username, $sms_api_password, $sms_api_phone);
+        
+        if ($ret_flag) {
+            $html  = '<table class="table table-bordered" style="width: 400px;">';
+            $html .= '<tr>';
+            $html .= '<th>Параметр</th>';
+            $html .= '<th>Значение</th>';
+            $html .= '</tr>';
+            $html .= '<tr>';
+            $html .= '<td>Логин</td>';
+            $html .= '<td>'.$sms_api_username.'</td>';
+            $html .= '</tr>';
+            $html .= '<tr>';
+            $html .= '<td>Пароль</td>';
+            $html .= '<td>'.$sms_api_password.'</td>';
+            $html .= '</tr>';
+            $html .= '<tr>';
+            $html .= '<td>N телефона</td>';
+            $html .= '<td>'.$sms_api_phone.'</td>';
+            $html .= '</tr>';
+            $html .= '</table';
+        } else {
+            $html = '';
+        }
+       
 
-	die();
+	die($html);
 }
 
 

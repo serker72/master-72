@@ -20,7 +20,7 @@ if($action == 'manager'){
 
 	$where = '';
 
-	if($_GET['date1'] == '' || $_GET['date2'] == '') die('Нет даты');
+	//if($_GET['date1'] == '' || $_GET['date2'] == '') die('Нет даты');
 
 	if($_GET['name'] != ''){
 		$where .= 'AND realname LIKE "%'.$_GET['name'].'%"';
@@ -30,25 +30,39 @@ if($action == 'manager'){
 
 	$array_man = array();
 
-	$start_time = mysql_real_escape_string($_GET['date1']);
-	$end_time = mysql_real_escape_string($_GET['date2']);
+	//$start_time = mysql_real_escape_string($_GET['date1']);
+	//$end_time = mysql_real_escape_string($_GET['date2']);
 
-	$html .= '<table><tr><td> Даты: с '.$start_time.' по '.$end_time.'</td></tr></table>';
-	$html .= '<table class="table table-bordered" style="border: 1px solid #000;">';
-	$html .= '<tr><td>ФИО</td><td>З/П</td></tr>';
+	//$html .= '<table><tr><td> Даты: с '.$start_time.' по '.$end_time.'</td></tr></table>';
+	$html .= '<table class="table table-bordered" border="1" style="border: 1px solid #000;">';
+	$html .= '<tr style="text-align: center;"><td style="width: 300px;padding: 0 2px;">ФИО</td>';
+        $html .= '<td style="width: 100px;padding: 0 2px;">Рассчитано</td>';
+        $html .= '<td style="width: 100px;padding: 0 2px;">Выплачено</td>';
+        $html .= '<td style="width: 100px;padding: 0 2px;">З/П</td></tr>';
 
 	foreach ($user_man as $one) {
-		$sum = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `order` WHERE STR_TO_DATE(time_date, '%d.%m.%Y') BETWEEN STR_TO_DATE('".$start_time."', '%d.%m.%Y') AND STR_TO_DATE('".$end_time."', '%d.%m.%Y') AND user_id =".$one['id']." AND cost != 0", true);
-		$zp = ($sum['summ']*$one['stavka'])/100;
-		$array_man[$one['id']]['id'] = $one['id'];
-		$array_man[$one['id']]['name'] = $one['realname'].'('.$one['username'].')';
-		$array_man[$one['id']]['zp'] = $zp;
+		//$sum = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `order` WHERE STR_TO_DATE(time_date, '%d.%m.%Y') BETWEEN STR_TO_DATE('".$start_time."', '%d.%m.%Y') AND STR_TO_DATE('".$end_time."', '%d.%m.%Y') AND user_id =".$one['id']." AND cost != 0", true);
+		$sum = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `order` WHERE user_id =".$one['id']." AND cost != 0", true);
+		$sum_pay = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `pay` WHERE user_id =".$one['id']." AND cost != 0", true);
+		$zp_calc = ($sum['summ']*$one['stavka'])/100;
+                
+                if ($zp_calc > 0) {
+                    $zp = $zp_calc - $sum_pay['summ'];
+                    
+                    $array_man[$one['id']]['id'] = $one['id'];
+                    $array_man[$one['id']]['name'] = $one['realname'].' ('.$one['username'].')';
+                    $array_man[$one['id']]['zp_calc'] = $zp_calc;
+                    $array_man[$one['id']]['zp_pay'] = $sum_pay['summ'];
+                    $array_man[$one['id']]['zp'] = $zp;
+                }
 	}
 
 	foreach ($array_man as $two) {
 		$html .= '<tr>';
 		$html .= '<td>'.$two['name'].'</td>';
-		$html .= '<td>'.$two['zp'].'</td>';
+		$html .= '<td style="text-align: right;">'.$two['zp_calc'].'</td>';
+		$html .= '<td style="text-align: right;">'.$two['zp_pay'].'</td>';
+		$html .= '<td style="text-align: right;">'.$two['zp'].'</td>';
 		$html .= '</tr>';
 	}
 	$html .= '</table>';
@@ -57,35 +71,49 @@ if($action == 'manager'){
 
 }elseif($action == 'master'){
 
-	if($_GET['date1'] == '' || $_GET['date2'] == '') die('Нет даты');
+	//if($_GET['date1'] == '' || $_GET['date2'] == '') die('Нет даты');
 
 	$user_mas = DB::GetQueryResult("SELECT * FROM `user` WHERE rang = 'master' AND id != 0 ", false);
 	$array_mas = array();
 
-	$start_time = mysql_real_escape_string($_GET['date1']);
-	$end_time = mysql_real_escape_string($_GET['date2']);
+	//$start_time = mysql_real_escape_string($_GET['date1']);
+	//$end_time = mysql_real_escape_string($_GET['date2']);
 
-	$html .= '<table><tr><td> Даты: с '.$start_time.' по '.$end_time.'</td></tr></table>';
-	$html .= '<table class="table table-bordered" style="border: 1px solid #000;">';
-	$html .= '<tr><td>ФИО</td><td>З/П</td></tr>';
+	//$html .= '<table><tr><td> Даты: с '.$start_time.' по '.$end_time.'</td></tr></table>';
+	$html .= '<table class="table table-bordered" border="1" style="border: 1px solid #000;">';
+	$html .= '<tr style="text-align: center;"><td style="width: 300px;padding: 0 2px;">ФИО</td>';
+        $html .= '<td style="width: 100px;padding: 0 2px;">Рассчитано</td>';
+        $html .= '<td style="width: 100px;padding: 0 2px;">Выплачено</td>';
+        $html .= '<td style="width: 100px;padding: 0 2px;">З/П</td></tr>';
 
 	foreach ($user_mas as $two) {
-		$sum = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `order` WHERE STR_TO_DATE(time_date, '%d.%m.%Y') BETWEEN STR_TO_DATE('".$start_time."', '%d.%m.%Y') AND STR_TO_DATE('".$end_time."', '%d.%m.%Y') AND master_name =".$two['id'], true);
-		$zp = ($sum['summ']*$two['stavka'])/100;
-		$array_mas[$two['id']]['id'] = $two['id'];
-		$array_mas[$two['id']]['name'] = $two['realname'].'('.$two['username'].')';
-		$array_mas[$two['id']]['zp'] = $zp;
-
-		$html .= '<tr>';
-		$html .= '<td>'.$two['realname'].'('.$two['username'].')'.'</td>';
-		$html .= '<td>'.$zp.'</td>';
-		$html .= '</tr>';
-
+		//$sum = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `order` WHERE STR_TO_DATE(time_date, '%d.%m.%Y') BETWEEN STR_TO_DATE('".$start_time."', '%d.%m.%Y') AND STR_TO_DATE('".$end_time."', '%d.%m.%Y') AND master_name =".$two['id'], true);
+		$sum = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `order` WHERE master_name =".$two['id'], true);
+		$sum_pay = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `pay` WHERE user_id =".$two['id']." AND cost != 0", true);
+		$zp_calc = ($sum['summ']*$two['stavka'])/100;
+                
+                if ($zp_calc > 0) {
+                    $zp = $zp_calc - $sum_pay['summ'];
+                    
+                    $array_mas[$two['id']]['id'] = $two['id'];
+                    $array_mas[$two['id']]['name'] = $two['realname'].' ('.$two['username'].')';
+                    $array_mas[$two['id']]['zp_calc'] = $zp_calc;
+                    $array_mas[$two['id']]['zp_pay'] = $sum_pay['summ'];
+                    $array_mas[$two['id']]['zp'] = $zp;
+                
+                    $html .= '<tr>';
+                    $html .= '<td>'.$two['realname'].' ('.$two['username'].')'.'</td>';
+                    $html .= '<td style="text-align: right;">'.$zp_calc.'</td>';
+                    $html .= '<td style="text-align: right;">'.$sum_pay['summ'].'</td>';
+                    $html .= '<td style="text-align: right;">'.$zp.'</td>';
+                    $html .= '</tr>';
+                }
 	}
 
 	$html .= '</table>';
 
-	echo $html;
+	//echo $html;
+	die($html);
 
 }
 

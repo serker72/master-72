@@ -157,7 +157,9 @@ if ($_POST) {
 		$offer = DB::Insert('order_offers', array(
 			'order_id' => $order_id,
 		));
-
+//////////////
+//die();
+//////////////
 		if(isset($date) && isset($time) && isset($master_name) && isset($street)){
 			if($date != '' && $time != '' && $master_name != '' && $street != ''){
 				$time_now = date('d-m-Y');
@@ -308,7 +310,7 @@ if ($_POST) {
 		}
 
 		//die($order_id);
-
+                die();
 	} elseif($_POST['action'] == 'search'){
 
 		$query = '';
@@ -367,6 +369,9 @@ if ($_POST) {
 		if($_POST['customer-details'] != ''){
 			$query .= ' AND details LIKE "%'.$_POST['customer-details'].'%"';
 		}
+		if (($_POST['status'] != '') && ($_POST['status'] != '0')) {
+			$query .= ' AND status = '.$_POST['status'];
+		}
 
 		$orders = DB::GetQueryResult("SELECT * FROM `order` WHERE time_date != '' ".$query." ORDER BY `id` DESC", false);
 		$table = '<table class="table table-striped">';
@@ -422,6 +427,7 @@ if ($_POST) {
 				'flat' => $_POST['flat'],
 				'details' => $_POST['customer-details'],
 				'note' => $_POST['note'],
+				'status' => $_POST['status'],
 				'img' => $_POST['img'],
 				'img1' => $_POST['img1'],
 				'img2' => $_POST['img2'],

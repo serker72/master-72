@@ -1,51 +1,14 @@
-<?php include template("header"); ?>
-<script type="text/javascript" src="/static/js/jquery.form.js"></script>
-<link rel="stylesheet" media="all" type="text/css" href="/static/css/time/date/jquery-ui-1.8.16.custom.css" />
-<script type="text/javascript" src="/static/css/time/date/jquery-ui-1.8.16.custom.min.js"></script>
-
-<script type="text/javascript" src="/static/js/datepicker/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript" src="/static/js/datepicker/js/bootstrap-datepicker.ru.js"></script>
-<script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>
-<link href="/static/js/datepicker/css/datepicker.css" rel="stylesheet">
-
-<script type="text/javascript" src="/static/js/jquery.autocomplete.js"></script>
-<link rel="stylesheet" media="all" type="text/css" href="/static/css/jquery.autocomplete.css" />
-<script type="text/javascript" src="/static/js/uploader/ajaxupload.3.5.js" ></script>
-<link rel="stylesheet" type="text/css" href="/static/js/uploader/styles.css" />
-<script type="text/javascript" src="/static/js/jquery.md5.js" ></script>
-<style type="text/css"> 
-	#ui-datepicker-div, .ui-datepicker{ font-size: 80%; }
-	.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
-	.ui-timepicker-div dl { text-align: left; }
-	.ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }
-	.ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }
-	.ui-timepicker-div td { font-size: 90%; }
-	.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
-
-	.autocomplete-w1 { background:url(img/shadow.png) no-repeat bottom right; position:absolute; top:0px; left:0px; margin:6px 0 0 6px; /* IE6 fix: */ _background:none; _margin:1px 0 0 0; }
-	.autocomplete { border:1px solid #999; background:#FFF; cursor:default; text-align:left; max-height:350px; overflow:auto; margin:-6px 6px 6px -6px; /* IE6 specific: */ _height:350px;  _margin:0; _overflow-x:hidden; }
-	.autocomplete .selected { background:#F0F0F0; }
-	.autocomplete div { padding:2px 5px; white-space:nowrap; overflow:hidden; }
-	.autocomplete strong { font-weight:normal; color:#3399FF; }
-	.f-input{
-		font-size: 14px;
-		padding: 3px 4px;
-		border-color: #89B4D6;
-		border-style: solid;
-		border-width: 1px;
-	}
-</style>
-<div style="float:right; margin-right: 5px;"><a href="/logout.php" class="btn">Выйти</a></div>
-<?php if($login_user['rang'] == 'admin'){ ?><div style="float:right; margin-right: 5px;"><a href="/admin.php" class="btn">Админка</a></div><?php } ?>
-	<div style="float:right; margin-right: 5px;"><a href="/message.php" class="btn">Сообщения</a></div>
-<?php if($login_user['rang'] == 'manager'){ ?><div style="float:right; margin-right: 5px;"><a href="/account.php" class="btn">Личный кабинет</a></div><?php } ?>
-<div style="float:right; margin-right: 5px;"><a id="mySearchModalButton" href="#mySearchModal" class="btn" role="button" data-toggle="modal">Поиск</a></div>
-	<div style="float:right; margin-right: 5px;"><a href="#" class="btn">Добавить заказ</a></div>
-<div class="info-block" id="status-bar-add" style="display:block; float: left;"><b>Добавление нового заказа (нажмите на "Сохранить" для добавления)</b></div>
-<div class="info-block" id="status-bar-search" style="display:none; float: left;"><b>Поиск заказа</b></div>
-<div class="info-block" id="status-bar-edit" style="display:none; float: left;"><b>Редактирование заказа</b></div>
-<input type="hidden" id="rang_user" value="<?=$login_user['rang']?>" />
-<form method="post" action="/ajax/post.php" class="validator" id="form" style="float:left;">	
+<?php 
+function PrintEditForm($img_fields_flag) {
+    global $login_user, $work_types, $master, $city, $users_master;
+    
+    if ($img_fields_flag) {
+        echo '<div id="edit-form-wrapper" style="display: none;">';
+    } else {
+        echo '<div id="add-form-wrapper">';
+    }
+    ?>
+    <form method="post" action="/ajax/post.php" class="validator" id="form" style="float:left;">	
 	<input type="hidden" id="action" name="action" value="add" />
 	<input type="hidden" id="order_id" name="order_id" value="0" />
 	<table style="width: 816px; float:left;">
@@ -189,13 +152,31 @@
 				<input type="text" id="cost" name="cost" <?php if(is_manager()){ echo 'disabled'; } ?>>
 			</td>
 			<td>
+                            <?php if ($img_fields_flag) { ?>
+                                <div class="title">Статус</div>
+				<select name="status" id="status">
+					<option value="0" selected="selected">Выбрать</option>
+					<option value="1">Выполнен</option>
+					<option value="2">Отменен</option>
+					<option value="3">Отказ</option>
+					<option value="4">Отсутствие заказчика</option>
+				</select>
+                            <?php } ?>
+			</td>
+		</tr>
+		<tr>
+			<td>
 				<div id="note_div" <?php if(is_manager()){ echo 'style="display:none;"'; } ?>>
 					<div class="title">Примечания</div>
 					<input type="text" id="note" name="note" <?php if(is_manager()){ echo 'disabled'; } ?>>
 				</div>				
 			</td>
+			<td>
+			</td>
+			<td>
+			</td>
 		</tr>
-		<?php if($login_user['rang'] == 'admin' || $login_user['rang'] == 'operator'){ ?>
+		<?php if ($img_fields_flag && ($login_user['rang'] == 'admin' || $login_user['rang'] == 'operator')) { ?>
 		<tr>
 			<td>
 				<div id="upload_img">
@@ -250,10 +231,11 @@
 		</tr>
 		<?php } ?>
 	</table>
+    <?php if ($img_fields_flag) { ?>
 	<div id="output" style="background: #FFF; width:300px; margin-top: 10px;"></div>
 	<div class="info-block" style="width: 816px; float:left;">
-			<a id="search-form" href="#" onClick="dosearch();" class="btn">Поиск</a>
-			<a id="btnadd-form" href="#" onClick="doadd();" class="btn" style="display:none;">Добавить запись</a>
+			<!--a id="search-form" href="#" onClick="dosearch();" class="btn">Поиск</a-->
+			<!--a id="btnadd-form" href="#" onClick="doadd();" class="btn" style="display:none;">Добавить запись</a-->
 			<a id="clear-form" href="#" onClick="clearall();" class="btn">Очистить</a>
 			<div style="float: right;">
 				<a id="copy-order" href="#" onClick="copythis();" class="btn" style="display:none;">Копировать</a>
@@ -261,7 +243,62 @@
 				<input type="submit" id="submit" value="Сохранить" name="commit" class="btn"/>
 			</div>
 	</div>
-	</form>
+    <?php } ?>
+    </form>
+    </div>
+<?php    
+}
+?>
+
+<?php include template("header"); ?>
+<script type="text/javascript" src="/static/js/jquery.form.js"></script>
+<link rel="stylesheet" media="all" type="text/css" href="/static/css/time/date/jquery-ui-1.8.16.custom.css" />
+<script type="text/javascript" src="/static/css/time/date/jquery-ui-1.8.16.custom.min.js"></script>
+
+<script type="text/javascript" src="/static/js/datepicker/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="/static/js/datepicker/js/bootstrap-datepicker.ru.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>
+<link href="/static/js/datepicker/css/datepicker.css" rel="stylesheet">
+
+<script type="text/javascript" src="/static/js/jquery.autocomplete.js"></script>
+<link rel="stylesheet" media="all" type="text/css" href="/static/css/jquery.autocomplete.css" />
+<script type="text/javascript" src="/static/js/uploader/ajaxupload.3.5.js" ></script>
+<link rel="stylesheet" type="text/css" href="/static/js/uploader/styles.css" />
+<script type="text/javascript" src="/static/js/jquery.md5.js" ></script>
+<style type="text/css"> 
+	#ui-datepicker-div, .ui-datepicker{ font-size: 80%; }
+	.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
+	.ui-timepicker-div dl { text-align: left; }
+	.ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }
+	.ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }
+	.ui-timepicker-div td { font-size: 90%; }
+	.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
+
+	.autocomplete-w1 { background:url(img/shadow.png) no-repeat bottom right; position:absolute; top:0px; left:0px; margin:6px 0 0 6px; /* IE6 fix: */ _background:none; _margin:1px 0 0 0; }
+	.autocomplete { border:1px solid #999; background:#FFF; cursor:default; text-align:left; max-height:350px; overflow:auto; margin:-6px 6px 6px -6px; /* IE6 specific: */ _height:350px;  _margin:0; _overflow-x:hidden; }
+	.autocomplete .selected { background:#F0F0F0; }
+	.autocomplete div { padding:2px 5px; white-space:nowrap; overflow:hidden; }
+	.autocomplete strong { font-weight:normal; color:#3399FF; }
+	.f-input{
+		font-size: 14px;
+		padding: 3px 4px;
+		border-color: #89B4D6;
+		border-style: solid;
+		border-width: 1px;
+	}
+</style>
+<div style="float:right; margin-right: 5px;"><a href="/logout.php" class="btn">Выйти</a></div>
+<?php if($login_user['rang'] == 'admin'){ ?><div style="float:right; margin-right: 5px;"><a href="/admin.php" class="btn">Админка</a></div><?php } ?>
+	<div style="float:right; margin-right: 5px;"><a href="/message.php" class="btn">Сообщения</a></div>
+<?php if($login_user['rang'] == 'manager'){ ?><div style="float:right; margin-right: 5px;"><a href="/account.php" class="btn">Личный кабинет</a></div><?php } ?>
+<div style="float:right; margin-right: 5px;"><a id="mySearchModalButton" href="#mySearchModal" class="btn" role="button" data-toggle="modal">Поиск</a></div>
+<div style="float:right; margin-right: 5px;"><a id="myAddModalButton" href="#myAddModal" class="btn" role="button" data-toggle="modal">Добавить заказ</a></div>
+<div class="info-block" id="status-bar-add" style="display:none; float: left;"><b>Добавление нового заказа (нажмите на "Сохранить" для добавления)</b></div>
+<div class="info-block" id="status-bar-search" style="display:none; float: left;"><b>Поиск заказа</b></div>
+<div class="info-block" id="status-bar-edit" style="display:none; float: left;"><b>Редактирование заказа</b></div>
+<input type="hidden" id="rang_user" value="<?=$login_user['rang']?>" />
+
+<?php PrintEditForm(true); ?>
 
 	<div class="info-block" style="width: 816px; float:left;">
 		<p id="last-post" style="display:block;">Последние не обработанные 25 записей:</p>
@@ -460,12 +497,26 @@
             <button class="btn btn-primary" onClick="ksk_onSearch();">Поиск</button>
         </div>
     </div>
-
+<!--------------------------------------------------------------------------------------->
+    <!-- Modal -->
+    <div id="myAddModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width: 96%; margin-left: -48%; top: 3%;">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Добавление нового заказа</h3>
+        </div>
+        <div class="modal-body" style="max-height: 450px;">
+            <?php PrintEditForm(false); ?>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onClick="ksk_onAdd();">Добавить заказ</button>
+        </div>
+    </div>
 <!--------------------------------------------------------------------------------------->
 
 <script type="text/javascript">
     
     function ksk_onSearch() {
+        $('#edit-form-wrapper').hide();
         $("#mySearchModal #form").ajaxSubmit({
             target: "#orders",
             beforeSubmit: showRequest,
@@ -477,6 +528,40 @@
         $("#mySearchModal").modal('hide');
     }
     
+    function ksk_onAdd() {
+        $('#edit-form-wrapper').hide();
+        var action = $('#action').val();
+        var options = { 
+            target: "#output",
+            //beforeSubmit: showRequest,
+            beforeSubmit: function () { $('#ajax_load').show(); },
+            success: showResponse,
+            timeout: 3000
+        };
+                
+        if(action == 'add'){
+            <?php if($login_user['rang'] != 'admin' && $login_user['rang'] != 'operator'){ ?>
+                if($('#myAddModal #datetime_hope').val() == '' || $('#myAddModal #street').val() == '' || $('#myAddModal #customer-phone').val() == '' || ($('#myAddModal #master-name').val() == '')){
+                    alert('Перед отправкой заполните все обязательные поля!');
+                    return false;
+                }else{
+                    $('#myAddModal #form').ajaxSubmit(options); 
+                    $("#myAddModal").modal('hide');
+                    return false;
+                }
+            <?php }else{ ?>
+                if ($('#myAddModal #master-name').val() == '') {
+                    alert('Необходимо выбрать мастера');
+                    return false;
+		}else{
+                    $('#myAddModal #form').ajaxSubmit(options); 
+                    $("#myAddModal").modal('hide');
+                    return false;
+                }
+            <?php } ?>
+        }
+    }
+   
 $(function() {  
 	// Телефоны
 	$(".custom-phone").mask("+79999999999");
@@ -567,6 +652,13 @@ $(document).ready(function(){
             language: 'ru',
             autoclose: true
     });
+
+    // #myAddModal datepicker
+    $('#myAddModal #datetime, #datetime_hope').datepicker({
+            format: 'dd.mm.yyyy',
+            language: 'ru',
+            autoclose: true
+    });
     
     $('#mySearchModalButton').on('click', function() { dosearch(); });
 
@@ -590,20 +682,23 @@ $(document).ready(function(){
 		var action = $('#action').val();
 		if(action == 'add' || action == 'edit'){
 			if(action == 'add'){
-				<?php if($login_user['rang'] != 'admin' && $login_user['rang'] != 'operator'){ ?>
+                            <?php if($login_user['rang'] != 'admin' && $login_user['rang'] != 'operator'){ ?>
 				if($('#datetime_hope').val() == '' || $('#street').val() == '' || $('#customer-phone').val() == ''){
-					alert('Перед отправкой заполните все обязательные поля!');
-					return false;
+                                    alert('Перед отправкой заполните все обязательные поля!');
+                                    return false;
 				}else{
-					$(this).ajaxSubmit(options); 
-					return false;
+                                    $(this).ajaxSubmit(options); 
+                                    $("#myAddModal").modal('hide');
+                                    return false;
 				}
-				<?php }else{ ?>
-					$(this).ajaxSubmit(options); 
-					return false;
-				<?php } ?>
+                            <?php }else{ ?>
+				$(this).ajaxSubmit(options); 
+                                $("#myAddModal").modal('hide');
+				return false;
+                            <?php } ?>
 			}else{
 				$(this).ajaxSubmit(options); 
+                                $('#edit-form-wrapper').hide();
 				return false;
 			}
 		}else if(action == 'search'){
@@ -613,7 +708,7 @@ $(document).ready(function(){
 	});
 
 	//Автодополнение
-	$('#street').autocomplete("/ajax/main.php?action=get_streets", {
+	$('#street, #myAddModal #street, #mySearchModal #street').autocomplete("/ajax/main.php?action=get_streets", {
 		width: 206,
 		matchContains: true,
 		selectFirst: false
@@ -652,7 +747,7 @@ function showRequest(formData, jqForm, options) {
 	var rang = $('#rang_user').val();	
 		if(action == 'add' || action == 'edit'){
 			if(rang == "admin" || rang == "operator") {
-			   if($('#master-name').val() == ''){
+			   if ($('#master-name').val() == '') {
 			   		alert('Необходимо выбрать мастера');
 			   		return false;
 			   }else{
@@ -778,7 +873,7 @@ function doadd(){
 		getOfferNumber();
 	<?php } ?>
 	$('#hope').show();
-	$('#status-bar-add').show();
+	//$('#status-bar-add').show();
 	$('#status-bar-search').hide();
 	$('#status-bar-edit').hide();
 	$('#last-search').hide();
@@ -799,7 +894,7 @@ function dosearch(){
 	$('#note_div').hide();
 	$('#hope').hide();
 	$('#copy-order').hide();
-	$('#status-bar-add').hide();
+	//$('#status-bar-add').hide();
 	$('#status-bar-search').show();
 	$('#last-search').show();
 	$('#last-post').hide();
@@ -899,6 +994,11 @@ function editpost(id, type){
 			$("#flat").val(oData.flat);
 			$("#customer-details").val(oData.details);
 			$("#note").val(oData.note);
+			if(oData.status == 0){
+				$("select#status :first").attr("selected", "selected");
+			}else{
+				$("select#status [value='"+oData.status+"']").attr("selected", "selected");
+			}			
 			$("#img").val(oData.img);
 			$("#img1").val(oData.img1);
 			$("#img2").val(oData.img2);
@@ -911,7 +1011,7 @@ function editpost(id, type){
 			//Работа с формой
 			$('#action').val('edit');
 			$('#order_id').val(oData.id);
-			$('#status-bar-add').hide();
+			//$('#status-bar-add').hide();
 			$('#status-bar-search').hide();
 			$('#status-bar-edit').show();
 			$('#upload_img').show();
@@ -927,7 +1027,7 @@ function editpost(id, type){
                         if ($("#img6").val() != '') img_count++;
                         if ($("#img7").val() != '') img_count++;
                         
-                        alert('img_count='+img_count);
+                        //alert('img_count='+img_count);
                         if (img_count < 7) {
                             $("#upload").show();
                             for(i=1;i <= img_count;i++) 
@@ -955,8 +1055,9 @@ function editpost(id, type){
 			$('#copy-order').attr('onClick','copythis('+oData.id+')');
 
 			$('#btnadd-form').show();
-			$('#search-form').show();			
-
+			$('#search-form').show();
+                        
+                    $('#edit-form-wrapper').show();
 		}
 	});
 }

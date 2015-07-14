@@ -6,6 +6,13 @@ ini_set('error_reporting', E_ALL);
 
 require_once(dirname(dirname(__FILE__)) . '/app.php');
 
+$order_status = array(
+    "1" => "Выполнен",
+    "2" => "Отменен",
+    "3" => "Отказ",
+    "4" => "Отсутствие заказчика",
+);
+
 $action = strval($_GET['action']);
 
 if ($action == 'get_cities') {
@@ -85,7 +92,9 @@ if ($action == 'get_cities') {
 		}else $city_name2 = '';
 
 	   	$table .= '<tr id="tr_id_'.$one['id'].'">';
-	    $table .= '<td '.$onclick.'>'.$one['time_date'].' '.$one['time_time'].' '.$works[$one['work_type']]['name'].' '.$masters[$one['master']]['name'].' '.$city[$one['city_id']]['name'].','.$city_name2;
+	    $table .= '<td '.$onclick.'>';
+/*            
+            $table .= $one['time_date'].' '.$one['time_time'].' '.$works[$one['work_type']]['name'].' '.$masters[$one['master']]['name'].' '.$city[$one['city_id']]['name'].','.$city_name2;
 	    $table .= ' '.$one['street'].', ';
 	    if($one['house'] != '' && $one['house'] != NULL && $one['house'] != 'NULL' ){
 	    	$table .= 'д.'.$one['house'].',';
@@ -97,7 +106,44 @@ if ($action == 'get_cities') {
 	   		$table .= ' кв.'.$one['flat'].',';
 	   	}
 	    $table .= ' тел: '.$one['phone'];
+            
+	    if($one['status'] > 0){
+	    	$table .= ', статус: '.$order_status[$one['status']];
+	    }
+            
 	    $table .= ' - '.$user_name['realname'].'('.$user_name['username'].')';
+ */
+             $st = $one['time_date'].' '.$one['time_time'].' '.$works[$one['work_type']]['name'].' '.$masters[$one['master']]['name'].' '.$city[$one['city_id']]['name'].','.$city_name2;
+	    $st .= ' '.$one['street'].', ';
+	    if($one['house'] != '' && $one['house'] != NULL && $one['house'] != 'NULL' ){
+	    	$st .= 'д.'.$one['house'].',';
+	    }
+	    if($one['corpus'] != '' && $one['corpus'] != NULL && $one['corpus'] != 'NULL' ){
+	    	$st .= ' корпус '.$one['corpus'].',';
+	    }
+	    if($one['flat'] != '' && $one['flat'] != NULL && $one['flat'] != 'NULL' ){
+	   	$st .= ' кв.'.$one['flat'].',';
+            }
+	    $st .= ' тел: '.$one['phone'];
+
+            $st .= ', '.($one['cost'] == 0 ? '<strong>сумма '.$one['cost'].'</strong>' : 'сумма '.$one['cost']);
+            
+	    if($one['status'] > 0){
+                $st .= ', '.(($one['status'] == 2 || $one['status'] == 3) ? '<strong>статус '.$order_status[$one['status']].'</strong>' : 'статус '.$order_status[$one['status']]);
+	    }
+            
+	    $st .= ' - '.$user_name['realname'].'('.$user_name['username'].')';
+            
+            if ($one['cost'] == 0) {
+                $table .= '<font color="red">'.$st.'</font></strong>';
+            }
+            else if (($one['status'] == 2) || ($one['status'] == 3)) {
+                $table .= '<font color="#f6a828">'.$st.'</font>';
+            }
+            else {
+                $table .= $st;
+            }
+           
 	    $table .= '</td></tr>';
 
 
@@ -181,6 +227,10 @@ if ($action == 'get_cities') {
 	}else{
 		$query .= " AND STR_TO_DATE(time_date, '%d.%m.%Y') BETWEEN STR_TO_DATE('".$now."', '%d.%m.%Y') AND STR_TO_DATE('".$tommorow."', '%d.%m.%Y')";
 	}
+        
+        if ($_GET['filter_cost_done']) {
+            $query .= " AND cost = 0";
+        }
 
 	$orders = DB::GetQueryResult("SELECT * FROM `order` WHERE master_name != 0 {$query} ORDER BY STR_TO_DATE( time_date,  '%d.%m.%Y' ) DESC , STR_TO_DATE( time_time,  '%h:%i' ) DESC LIMIT 0,25", false);
 
@@ -230,19 +280,39 @@ if ($action == 'get_cities') {
 		}else $city_name2 = '';
 
 	    $table .= '<tr id="tr_id_'.$one['id'].'">';
-	    $table .= '<td '.$onclick.'>'.$one['time_date'].' '.$one['time_time'].' '.$works[$one['work_type']]['name'].' '.$masters[$one['master']]['name'].' '.$city[$one['city_id']]['name'].','.$city_name2;
-	    $table .= ' '.$one['street'].', ';
+	    $table .= '<td '.$onclick.'>';
+            
+            $st = $one['time_date'].' '.$one['time_time'].' '.$works[$one['work_type']]['name'].' '.$masters[$one['master']]['name'].' '.$city[$one['city_id']]['name'].','.$city_name2;
+	    $st .= ' '.$one['street'].', ';
 	    if($one['house'] != '' && $one['house'] != NULL && $one['house'] != 'NULL' ){
-	    	$table .= 'д.'.$one['house'].',';
+	    	$st .= 'д.'.$one['house'].',';
 	    }
 	    if($one['corpus'] != '' && $one['corpus'] != NULL && $one['corpus'] != 'NULL' ){
-	    	$table .= ' корпус '.$one['corpus'].',';
+	    	$st .= ' корпус '.$one['corpus'].',';
 	    }
 	    if($one['flat'] != '' && $one['flat'] != NULL && $one['flat'] != 'NULL' ){
-	   		$table .= ' кв.'.$one['flat'].',';
-	   	}
-	    $table .= ' тел: '.$one['phone'];
-	    $table .= ' - '.$user_name['realname'].'('.$user_name['username'].')';
+	   	$st .= ' кв.'.$one['flat'].',';
+            }
+	    $st .= ' тел: '.$one['phone'];
+
+            $st .= ', '.($one['cost'] == 0 ? '<strong>сумма '.$one['cost'].'</strong>' : 'сумма '.$one['cost']);
+            
+	    if($one['status'] > 0){
+                $st .= ', '.(($one['status'] == 2 || $one['status'] == 3) ? '<strong>статус '.$order_status[$one['status']].'</strong>' : 'статус '.$order_status[$one['status']]);
+	    }
+            
+	    $st .= ' - '.$user_name['realname'].'('.$user_name['username'].')';
+            
+            if ($one['cost'] == 0) {
+                $table .= '<font color="red">'.$st.'</font></strong>';
+            }
+            else if (($one['status'] == 2) || ($one['status'] == 3)) {
+                $table .= '<font color="#f6a828">'.$st.'</font>';
+            }
+            else {
+                $table .= $st;
+            }
+                    
 	    $table .= '</td></tr>';
 
 	$i++;}}
@@ -254,6 +324,7 @@ if ($action == 'get_cities') {
 	$tommorow = time()+86000;
 	$tommorow = date('d.m.Y', $tommorow);
 
+        
 	$query = '';
 
 	if($_GET['filter_date'] != '' && $_GET['filter_date2'] != ''){
@@ -332,6 +403,10 @@ if ($action == 'get_cities') {
 	    if($offer_num){
 	    	$table .= ' '.$offer_num;
 	    }
+            
+	    if($one['status'] > 0){
+	    	$table .= ', Статус: '.$order_status[$one['status']];
+	    }
 
 	    $table .= '</td></tr>';
 	$i++;}}
@@ -390,11 +465,60 @@ if ($action == 'get_cities') {
 			$sum = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `order` WHERE STR_TO_DATE(time_date, '%d.%m.%Y') BETWEEN '".$start_time."' AND '".$end_time."' AND master_name =".$login_user['id'], true);
 		}
 		
-		$zp = ($sum['summ']*$login_user['stavka'])/100;
+		$sum_pay = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `pay` WHERE `date_start` BETWEEN '".$start_time."' AND '".$end_time."' AND `date_end` BETWEEN '".$start_time."' AND '".$end_time."' AND user_id =".$login_user['id']." AND cost != 0", true);
+                
+		$zp_calc = ($sum['summ']*$login_user['stavka'])/100;
+                $zp = $zp_calc - $sum_pay['summ'];
 
 		$html .= '<div>З/П с <input id="date1" name="date1" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none;" value="'.$start_time.'" > по <input id="date2" name="date2" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none;" value="'.$end_time.'" > <a hre="#" onClick="get_zp(); return false;" class="btn">Показать</a><br/>
-		З/П: <span id="zp">'.$zp.'</span> руб. <br/></div>';
-
+		З/П: <span id="zp">'.$zp.'</span> руб. (начислено: '.$zp_calc.' руб., выплачено: '.($sum_pay['summ'] ? $sum_pay['summ'] : '0').' руб.)<br/></div>';
+                
+                // Вывод з/п помесячно
+                $sql_str = "SELECT RIGHT(`time_date`, 4) AS year, 
+                    LEFT(SUBSTRING(`time_date`, 4), 2) AS mon,
+  CASE LEFT(SUBSTRING(`time_date`, 4), 2)
+    WHEN '01' THEN 'Январь'
+    WHEN '02' THEN 'Февраль'
+    WHEN '03' THEN 'Март'
+    WHEN '04' THEN 'Апрель'
+    WHEN '05' THEN 'Май'
+    WHEN '06' THEN 'Июнь'
+    WHEN '07' THEN 'Июль'
+    WHEN '08' THEN 'Август'
+    WHEN '09' THEN 'Сентябрь'
+    WHEN '10' THEN 'Октябрь'
+    WHEN '11' THEN 'Ноябрь'
+    WHEN '12' THEN 'Декабрь'
+    ELSE ''
+  END AS mes, 
+  SUM(`cost`) AS summ
+  FROM `order` 
+  WHERE STR_TO_DATE(`time_date`, '%d.%m.%Y') BETWEEN STR_TO_DATE('".$start_time."', '%d.%m.%Y') AND STR_TO_DATE('".$end_time."', '%d.%m.%Y')
+  AND ".($login_user['rang'] == 'master' ? 'master_name' : 'user_id')." = ".$login_user['id']."
+  AND cost != 0
+  GROUP BY 1,2";
+                $sum_year = DB::GetQueryResult($sql_str, false);
+                
+		$html .= '<div class="info-block" style="width: 400px;">
+			<table id="table-manager" class="table table-bordered">
+                            <thead>
+				<tr>
+                                    <td>Год</td>
+                                    <td>Месяц</td>
+                                    <td>З/П</td>
+				</tr>
+                            </thead>
+                            <tbody>';
+                foreach ($sum_year as $row) {
+                    $html .= '<tr>';
+                    $html .= '<td>'.$row['year'].'</td>';
+                    $html .= '<td>'.$row['mes'].'</td>';
+                    $html .= '<td>'.(($row['summ']*$login_user['stavka'])/100).'</td>';
+                    $html .= '</tr>';
+                }
+		$html .= '</tbody></table></div>';
+                
+                //
 		$html .= '<script type="text/javascript">';
 		$html .= '$(document).ready(function () { $(\'#date1\').datepicker({format: \'dd.mm.yyyy\', language: \'ru\', autoclose: true}); $(\'#date2\').datepicker({format: \'dd.mm.yyyy\', language: \'ru\', autoclose: true}) });';
 		$html .= '</script>';

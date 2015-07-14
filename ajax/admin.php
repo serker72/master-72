@@ -201,9 +201,9 @@ if($action == "list"){
                     
                     $array_man[$one['id']]['id'] = $one['id'];
                     $array_man[$one['id']]['name'] = $one['realname'].'('.$one['username'].')';
-                    $array_man[$one['id']]['zp_calc'] = $zp_calc;
-                    $array_man[$one['id']]['zp_pay'] = $sum_pay['summ'];
-                    $array_man[$one['id']]['zp'] = $zp;
+                    $array_man[$one['id']]['zp_calc'] = round($zp_calc, 2);
+                    $array_man[$one['id']]['zp_pay'] = round($sum_pay['summ'], 2);
+                    $array_man[$one['id']]['zp'] = round($zp, 2);
                     
                     $html .= '<tr>';
                     $html .= '<td id="name_'.$one['id'].'">'.$one['realname'].' ('.$one['username'].')</td>';
@@ -257,15 +257,15 @@ if($action == "list"){
                     
                     $array_mas[$two['id']]['id'] = $two['id'];
                     $array_mas[$two['id']]['name'] = $two['realname'].'('.$two['username'].')';
-                    $array_man[$two['id']]['zp_calc'] = $zp_calc;
-                    $array_man[$two['id']]['zp_pay'] = $sum_pay['summ'];
-                    $array_mas[$two['id']]['zp'] = $zp;
+                    $array_man[$two['id']]['zp_calc'] = round($zp_calc, 2);
+                    $array_man[$two['id']]['zp_pay'] = round($sum_pay['summ'], 2);
+                    $array_mas[$two['id']]['zp'] = round($zp, 2);
                     
                     $html .= '<tr>';
                     $html .= '<td id="name_'.$two['id'].'">'.$two['realname'].' ('.$two['username'].')</td>';
-                    $html .= '<td id="zp_calc_'.$two['id'].'">'.$zp_calc.'</td>';
-                    $html .= '<td id="zp_pay_'.$two['id'].'">'.$sum_pay['summ'].'</td>';
-                    $html .= '<td id="zp_'.$two['id'].'">'.$zp.'</td>';
+                    $html .= '<td id="zp_calc_'.$two['id'].'">'.round($zp_calc, 2).'</td>';
+                    $html .= '<td id="zp_pay_'.$two['id'].'">'.round($sum_pay['summ'], 2).'</td>';
+                    $html .= '<td id="zp_'.$two['id'].'">'.round($zp, 2).'</td>';
                     $html .= '</tr>';
                 }
 	}

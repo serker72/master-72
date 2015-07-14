@@ -236,7 +236,7 @@ function PrintEditForm($img_fields_flag) {
 	<div class="info-block" style="width: 816px; float:left;">
 			<!--a id="search-form" href="#" onClick="dosearch();" class="btn">Поиск</a-->
 			<!--a id="btnadd-form" href="#" onClick="doadd();" class="btn" style="display:none;">Добавить запись</a-->
-			<a id="clear-form" href="#" onClick="clearall();" class="btn">Очистить</a>
+			<!--a id="clear-form" href="#" onClick="clearall();" class="btn">Очистить</a-->
 			<div style="float: right;">
 				<a id="copy-order" href="#" onClick="copythis();" class="btn" style="display:none;">Копировать</a>
 				<a id="delete-order" href="#" onClick="deletethis();" class="btn" style="display:none;">Удалить</a>
@@ -288,17 +288,16 @@ function PrintEditForm($img_fields_flag) {
 	}
 </style>
 <div style="float:right; margin-right: 5px;"><a href="/logout.php" class="btn">Выйти</a></div>
-<?php if($login_user['rang'] == 'admin'){ ?><div style="float:right; margin-right: 5px;"><a href="/admin.php" class="btn">Админка</a></div><?php } ?>
-	<div style="float:right; margin-right: 5px;"><a href="/message.php" class="btn">Сообщения</a></div>
-<?php if($login_user['rang'] == 'manager'){ ?><div style="float:right; margin-right: 5px;"><a href="/account.php" class="btn">Личный кабинет</a></div><?php } ?>
+<div style="float:right; margin-right: 5px;"><a href="/message.php" class="btn">Сообщения</a></div>
 <div style="float:right; margin-right: 5px;"><a id="mySearchModalButton" href="#mySearchModal" class="btn" role="button" data-toggle="modal">Поиск</a></div>
 <div style="float:right; margin-right: 5px;"><a id="myAddModalButton" href="#myAddModal" class="btn" role="button" data-toggle="modal">Добавить заказ</a></div>
+
+<?php if($login_user['rang'] == 'admin'){ ?><div style="float:right; margin-right: 5px;"><a href="/admin.php" class="btn">Админка</a></div><?php } ?>
+<?php if($login_user['rang'] == 'manager'){ ?><div style="float:right; margin-right: 5px;"><a href="/account.php" class="btn">Личный кабинет</a></div><?php } ?>
+
 <div class="info-block" id="status-bar-add" style="display:none; float: left;"><b>Добавление нового заказа (нажмите на "Сохранить" для добавления)</b></div>
 <div class="info-block" id="status-bar-search" style="display:none; float: left;"><b>Поиск заказа</b></div>
-<div class="info-block" id="status-bar-edit" style="display:none; float: left;"><b>Редактирование заказа</b></div>
 <input type="hidden" id="rang_user" value="<?=$login_user['rang']?>" />
-
-<?php PrintEditForm(true); ?>
 
 	<div class="info-block" style="width: 816px; float:left;">
 		<p id="last-post" style="display:block;">Последние не обработанные 25 записей:</p>
@@ -308,7 +307,11 @@ function PrintEditForm($img_fields_flag) {
 
 	<?php if($login_user['rang'] == 'admin' || $login_user['rang'] == 'operator' || $login_user['rang'] == 'manager'){ ?>
 		<div class="info-block" style="width: 816px; float:left;">
-			<div>Дата с <input type="text" id="filter-datetime-done" name="filter-date-done" style="width: 100px;"> по <input type="text" id="filter-datetime2-done" name="filter-date2-done" style="width: 100px;"></div>
+			<div>
+                            Дата с <input type="text" id="filter-datetime-done" name="filter-date-done" style="width: 100px;">&nbsp;
+                            по&nbsp;<input type="text" id="filter-datetime2-done" name="filter-date2-done" style="width: 100px;">&nbsp;&nbsp;
+                            <input type="checkbox" id="filter-cost-done" name="filter-cost-done">&nbsp;Отобрать только с нулевой суммой
+                        </div>
 			<?php if($login_user['rang'] == 'admin' || $login_user['rang'] == 'operator'){ ?>
 			<div>Фильтр по мастерам: 
 				<select id="filter-master-done" name="filter-master-done">
@@ -331,11 +334,14 @@ function PrintEditForm($img_fields_flag) {
 	</div>
 	<div id="orders_done" style="width: 816px; float:left;"></div>
 
+<div class="info-block" id="status-bar-edit" style="display:none; float: left; width: 100%; margin-top: 10px; text-align: center;"><b>Редактирование заказа</b></div>
+<?php PrintEditForm(true); ?>
+        
 <!--------------------------------------------------------------------------------------->
     <!-- Modal -->
     <div id="mySearchModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width: 600px; margin-left: -300px;">
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <button id="mySearchModalCloseButton" type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h3 id="myModalLabel">Поиск заказов</h3>
         </div>
         <div class="modal-body">
@@ -494,6 +500,7 @@ function PrintEditForm($img_fields_flag) {
 			</td-->
         </div>
         <div class="modal-footer">
+            <button class="btn btn-inverse" onClick="ksk_onSearchClear();">Очистить</button>
             <button class="btn btn-primary" onClick="ksk_onSearch();">Поиск</button>
         </div>
     </div>
@@ -508,6 +515,7 @@ function PrintEditForm($img_fields_flag) {
             <?php PrintEditForm(false); ?>
         </div>
         <div class="modal-footer">
+            <button class="btn btn-inverse" onClick="ksk_onSearchClear();">Очистить</button>
             <button class="btn btn-primary" onClick="ksk_onAdd();">Добавить заказ</button>
         </div>
     </div>
@@ -516,6 +524,7 @@ function PrintEditForm($img_fields_flag) {
 <script type="text/javascript">
     
     function ksk_onSearch() {
+        $('#status-bar-edit').hide();
         $('#edit-form-wrapper').hide();
         $("#mySearchModal #form").ajaxSubmit({
             target: "#orders",
@@ -528,7 +537,18 @@ function PrintEditForm($img_fields_flag) {
         $("#mySearchModal").modal('hide');
     }
     
+    function ksk_onSearchClose() {
+	$('#status-bar-search').hide();
+	$('#last-search').hide();
+	$('#last-post').show();
+    }
+    
+    function ksk_onSearchClear() {
+        resetForm("form[id='form']");
+    }
+    
     function ksk_onAdd() {
+        $('#status-bar-edit').hide();
         $('#edit-form-wrapper').hide();
         var action = $('#action').val();
         var options = { 
@@ -547,7 +567,7 @@ function PrintEditForm($img_fields_flag) {
                 }else{
                     $('#myAddModal #form').ajaxSubmit(options); 
                     $("#myAddModal").modal('hide');
-                    return false;
+                    return true;
                 }
             <?php }else{ ?>
                 if ($('#myAddModal #master-name').val() == '') {
@@ -556,12 +576,23 @@ function PrintEditForm($img_fields_flag) {
 		}else{
                     $('#myAddModal #form').ajaxSubmit(options); 
                     $("#myAddModal").modal('hide');
-                    return false;
+                    return true;
                 }
             <?php } ?>
         }
     }
    
+    function ksk_onSubmitClick(event) {
+	var rang = $('#rang_user').val();	
+	if ((rang == "admin" || rang == "operator") && ($('#master-name').val() == '')) {
+            event.preventDefault();
+            alert('Необходимо выбрать мастера');
+       }
+    }
+
+
+
+
 $(function() {  
 	// Телефоны
 	$(".custom-phone").mask("+79999999999");
@@ -620,10 +651,11 @@ function dofilter(type){
 		var filter_date = $('#filter-datetime-done').val();
 		var filter_date2 = $('#filter-datetime2-done').val();
 		var filter_master = $('#filter-master-done').val();
+                var filter_cost_done = $('#filter-cost-done').is(':checked') ? 1 : 0;
 		$.ajax({
 			type: "GET",
 			<?php if($login_user['rang'] != 'manager'){ ?>
-				url: "/ajax/main.php?action=get_orders_done&filter_date="+filter_date+"&filter_date2="+filter_date2+"&filter_master="+filter_master,
+				url: "/ajax/main.php?action=get_orders_done&filter_date="+filter_date+"&filter_date2="+filter_date2+"&filter_master="+filter_master+"&filter_cost_done="+filter_cost_done,
 			<?php }else{ ?>
 				url: "/ajax/main.php?action=get_orders_done&user_id=<?=$login_user['id'];?>&place=account&filter_date="+filter_date+"&filter_date2="+filter_date2,
 			<?php } ?>
@@ -661,6 +693,8 @@ $(document).ready(function(){
     });
     
     $('#mySearchModalButton').on('click', function() { dosearch(); });
+    $("#mySearchModalCloseButton").on('click', function() { ksk_onSearchClose(); });
+    $("#submit").on('click', function(event) {  ksk_onSubmitClick(event); });
 
 	timer_update();
 
@@ -698,6 +732,7 @@ $(document).ready(function(){
                             <?php } ?>
 			}else{
 				$(this).ajaxSubmit(options); 
+                                $('#status-bar-edit').hide();
                                 $('#edit-form-wrapper').hide();
 				return false;
 			}
@@ -714,6 +749,9 @@ $(document).ready(function(){
 		selectFirst: false
 	});
 
+        <?php if (isset($_GET[action]) && ($_GET[action] === 'new_order')) { ?>
+            $('#myAddModal').modal('show');
+        <?php } ?>
 });
 
 function timer_update(){
@@ -1057,6 +1095,7 @@ function editpost(id, type){
 			$('#btnadd-form').show();
 			$('#search-form').show();
                         
+                    $('#status-bar-edit').show();
                     $('#edit-form-wrapper').show();
 		}
 	});

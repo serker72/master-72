@@ -4,7 +4,11 @@
 <script type="text/javascript" src="/static/js/datepicker/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="/static/js/datepicker/js/bootstrap-datepicker.ru.js"></script>
 <div class="info-block">
-	<?php if(is_manager()){ ?> <a href="/operator.php" class="btn">Добавить заказ</a> <?php } ?>
+	<?php if(is_manager()){ ?> 
+            <a href="/operator.php?action=new_order" class="btn">Добавить заказ</a> 
+            <!--div style="float:right; margin-right: 5px;"-->
+            <a id="download" href="/ajax/main.php?action=download<?php if(is_manager()){ echo '&user_id='.$login_user['id']; } ?>" target="_blank" class="btn">Скачать файл заказов</a><!--/div-->
+        <?php } ?>
 	<a href="/message.php" class="btn">Сообщения</a>
 	<a href="/logout.php" class="btn">Выйти</a>
 </div>
@@ -135,6 +139,8 @@ function dofilter(type){
 <?php } ?>
 
 function give_img(id){
+	$("#orders_done table tr td").removeClass("activetd");
+	$("#orders_done table tr#tr_id_"+id+" td").addClass("activetd");
 	$.ajax({
 		type: "GET",
 		url: "/ajax/main.php?action=get_imgs&id="+id,

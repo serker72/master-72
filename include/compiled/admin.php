@@ -10,7 +10,6 @@
 	<div class="info-block" id="status-bar-add" style="display:block; float: left;"><b>Панель управления</b></div>
 	<div style="float:right; margin-right: 5px;"><a href="/logout.php" class="btn">Выйти</a></div>
 	<div style="float:right; margin-right: 5px;"><a href="/operator.php" class="btn">Заказы</a></div>
-	<div style="float:right; margin-right: 5px;"><a id="download" href="/ajax/main.php?action=download<?php if(is_manager()){ echo '&user_id='.$login_user['id']; } ?>" target="_blank" class="btn">Скачать файл заказов</a></div>
         
 	<div class="admin-people" style="margin-top: 20px;">
 		<div class="filtering" style="float: left; margin-left: 20px;">
@@ -63,7 +62,8 @@
 			<h4>Подсчет з/п - Менеджеров</h4>
 			<div class="div-manager-zp">
 				<!--Даты: с <input type="text" id="date1" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none; margin-top: 10px;" value="<?php //echo $start_time; ?>"> по <input type="text" id="date2" style="width:100px; border: none; background: transparent; margin-top: 10px; text-decoration: none;cursor: pointer; box-shadow:none;" value="<?php //echo $end_time; ?>"><br/>-->
-				Имя: <input type="text" id="manager-zp" name="manager-zp" value="" /><a class="btn" href="#" onClick="onManager(); return false;" style="font-weight:normal; margin-top: -11px; margin-left: 20px;">Показать</a>
+				Имя: <input type="text" id="manager-zp" name="manager-zp" value="" />
+                                <a class="btn" href="#" onClick="onManager(); return false;" style="font-weight:normal; margin-top: -11px; margin-left: 20px;">Показать</a>
 				<a class="btn" href="#" onClick="get_xls('manager'); return false;">Скачать</a>
 			<table id="table-manager" class="table table-bordered">
                             <thead>
@@ -75,7 +75,7 @@
 				</tr>
                             </thead>
                             <tbody>
-				<?php foreach ($array_man as $two) { ?>
+				<?php /*foreach ($array_man as $two) { ?>
 					<tr>
 						<td id="name_<?=$two['id']?>"><?php echo $two['name']; ?></td>
 						<td id="zp_calc_<?=$two['id']?>"><?php echo $two['zp_calc']; ?></td>
@@ -85,7 +85,7 @@
 							<!--input type="hidden" name="date_end_<?$two['id']?>" value="<?php //echo $end_time; ?>"-->
 						</td>
 					</tr>
-				<?php } ?>
+				<?php } */?>
                             </tbody>
 			</table>
 			</div>
@@ -108,14 +108,14 @@
 				</tr>
                             </thead>
                             <tbody>
-			<?php foreach ($array_mas as $two) { ?>
+			<?php /*foreach ($array_mas as $two) { ?>
 				<tr>
 					<td><?php echo $two['name']; ?></td>
 					<td><?php echo $two['zp_calc']; ?></td>
 					<td><?php echo $two['zp_pay']; ?></td>
 					<td><?php echo $two['zp']; ?></td>
 				</tr>
-			<?php } ?>
+			<?php }*/ ?>
                             </tbody>
 			</table>
                     </div>
@@ -453,6 +453,10 @@
  
         		//Load all records when page is first shown
         		$('#LoadRecordsButton').click();
+                        
+                        // Загружаем данные о з/п при входе
+                        onManager();
+                        onMaster();
 
 			});
 		</script>

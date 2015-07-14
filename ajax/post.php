@@ -7,6 +7,13 @@ ini_set('error_reporting', E_ALL);
 require_once(dirname(dirname(__FILE__)) . '/app.php');
 include_once '../lib/function.php';
 
+$order_status = array(
+    "1" => "Выполнен",
+    "2" => "Отменен",
+    "3" => "Отказ",
+    "4" => "Отсутствие заказчика",
+);
+
 function date_diff_f($date1, $date2){
     $diff = strtotime($date2) - strtotime($date1);
     return $diff;
@@ -388,13 +395,24 @@ if ($_POST) {
 
 		if($orders){foreach($orders as $one) {
 		    $table .= '<tr id="tr_id_'.$one['id'].'"><td onClick="editpost('.$one['id'].');">';
-                    if ($one['cost'] == 0) {
-                        $table .= '<font color="red">';
+                    
+                    $st = $one['time_date'].' '.$works[$one['work_type']]['name'].' '.$masters[$one['master']]['name'].' '.$city[$one['city_id']]['name'].', '.$one['street'].', д.'.$one['house'].', корпус '.$one['corpus'].', кв.'.$one['flat'].', тел: '.$one['phone'];
+                    $st .= ', '.($one['cost'] == 0 ? '<strong>сумма '.$one['cost'].'</strong>' : 'сумма '.$one['cost']);
+                    
+                    if($one['status'] > 0){
+                        $st .= ', '.(($one['status'] == 2 || $one['status'] == 3) ? '<strong>статус '.$order_status[$one['status']].'</strong>' : 'статус '.$order_status[$one['status']]);
                     }
-                    $table .= $one['time_date'].' '.$works[$one['work_type']]['name'].' '.$masters[$one['master']]['name'].' '.$city[$one['city_id']]['name'].', '.$one['street'].', д.'.$one['house'].', корпус '.$one['corpus'].', кв.'.$one['flat'].', тел: '.$one['phone'].', сумма '.$one['cost'];
+                    
                     if ($one['cost'] == 0) {
-                        $table .= '</font>';
+                        $table .= '<font color="red">'.$st.'</font></strong>';
                     }
+                    else if (($one['status'] == 2) || ($one['status'] == 3)) {
+                        $table .= '<font color="#f6a828">'.$st.'</font>';
+                    }
+                    else {
+                        $table .= $st;
+                    }
+                    
                     $table .= '</td></tr>';
 		    $i++;
 		}}

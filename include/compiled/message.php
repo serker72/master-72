@@ -1,6 +1,6 @@
 <?php include template("header"); ?>
 <div class="info-block">
-	<?php if(is_manager()){ ?> <a href="/operator.php" class="btn">Добавить заказ</a> <?php } ?>
+	<?php if(is_manager()){ ?> <a href="/operator.php?action=new_order" class="btn">Добавить заказ</a> <?php } ?>
 	<?php if($login_user['rang'] == 'master'){ ?> <a href="/account.php" class="btn">Профиль</a> <?php } ?>
 	<a href="/logout.php" class="btn">Выйти</a>
 </div>

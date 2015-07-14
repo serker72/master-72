@@ -1,6 +1,6 @@
 <?php include template("header"); ?>
 <div class="info-block">
-	<a href="/operator.php" class="btn">Добавить заказ</a>
+	<a href="/operator.php?action=new_order" class="btn">Добавить заказ</a>
 	<a href="/logout.php" class="btn">Выйти</a>
 </div>
 <div class="info-block" style="float: left; width: 100%; margin-top:10px;">

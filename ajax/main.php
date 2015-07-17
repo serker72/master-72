@@ -458,6 +458,7 @@ if ($action == 'get_cities') {
 
 		$start_time = mysql_real_escape_string($_GET['date_one']);
 		$end_time = mysql_real_escape_string($_GET['date_two']);
+		$m_start_time = mysql_real_escape_string($_GET['date_three']);
 
 		if($login_user['rang'] == 'manager'){
 			$sum = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `order` WHERE STR_TO_DATE(time_date, '%d.%m.%Y') BETWEEN '".$start_time."' AND '".$end_time."' AND user_id =".$login_user['id'], true);
@@ -474,10 +475,15 @@ if ($action == 'get_cities') {
 		З/П: <span id="zp">'.$zp.'</span> руб. (начислено: '.$zp_calc.' руб., выплачено: '.($sum_pay['summ'] ? $sum_pay['summ'] : '0').' руб.)<br/></div>';
                 
                 // Вывод з/п помесячно
-                $sql_str = "SET @i=0;
-SET @c=PERIOD_DIFF(201507, 201401)+1);
-SELECT t.dt, LEFT(t.dt, 4) AS year, t.mon, 
-  CASE t.mon
+                $start_time1 = substr($m_start_time, 6, 4).substr($m_start_time, 3, 2);
+                $end_time1 = substr($end_time, 6, 4).substr($end_time, 3, 2);
+                $sql_str = "SELECT PERIOD_DIFF(".$end_time1.", ".$start_time1.")+1 AS mon_cnt";
+                $mon_cnt = DB::GetQueryResult($sql_str, true)['mon_cnt'];
+                
+                $sql_str = "SELECT PERIOD_ADD(".$start_time1.", `id`-1) AS `dt`, 
+  LEFT(CONCAT(PERIOD_ADD(".$start_time1.", `id`-1)), 4) AS `year`, 
+  RIGHT(CONCAT(PERIOD_ADD(".$start_time1.", `id`-1)), 2) AS `mon`, 
+  CASE RIGHT(CONCAT(PERIOD_ADD(".$start_time1.", `id`-1)), 2)
     WHEN '01' THEN 'Январь'
     WHEN '02' THEN 'Февраль'
     WHEN '03' THEN 'Март'
@@ -491,43 +497,64 @@ SELECT t.dt, LEFT(t.dt, 4) AS year, t.mon,
     WHEN '11' THEN 'Ноябрь'
     WHEN '12' THEN 'Декабрь'
     ELSE ''
-  END AS mes,
-SUM(t.summ) AS summ1
-  FROM (
-SELECT PERIOD_ADD(PERIOD_ADD(201401, -1), @i) AS dt, RIGHT(CONCAT(PERIOD_ADD(PERIOD_ADD(201401, -1), @i)), 2) AS mon, 0.00 AS summ
-  FROM street s
-  WHERE (@i:=(@i+1)) <= @c
-UNION ALL
-SELECT CONCAT(RIGHT(`time_date`, 4), LEFT(SUBSTRING(`time_date`, 4), 2)) AS dt, LEFT(SUBSTRING(`time_date`, 4), 2) AS mon, SUM(o.cost) AS summ
-  FROM `order` o
-  WHERE STR_TO_DATE(`time_date`, '%d.%m.%Y') BETWEEN STR_TO_DATE('".$start_time."', '%d.%m.%Y') AND STR_TO_DATE('".$end_time."', '%d.%m.%Y')
-  AND ".($login_user['rang'] == 'master' ? 'master_name' : 'user_id')." = ".$login_user['id']."
-  GROUP BY 1,2
-) t
-GROUP BY t.dt, t.mon;";
+  END AS `mes`,
+  0.00 AS `summ`
+  FROM `street` s
+  WHERE `id` <= ".$mon_cnt.";"; 
+                
 // WHERE STR_TO_DATE(`time_date`, '%d.%m.%Y') BETWEEN STR_TO_DATE('".$start_time."', '%d.%m.%Y') AND STR_TO_DATE('".$end_time."', '%d.%m.%Y')
 //  AND ".($login_user['rang'] == 'master' ? 'master_name' : 'user_id')." = ".$login_user['id']."
-                $sum_year = DB::GetQueryResult($sql_str, false);
+                $sum_year1 = DB::GetQueryResult($sql_str, false);
                 
-		$html .= '<div class="info-block" style="width: 400px;">
+                $sum_year = array();
+                foreach ($sum_year1 as $row) {
+                    $sum_year[$row['dt']]['year'] = $row['year'];
+                    $sum_year[$row['dt']]['mon']  = $row['mon'];
+                    $sum_year[$row['dt']]['mes']  = $row['mes'];
+                    $sum_year[$row['dt']]['summ'] = $row['summ'];
+                }
+
+                $sql_str = "SELECT CONCAT(RIGHT(`time_date`, 4), LEFT(SUBSTRING(`time_date`, 4), 2)) AS dt, 
+  LEFT(SUBSTRING(`time_date`, 4), 2) AS mon, 
+  SUM(o.cost) AS summ
+  FROM `order` o
+ WHERE STR_TO_DATE(`time_date`, '%d.%m.%Y') BETWEEN STR_TO_DATE('".$m_start_time."', '%d.%m.%Y') AND STR_TO_DATE('".$end_time."', '%d.%m.%Y')
+  AND ".($login_user['rang'] == 'master' ? 'master_name' : 'user_id')." = ".$login_user['id']."
+  GROUP BY 1,2";
+                $sum_year2 = DB::GetQueryResult($sql_str, false);
+                
+                foreach ($sum_year2 as $row) {
+                    $sum_year[$row['dt']]['summ'] = $row['summ'];
+                }
+                
+		$html .= '<div class="info-block" style="width: 400px; padding-top: 15px;">
 			<table id="table-manager" class="table table-bordered">
                             <thead>
 				<tr>
-                                    <td>Год</td>
-                                    <td>Месяц</td>
-                                    <td>З/П</td>
+                                    <td colspan="3" style="text-align: center;">Информация о з/п за период '.$m_start_time.' - '.$end_time.'</td>
+				</tr>
+				<tr>
+                                    <td style="text-align: center;">Год</td>
+                                    <td style="text-align: center;">Месяц</td>
+                                    <td style="text-align: center;">З/П</td>
 				</tr>
                             </thead>
                             <tbody>';
+                
                 foreach ($sum_year as $row) {
                     $html .= '<tr>';
                     $html .= '<td>'.$row['year'].'</td>';
                     $html .= '<td>'.$row['mes'].'</td>';
-                    $html .= '<td>'.(($row['summ']*$login_user['stavka'])/100).'</td>';
+                    $html .= '<td style="text-align: right;">'.(($row['summ']*$login_user['stavka'])/100).'</td>';
                     $html .= '</tr>';
                 }
-		$html .= '</tbody></table></div>';
                 
+		/*$html .= '<tr>
+                            <td colspan="2">Сумма выплат за период</td>
+                            <td style="text-align: right;">'.($sum_pay['summ'] ? $sum_pay['summ'] : '0').'</td>
+			</tr>';
+		$html .= '</tbody></table></div>';
+                */
                 //
 		$html .= '<script type="text/javascript">';
 		$html .= '$(document).ready(function () { $(\'#date1\').datepicker({format: \'dd.mm.yyyy\', language: \'ru\', autoclose: true}); $(\'#date2\').datepicker({format: \'dd.mm.yyyy\', language: \'ru\', autoclose: true}) });';

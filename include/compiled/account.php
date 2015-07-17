@@ -26,6 +26,7 @@
 	Процентная ставка: <?=$login_user['stavka'];?>% <br/>
 	<div id="zp_dates">
 		З/П с <input id="date1" name="date1" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none;" value="<?php echo $start_time; ?>" > по <input id="date2" name="date2" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none;" value="<?php echo $end_time; ?>" > <a hre="#" onClick="get_zp(); return false;" class="btn">Показать</a><br/>
+                      <input type="hidden" id="date3" name="date3" value="<?php echo $start_year_time; ?>" />
 		З/П: <span id="zp"><?=$zp;?></span> руб. <br/> 
 	</div>
 </div>
@@ -64,13 +65,13 @@ $(document).ready(function(){
 		format: 'dd.mm.yyyy',
 		language: 'ru',
 		autoclose: true
-	})
-
+	});
+        
 	$('#date2').datepicker({
 		format: 'dd.mm.yyyy',
 		language: 'ru',
 		autoclose: true
-	})
+	});
 
 	$('#filter-datetime-done').datepicker({
 		format: 'dd.mm.yyyy',
@@ -84,7 +85,7 @@ $(document).ready(function(){
 		autoclose: true
 	});
 
-	get_zp();
+	get_zp(true);
 <?php if($login_user['rang'] != 'master'){ ?>
 	get_order();
 	get_order_done();
@@ -148,15 +149,18 @@ function give_img(id){
 	});		
 }
 
-function get_zp(){
+function get_zp(dt3_flag = false){
 	date_one = $('#date1').val();
 	date_two = $('#date2').val();
+        if (dt3_flag) date_three = $('#date3').val();
+        else date_three = $('#date1').val();
+        
 	if(date_one == '' || date_two == ''){
 		alert('Заполните даты');
 	}else{
 		$.ajax({
 			type: "GET",
-			url: "/ajax/main.php?action=get_zp&user_id=<?=$login_user['id'];?>&date_one="+date_one+"&date_two="+date_two,
+			url: "/ajax/main.php?action=get_zp&user_id=<?=$login_user['id'];?>&date_one="+date_one+"&date_two="+date_two+"&date_three="+date_three,
 			success: function(data){ $('#zp_dates').empty().append($(data));}
 		});		
 	}

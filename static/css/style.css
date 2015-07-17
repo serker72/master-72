@@ -155,3 +155,7 @@ table.jtable{
 .div-manager-zp table, .div-master-zp table {
 	width:600px;
 }
+
+#logo {
+    margin-bottom: 15px;
+}

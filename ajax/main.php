@@ -474,9 +474,10 @@ if ($action == 'get_cities') {
 		З/П: <span id="zp">'.$zp.'</span> руб. (начислено: '.$zp_calc.' руб., выплачено: '.($sum_pay['summ'] ? $sum_pay['summ'] : '0').' руб.)<br/></div>';
                 
                 // Вывод з/п помесячно
-                $sql_str = "SELECT RIGHT(`time_date`, 4) AS year, 
-                    LEFT(SUBSTRING(`time_date`, 4), 2) AS mon,
-  CASE LEFT(SUBSTRING(`time_date`, 4), 2)
+                $sql_str = "SET @i=0;
+SET @c=PERIOD_DIFF(201507, 201401)+1);
+SELECT t.dt, LEFT(t.dt, 4) AS year, t.mon, 
+  CASE t.mon
     WHEN '01' THEN 'Январь'
     WHEN '02' THEN 'Февраль'
     WHEN '03' THEN 'Март'
@@ -490,13 +491,22 @@ if ($action == 'get_cities') {
     WHEN '11' THEN 'Ноябрь'
     WHEN '12' THEN 'Декабрь'
     ELSE ''
-  END AS mes, 
-  SUM(`cost`) AS summ
-  FROM `order` 
+  END AS mes,
+SUM(t.summ) AS summ1
+  FROM (
+SELECT PERIOD_ADD(PERIOD_ADD(201401, -1), @i) AS dt, RIGHT(CONCAT(PERIOD_ADD(PERIOD_ADD(201401, -1), @i)), 2) AS mon, 0.00 AS summ
+  FROM street s
+  WHERE (@i:=(@i+1)) <= @c
+UNION ALL
+SELECT CONCAT(RIGHT(`time_date`, 4), LEFT(SUBSTRING(`time_date`, 4), 2)) AS dt, LEFT(SUBSTRING(`time_date`, 4), 2) AS mon, SUM(o.cost) AS summ
+  FROM `order` o
   WHERE STR_TO_DATE(`time_date`, '%d.%m.%Y') BETWEEN STR_TO_DATE('".$start_time."', '%d.%m.%Y') AND STR_TO_DATE('".$end_time."', '%d.%m.%Y')
   AND ".($login_user['rang'] == 'master' ? 'master_name' : 'user_id')." = ".$login_user['id']."
-  AND cost != 0
-  GROUP BY 1,2";
+  GROUP BY 1,2
+) t
+GROUP BY t.dt, t.mon;";
+// WHERE STR_TO_DATE(`time_date`, '%d.%m.%Y') BETWEEN STR_TO_DATE('".$start_time."', '%d.%m.%Y') AND STR_TO_DATE('".$end_time."', '%d.%m.%Y')
+//  AND ".($login_user['rang'] == 'master' ? 'master_name' : 'user_id')." = ".$login_user['id']."
                 $sum_year = DB::GetQueryResult($sql_str, false);
                 
 		$html .= '<div class="info-block" style="width: 400px;">

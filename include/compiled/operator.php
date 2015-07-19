@@ -287,16 +287,21 @@ function PrintEditForm($img_fields_flag) {
 		border-width: 1px;
 	}
 </style>
-<div style="float:right; margin-right: 5px;"><a href="/logout.php" class="btn">Выйти</a></div>
-<div style="float:right; margin-right: 5px;"><a href="/message.php" class="btn">Сообщения</a></div>
-<div style="float:right; margin-right: 5px;"><a id="mySearchModalButton" href="#mySearchModal" class="btn" role="button" data-toggle="modal">Поиск</a></div>
-<div style="float:right; margin-right: 5px;"><a id="myAddModalButton" href="#myAddModal" class="btn" role="button" data-toggle="modal">Добавить заказ</a></div>
+<div id="top-menu-wrapper">
+    <div style="float:right; margin-right: 5px;"><a href="/logout.php" class="btn">Выйти</a></div>
+    <div style="float:right; margin-right: 5px;"><a href="/message.php" class="btn">Сообщения</a></div>
+    <div style="float:right; margin-right: 5px;"><a id="mySearchModalButton" href="#mySearchModal" class="btn" role="button" data-toggle="modal">Поиск</a></div>
+    <div style="float:right; margin-right: 5px;"><a id="myAddModalButton" href="#myAddModal" class="btn" role="button" data-toggle="modal">Добавить заказ</a></div>
 
-<?php if($login_user['rang'] == 'admin'){ ?><div style="float:right; margin-right: 5px;"><a href="/admin.php" class="btn">Админка</a></div><?php } ?>
-<?php if($login_user['rang'] == 'manager'){ ?><div style="float:right; margin-right: 5px;"><a href="/account.php" class="btn">Личный кабинет</a></div><?php } ?>
+    <?php if($login_user['rang'] == 'admin'){ ?><div style="float:right; margin-right: 5px;"><a href="/admin.php" class="btn">Админка</a></div><?php } ?>
+    <?php if($login_user['rang'] == 'manager'){ ?><div style="float:right; margin-right: 5px;"><a href="/account.php" class="btn">Личный кабинет</a></div><?php } ?>
+    
+    <div id="ajax_load_1">
+        <img src="/static/img/ajax.gif"/>
+    </div>
+</div>
 
 <div class="info-block" id="status-bar-add" style="display:none; float: left;"><b>Добавление нового заказа (нажмите на "Сохранить" для добавления)</b></div>
-<div class="info-block" id="status-bar-search" style="display:none; float: left;"><b>Поиск заказа</b></div>
 <input type="hidden" id="rang_user" value="<?=$login_user['rang']?>" />
 
 	<div class="info-block" style="width: 816px; float:left;">
@@ -334,6 +339,13 @@ function PrintEditForm($img_fields_flag) {
 	</div>
 	<div id="orders_done" style="width: 816px; float:left;"></div>
 
+        <div class="info-block" id="status-bar-search" style="display:block; float: left;">Результат поиска заказов</div>
+        <div id="orders_search" style="width: 816px; float:left;">
+            <table class="table table-striped">
+                <tr><td>&nbsp;</td></tr>
+            </table>
+        </div>
+        
 <div class="info-block" id="status-bar-edit" style="display:none; float: left; width: 100%; margin-top: 10px; text-align: center;"><b>Редактирование заказа</b></div>
 <?php PrintEditForm(true); ?>
         
@@ -345,7 +357,7 @@ function PrintEditForm($img_fields_flag) {
             <h3 id="myModalLabel">Поиск заказов</h3>
         </div>
         <div class="modal-body">
-            <form method="post" action="/ajax/post.php" class="validator" id="form" style="float:left;">	
+            <form method="post" action="/ajax/post.php" class="validator" id="form_search" style="float:left;">	
                 <input type="hidden" id="action" name="action" value="search" />
                 <input type="hidden" id="order_id" name="order_id" value="0" />
                 <table style="float:left;">
@@ -526,25 +538,27 @@ function PrintEditForm($img_fields_flag) {
     function ksk_onSearch() {
         $('#status-bar-edit').hide();
         $('#edit-form-wrapper').hide();
-        $("#mySearchModal #form").ajaxSubmit({
-            target: "#orders",
-            beforeSubmit: showRequest,
+        $("#mySearchModal").modal('hide');
+        $("#mySearchModal #form_search").ajaxSubmit({
+            target: "#orders_search",
+            beforeSubmit: function() {
+		$('#ajax_load_1').show();
+            },
             timeout: 3000,
             success: function() {
-                showResponse();
+		$('#ajax_load_1').hide();
             }
         });
-        $("#mySearchModal").modal('hide');
     }
     
     function ksk_onSearchClose() {
-	$('#status-bar-search').hide();
-	$('#last-search').hide();
-	$('#last-post').show();
+	//$('#status-bar-search').hide();
+	//$('#last-search').hide();
+	//$('#last-post').show();
     }
     
     function ksk_onSearchClear() {
-        resetForm("form[id='form']");
+        resetForm("form[id='form_search']");
     }
     
     function ksk_onAdd() {
@@ -692,7 +706,7 @@ $(document).ready(function(){
             autoclose: true
     });
     
-    $('#mySearchModalButton').on('click', function() { dosearch(); });
+    //$('#mySearchModalButton').on('click', function() { dosearch(); });
     $("#mySearchModalCloseButton").on('click', function() { ksk_onSearchClose(); });
     $("#submit").on('click', function(event) {  ksk_onSubmitClick(event); });
 
@@ -912,7 +926,7 @@ function doadd(){
 	<?php } ?>
 	$('#hope').show();
 	//$('#status-bar-add').show();
-	$('#status-bar-search').hide();
+	//$('#status-bar-search').hide();
 	$('#status-bar-edit').hide();
 	$('#last-search').hide();
 	$('#last-post').show();
@@ -933,7 +947,7 @@ function dosearch(){
 	$('#hope').hide();
 	$('#copy-order').hide();
 	//$('#status-bar-add').hide();
-	$('#status-bar-search').show();
+	//$('#status-bar-search').show();
 	$('#last-search').show();
 	$('#last-post').hide();
 	$('#upload_img').hide();
@@ -979,6 +993,8 @@ function editpost(id, type){
 	$("#orders table tr#tr_id_"+id+" td").addClass("activetd");
 	$("#orders_done table tr td").removeClass("activetd");
 	$("#orders_done table tr#tr_id_"+id+" td").addClass("activetd");
+	$("#orders_search table tr td").removeClass("activetd");
+	$("#orders_search table tr#tr_id_"+id+" td").addClass("activetd");
 	$('#ajax_load').show();	
 	$.ajax({
 		type: "GET",
@@ -1050,7 +1066,7 @@ function editpost(id, type){
 			$('#action').val('edit');
 			$('#order_id').val(oData.id);
 			//$('#status-bar-add').hide();
-			$('#status-bar-search').hide();
+			//$('#status-bar-search').hide();
 			$('#status-bar-edit').show();
 			$('#upload_img').show();
                         

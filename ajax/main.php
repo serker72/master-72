@@ -469,7 +469,7 @@ if ($action == 'get_cities') {
 		$sum_pay = DB::GetQueryResult("SELECT SUM(cost) AS summ FROM `pay` WHERE `date_start` BETWEEN '".$start_time."' AND '".$end_time."' AND `date_end` BETWEEN '".$start_time."' AND '".$end_time."' AND user_id =".$login_user['id']." AND cost != 0", true);
                 
 		$zp_calc = ($sum['summ']*$login_user['stavka'])/100;
-                $zp = $zp_calc - $sum_pay['summ'];
+                $zp = round($zp_calc - $sum_pay['summ'], 2);
 
 		$html .= '<div>З/П с <input id="date1" name="date1" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none;" value="'.$start_time.'" > по <input id="date2" name="date2" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none;" value="'.$end_time.'" > <a hre="#" onClick="get_zp(); return false;" class="btn">Показать</a><br/>
 		З/П: <span id="zp">'.$zp.'</span> руб. (начислено: '.$zp_calc.' руб., выплачено: '.($sum_pay['summ'] ? $sum_pay['summ'] : '0').' руб.)<br/></div>';
@@ -478,7 +478,8 @@ if ($action == 'get_cities') {
                 $start_time1 = substr($m_start_time, 6, 4).substr($m_start_time, 3, 2);
                 $end_time1 = substr($end_time, 6, 4).substr($end_time, 3, 2);
                 $sql_str = "SELECT PERIOD_DIFF(".$end_time1.", ".$start_time1.")+1 AS mon_cnt";
-                $mon_cnt = DB::GetQueryResult($sql_str, true)['mon_cnt'];
+                $mon_cnt = DB::GetQueryResult($sql_str, true);
+                $mon_cnt = $mon_cnt['mon_cnt'];
                 
                 $sql_str = "SELECT PERIOD_ADD(".$start_time1.", `id`-1) AS `dt`, 
   LEFT(CONCAT(PERIOD_ADD(".$start_time1.", `id`-1)), 4) AS `year`, 
@@ -545,7 +546,7 @@ if ($action == 'get_cities') {
                     $html .= '<tr>';
                     $html .= '<td>'.$row['year'].'</td>';
                     $html .= '<td>'.$row['mes'].'</td>';
-                    $html .= '<td style="text-align: right;">'.(($row['summ']*$login_user['stavka'])/100).'</td>';
+                    $html .= '<td style="text-align: right;">'.round(($row['summ']*$login_user['stavka'])/100, 2).'</td>';
                     $html .= '</tr>';
                 }
                 

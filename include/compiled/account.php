@@ -25,7 +25,7 @@
 	№ договора: <?=$login_user['dogovor'];?> <br/>
 	Процентная ставка: <?=$login_user['stavka'];?>% <br/>
 	<div id="zp_dates">
-		З/П с <input id="date1" name="date1" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none;" value="<?php echo $start_time; ?>" > по <input id="date2" name="date2" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none;" value="<?php echo $end_time; ?>" > <a hre="#" onClick="get_zp(); return false;" class="btn">Показать</a><br/>
+		З/П с <input id="date1" name="date1" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none;" value="<?php echo $start_time; ?>" > по <input id="date2" name="date2" style="width:100px; border: none; background: transparent; text-decoration: none;cursor: pointer; box-shadow:none;" value="<?php echo $end_time; ?>" > <a hre="#" onClick="get_zp(false); return false;" class="btn">Показать</a><br/>
                       <input type="hidden" id="date3" name="date3" value="<?php echo $start_year_time; ?>" />
 		З/П: <span id="zp"><?=$zp;?></span> руб. <br/> 
 	</div>
@@ -149,7 +149,7 @@ function give_img(id){
 	});		
 }
 
-function get_zp(dt3_flag = false){
+function get_zp(dt3_flag){
 	date_one = $('#date1').val();
 	date_two = $('#date2').val();
         if (dt3_flag) date_three = $('#date3').val();

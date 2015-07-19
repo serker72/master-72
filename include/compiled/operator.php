@@ -4,12 +4,14 @@ function PrintEditForm($img_fields_flag) {
     
     if ($img_fields_flag) {
         echo '<div id="edit-form-wrapper" style="display: none;">';
+        $form_type = 'edit';
     } else {
         echo '<div id="add-form-wrapper">';
+        $form_type = 'add';
     }
     ?>
-    <form method="post" action="/ajax/post.php" class="validator" id="form" style="float:left;">	
-	<input type="hidden" id="action" name="action" value="add" />
+    <form method="post" action="/ajax/post.php" class="validator" id="form_<?php echo $form_type; ?>" style="float:left;">	
+	<input type="hidden" id="action" name="action" value="<?php echo $form_type; ?>" />
 	<input type="hidden" id="order_id" name="order_id" value="0" />
 	<table style="width: 816px; float:left;">
 		<tr>
@@ -240,7 +242,8 @@ function PrintEditForm($img_fields_flag) {
 			<div style="float: right;">
 				<a id="copy-order" href="#" onClick="copythis();" class="btn" style="display:none;">Копировать</a>
 				<a id="delete-order" href="#" onClick="deletethis();" class="btn" style="display:none;">Удалить</a>
-				<input type="submit" id="submit" value="Сохранить" name="commit" class="btn"/>
+				<a id="save-order" href="#" onClick="ksk_onSaveOrder();" class="btn" style="display:none;">Обновить запись</a>
+				<!--input type="submit" id="submit" value="Сохранить" name="commit" class="btn"/-->
 			</div>
 	</div>
     <?php } ?>
@@ -339,7 +342,7 @@ function PrintEditForm($img_fields_flag) {
 	</div>
 	<div id="orders_done" style="width: 816px; float:left;"></div>
 
-        <div class="info-block" id="status-bar-search" style="display:block; float: left;">Результат поиска заказов</div>
+        <div class="info-block" id="status-bar-search" style="display:block; float: left;">Результат поиска заказов:</div>
         <div id="orders_search" style="width: 816px; float:left;">
             <table class="table table-striped">
                 <tr><td>&nbsp;</td></tr>
@@ -366,25 +369,25 @@ function PrintEditForm($img_fields_flag) {
                             <!--div style="width:260px; float:left;">Дата регистрации</div-->
                             <div style="float:left;">
                                     <div class="title">Дата</div>
-                                    <input type="text" id="datetime" name="date" style="width: 100px;" <?php if(is_manager()){ echo 'disabled'; } ?>>
+                                    <input type="text" id="s_datetime" name="date" style="width: 100px;">
                             </div>
                             <div style="float:left; margin-left: 5px;">
                                     <div class="title">Время</div>
-                                    <input type="text" id="time" name="time" style="width: 60px;" <?php if(is_manager()){ echo 'disabled'; } ?>>
+                                    <input type="text" id="s_time" name="time" style="width: 60px;">
                             </div>
 			</td>
 			<td>
                             <!--div style="width:260px; float:left;">Желаемое время</div>
                             <div style="float:left;">
                                     <div class="title">Дата</div>
-                                    <input type="text" id="datetime_hope" name="date_hope" style="width: 100px;">
+                                    <input type="text" id="s_datetime_hope" name="date_hope" style="width: 100px;">
                             </div>
                             <div style="float:left; margin-left: 5px;">
                                     <div class="title">Время</div>
-                                    <input type="text" id="time_hope" name="time_hope" style="width: 60px;">
+                                    <input type="text" id="s_time_hope" name="time_hope" style="width: 60px;">
                             </div-->
 				<div class="title">Тип работ</div>
-				<select name="work_type" id="work_type">
+				<select name="work_type" id="s_work_type">
 					<option value="" selected="selected">Выбрать</option>
 					<?php foreach ($work_types as $one) {
 						echo '<option value="'.$one['id'].'">'.$one['name'].'</option>';
@@ -395,7 +398,7 @@ function PrintEditForm($img_fields_flag) {
                     <tr>
 			<td>
 				<div class="title">Мастер</div>
-				<select name="master" id="master">
+				<select name="master" id="s_master">
 					<option value="" selected="selected">Выбрать</option>
 					<?php foreach ($master as $one) {
 						echo '<option value="'.$one['id'].'">'.$one['name'].'</option>';
@@ -403,28 +406,14 @@ function PrintEditForm($img_fields_flag) {
 				</select>
 			</td>
 			<td>
-                            <div <?php if(is_manager()){ echo 'style="display:none;"'; } ?>>
+                            <div <?php //if(is_manager()){ echo 'style="display:none;"'; } ?>>
                                     <div class="title">ФИО мастера 1</div>
-                                    <select id="master-name" name="master-name" <?php if(is_manager()){ echo 'disabled'; } ?>>
+                                    <select id="s_master-name" name="master-name">
                                             <option value="" selected="selected">Выбрать</option>
                                             <?php foreach($users_master as $one){
                                                     echo '<option value="'.$one['id'].'">'.$one['realname'].'</option>';
                                             } ?>
                                     </select>
-                                    <!--div class="title">ФИО мастера 2</div>
-                                    <select id="master-name-two" name="master-name-two" <?php if(is_manager()){ echo 'disabled'; } ?>>
-                                            <option value="" selected="selected">Выбрать</option>
-                                            <?php //foreach($users_master as $one){
-                                                    //echo '<option value="'.$one['id'].'">'.$one['realname'].'</option>';
-                                            //} ?>
-                                    </select>	
-                                    <div class="title">ФИО мастера 2</div>
-                                    <select id="master-name-th" name="master-name-th" <?php if(is_manager()){ echo 'disabled'; } ?>>
-                                            <option value="" selected="selected">Выбрать</option>
-                                            <?php //foreach($users_master as $one){
-                                                    //echo '<option value="'.$one['id'].'">'.$one['realname'].'</option>';
-                                            //} ?>
-                                    </select-->										
                             </div>
 			</td>
                     </tr>
@@ -448,7 +437,7 @@ function PrintEditForm($img_fields_flag) {
                     <tr>
 			<td>
 				<div class="title">Улица</div>
-				<input type="text" id="street" name="street">
+				<input type="text" id="s_street" name="street">
 			</td>
 			<td>
 				<table style="width:100%; margin:0;">
@@ -458,9 +447,9 @@ function PrintEditForm($img_fields_flag) {
 						<td><div class="title">Кв.</div></td>
 					</tr>
 					<tr>
-						<td><input type="text" id="house" name="house" style="width: 50px;"></td>
-						<td><input type="text" id="corpus" name="corpus" style="width: 50px;"></td>
-						<td><input type="text" id="flat" name="flat" style="width: 50px;"></td>
+						<td><input type="text" id="s_house" name="house" style="width: 50px;"></td>
+						<td><input type="text" id="s_corpus" name="corpus" style="width: 50px;"></td>
+						<td><input type="text" id="s_flat" name="flat" style="width: 50px;"></td>
 					</tr>
 				</table>
 			</td>
@@ -468,7 +457,7 @@ function PrintEditForm($img_fields_flag) {
                     <tr>
 			<td>
 				<div class="title">Статус</div>
-				<select name="status" id="status">
+				<select name="status" id="s_status">
 					<option value="0" selected="selected">Выбрать</option>
 					<option value="1">Выполнен</option>
 					<option value="2">Отменен</option>
@@ -478,41 +467,31 @@ function PrintEditForm($img_fields_flag) {
 			</td>
 			<td>
 				<div class="title">Сумма заказа</div>
-				<input type="text" id="cost" name="cost" <?php if(is_manager()){ echo 'disabled'; } ?>>
+				<input type="text" id="s_cost" name="cost">
 			</td>
                     </tr>
                     <tr>
 			<td rowspan="2">
 				<div class="title">Особые отметки</div>
-				<textarea cols="35" rows="8" id="customer-details" name="customer-details" 
+				<textarea cols="35" rows="8" id="s_customer-details" name="customer-details" 
                                           style="margin-left: 0px; margin-right: 0px; width: 250px; margin-top: 0px; margin-bottom: 0px; height: 100px; padding: 3px;"></textarea>
 			</td>
 			<td>
 				<div class="title">Телефон заказчика</div>
-				<input type="text" class="custom-phone" id="customer-phone" name="customer-phone">
+				<input type="text" class="custom-phone" id="s_customer-phone" name="customer-phone">
 			</td>
                     </tr>
                     <tr>
 			<td>
 				<div class="title">ФИО заказчика</div>
-				<input type="text" id="customer-name" name="customer-name">
+				<input type="text" id="s_customer-name" name="customer-name">
 			</td>
                     </tr>
                 </table>
             </form>
-			<!--td>
-                            <div id="note_div" <?php //if(is_manager()){ echo 'style="display:none;"'; } ?>>
-                                    <div class="title">Примечания</div>
-                                    <input type="text" id="note" name="note" <?php //if(is_manager()){ echo 'disabled'; } ?>>
-                            </div>				
-			</td-->
-			<!--td>
-				<div class="title">Номер акта</div>
-				<input type="text" id="offer-number" name="offer-number" <?php if(is_manager()){ echo 'disabled'; } ?>>
-			</td-->
         </div>
         <div class="modal-footer">
-            <button class="btn btn-inverse" onClick="ksk_onSearchClear();">Очистить</button>
+            <button class="btn btn-inverse" onClick="ksk_onSearchClear('search');">Очистить</button>
             <button class="btn btn-primary" onClick="ksk_onSearch();">Поиск</button>
         </div>
     </div>
@@ -527,7 +506,7 @@ function PrintEditForm($img_fields_flag) {
             <?php PrintEditForm(false); ?>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-inverse" onClick="ksk_onSearchClear();">Очистить</button>
+            <button class="btn btn-inverse" onClick="ksk_onSearchClear('add');">Очистить</button>
             <button class="btn btn-primary" onClick="ksk_onAdd();">Добавить заказ</button>
         </div>
     </div>
@@ -538,6 +517,9 @@ function PrintEditForm($img_fields_flag) {
     function ksk_onSearch() {
         $('#status-bar-edit').hide();
         $('#edit-form-wrapper').hide();
+    $("#orders table tr td").removeClass("activetd");
+    $("#orders_done table tr td").removeClass("activetd");
+    $("#orders_search table tr td").removeClass("activetd");
         $("#mySearchModal").modal('hide');
         $("#mySearchModal #form_search").ajaxSubmit({
             target: "#orders_search",
@@ -557,29 +539,37 @@ function PrintEditForm($img_fields_flag) {
 	//$('#last-post').show();
     }
     
-    function ksk_onSearchClear() {
-        resetForm("form[id='form_search']");
+    function ksk_onSearchClear(form_type) {
+        resetForm("form[id='form_" + form_type + "']");
     }
     
     function ksk_onAdd() {
         $('#status-bar-edit').hide();
         $('#edit-form-wrapper').hide();
+    $("#orders table tr td").removeClass("activetd");
+    $("#orders_done table tr td").removeClass("activetd");
+    $("#orders_search table tr td").removeClass("activetd");
         var action = $('#action').val();
         var options = { 
             target: "#output",
             //beforeSubmit: showRequest,
             beforeSubmit: function () { $('#ajax_load').show(); },
-            success: showResponse,
+            success: function() {
+		get_order();
+		get_order_done();
+		$('#ajax_load').hide();
+		alert("Запись успешно добавлена!");
+            },
             timeout: 3000
         };
                 
-        if(action == 'add'){
+//        if(action == 'add'){
             <?php if($login_user['rang'] != 'admin' && $login_user['rang'] != 'operator'){ ?>
                 if($('#myAddModal #datetime_hope').val() == '' || $('#myAddModal #street').val() == '' || $('#myAddModal #customer-phone').val() == '' || ($('#myAddModal #master-name').val() == '')){
                     alert('Перед отправкой заполните все обязательные поля!');
                     return false;
                 }else{
-                    $('#myAddModal #form').ajaxSubmit(options); 
+                    $('#myAddModal #form_add').ajaxSubmit(options); 
                     $("#myAddModal").modal('hide');
                     return true;
                 }
@@ -588,12 +578,12 @@ function PrintEditForm($img_fields_flag) {
                     alert('Необходимо выбрать мастера');
                     return false;
 		}else{
-                    $('#myAddModal #form').ajaxSubmit(options); 
+                    $('#myAddModal #form_add').ajaxSubmit(options); 
                     $("#myAddModal").modal('hide');
                     return true;
                 }
             <?php } ?>
-        }
+//        }
     }
    
     function ksk_onSubmitClick(event) {
@@ -604,7 +594,39 @@ function PrintEditForm($img_fields_flag) {
        }
     }
 
-
+    function ksk_onSaveOrder() {
+	var rang = $('#rang_user').val();	
+	if ((rang == "admin" || rang == "operator") && ($('#master-name').val() == '')) {
+            alert('Необходимо выбрать мастера');
+            return false;
+        }
+//////////////////
+        var options = { 
+            target: "#output",
+            beforeSubmit: function() { 
+                $('#ajax_load').show(); 
+            },
+            success: function() {
+		get_order();
+		get_order_done();
+		$('#ajax_load').hide();
+		alert("Запись успешно обновлена!");
+            },
+            timeout: 3000
+        };
+		
+        $("#form_edit").ajaxSubmit(options); 
+        
+        $('#status-bar-edit').hide();
+        $('#edit-form-wrapper').hide();
+        
+	resetForm("form[id='form_edit']");
+        
+        doedit();
+        
+        return true;
+////////////////////
+    }
 
 
 $(function() {  
@@ -662,6 +684,11 @@ $(function() {
 
 function dofilter(type){
 	if(type === 'order-done'){
+        $('#status-bar-edit').hide();
+        $('#edit-form-wrapper').hide();
+    $("#orders table tr td").removeClass("activetd");
+    $("#orders_done table tr td").removeClass("activetd");
+    $("#orders_search table tr td").removeClass("activetd");
 		var filter_date = $('#filter-datetime-done').val();
 		var filter_date2 = $('#filter-datetime2-done').val();
 		var filter_master = $('#filter-master-done').val();
@@ -693,7 +720,7 @@ function dofilter(type){
 $(document).ready(function(){
 
     // #mySearchModal datepicker
-    $('#mySearchModal #datetime, #datetime_hope').datepicker({
+    $('#mySearchModal #s_datetime, #s_datetime_hope').datepicker({
             format: 'dd.mm.yyyy',
             language: 'ru',
             autoclose: true
@@ -706,7 +733,13 @@ $(document).ready(function(){
             autoclose: true
     });
     
-    //$('#mySearchModalButton').on('click', function() { dosearch(); });
+    $('#mySearchModalButton').on('click', function() { 
+        //ksk_onSearchClear('search'); 
+        //dosearch(); 
+    });
+    $('#myAddModalButton').on('click', function() { 
+        ksk_onSearchClear('add');
+    });
     $("#mySearchModalCloseButton").on('click', function() { ksk_onSearchClose(); });
     $("#submit").on('click', function(event) {  ksk_onSubmitClick(event); });
 
@@ -764,6 +797,8 @@ $(document).ready(function(){
 	});
 
         <?php if (isset($_GET[action]) && ($_GET[action] === 'new_order')) { ?>
+            get_order();
+            get_order_done();
             $('#myAddModal').modal('show');
         <?php } ?>
 });
@@ -870,7 +905,7 @@ function deletethis(id){
 			data: 'action=delete_order&order_id='+id,
 			url: "/ajax/post.php",
 			success: function(data){ 
-				doadd();
+				doedit();
 				alert("Запись успешно удалена!"); 
 				$('#ajax_load').hide();
 			}
@@ -888,7 +923,7 @@ function copythis(id){
 			data: 'action=copy_order&order_id='+id,
 			url: "/ajax/post.php",
 			success: function(data){ 
-				doadd();
+				doedit();
 				alert("Запись успешно скопированна!"); 
 				$('#ajax_load').hide();
 			}
@@ -910,27 +945,36 @@ function getOfferNumber(){
 
 //Нажать добавить
 function doadd(){
-	resetForm("form[id='form']");
+	resetForm("form[id='form_add']");
 	get_order();
 	get_order_done();
-	$('#action').val('add');
-	$('#submit').show();
-	$('#submit').val('Сохранить');
-	$('#btnadd-form').hide();
-	$('#delete-order').hide();
-	$('#copy-order').hide();
-	$('#search-form').show();
+	//$('#action').val('add');
+	//$('#submit').show();
+	//$('#submit').val('Сохранить');
+	//$('#btnadd-form').hide();
+	//$('#delete-order').hide();
+	//$('#copy-order').hide();
+	//$('#search-form').show();
 	<?php if(!is_manager()){ ?>
 		$('#note_div').show();
 		getOfferNumber();
 	<?php } ?>
-	$('#hope').show();
+	//$('#hope').show();
 	//$('#status-bar-add').show();
 	//$('#status-bar-search').hide();
-	$('#status-bar-edit').hide();
-	$('#last-search').hide();
-	$('#last-post').show();
-	$('#upload_img').show();
+	//$('#status-bar-edit').hide();
+	//$('#last-search').hide();
+	//$('#last-post').show();
+	//$('#upload_img').show();
+}
+
+function doedit(){
+        $('#status-bar-edit').hide();
+        $('#edit-form-wrapper').hide();
+	resetForm("form[id='form_edit']");
+	get_order();
+	get_order_done();
+        ksk_onSearch();
 }
 
 //Нажать на поиск
@@ -988,21 +1032,28 @@ function get_order_done(){
 }
 
 //Редактирование формы
-function editpost(id, type){
-	$("#orders table tr td").removeClass("activetd");
+function editpost(id, table_type, type){
+    $("#orders table tr td").removeClass("activetd");
+    $("#orders_done table tr td").removeClass("activetd");
+    $("#orders_search table tr td").removeClass("activetd");
+    
+    if (table_type === '') {
 	$("#orders table tr#tr_id_"+id+" td").addClass("activetd");
-	$("#orders_done table tr td").removeClass("activetd");
-	$("#orders_done table tr#tr_id_"+id+" td").addClass("activetd");
-	$("#orders_search table tr td").removeClass("activetd");
-	$("#orders_search table tr#tr_id_"+id+" td").addClass("activetd");
-	$('#ajax_load').show();	
+    } else {
+	$("#orders_" + table_type + " table tr#tr_id_"+id+" td").addClass("activetd");
+    }
+	//$("#orders_done table tr td").removeClass("activetd");
+	//$("#orders_done table tr#tr_id_"+id+" td").addClass("activetd");
+	//$("#orders_search table tr td").removeClass("activetd");
+	//$("#orders_search table tr#tr_id_"+id+" td").addClass("activetd");
+	//$('#ajax_load').show();	
 	$.ajax({
 		type: "GET",
 		url: "/ajax/main.php?action=get_edit_order&id="+id,
 		success: function(data){
 			give_img(id);
 			$('#ajax_load').hide();
-			resetForm("form[id='form']");
+			resetForm("form[id='form_edit']");
 			var oData = JSON.parse(data);
 			$("#datetime").val(oData.time_date);
 			$("#time").val(oData.time_time);
@@ -1096,12 +1147,14 @@ function editpost(id, type){
                         }
 			
 			if(type != 'manager'){
-				$('#submit').show();
-				$('#submit').val('Обновить запись');
+				$('#save-order').show();
+				//$('#submit').show();
+				//$('#submit').val('Обновить запись');
 				$('#delete-order').show();
 				$('#delete-order').attr('onClick','deletethis('+oData.id+')');
 			}else{
-				$('#submit').hide();
+				$('#save-order').show();
+				//$('#submit').hide();
 				$('#delete-order').hide();
 			}
 

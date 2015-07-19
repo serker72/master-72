@@ -394,7 +394,7 @@ if ($_POST) {
 		$works = Table::Fetch('work_type', $work_id);
 
 		if($orders){foreach($orders as $one) {
-		    $table .= '<tr id="tr_id_'.$one['id'].'"><td onClick="editpost('.$one['id'].');">';
+		    $table .= '<tr id="tr_id_'.$one['id'].'"><td onClick="editpost('.$one['id'].', \'search\');">';
                     
                     $st = $one['time_date'].' '.$works[$one['work_type']]['name'].' '.$masters[$one['master']]['name'].' '.$city[$one['city_id']]['name'].', '.$one['street'].', д.'.$one['house'].', корпус '.$one['corpus'].', кв.'.$one['flat'].', тел: '.$one['phone'];
                     $st .= ', '.($one['cost'] == 0 ? '<strong>сумма '.$one['cost'].'</strong>' : 'сумма '.$one['cost']);

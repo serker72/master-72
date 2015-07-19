@@ -5,7 +5,7 @@
 <script type="text/javascript" src="/static/js/datepicker/js/bootstrap-datepicker.ru.js"></script>
 <div class="info-block">
 	<?php if(is_manager()){ ?> 
-            <a href="/operator.php?action=new_order" class="btn">Добавить заказ</a> 
+    <a href="/operator.php" class="btn">Добавить заказ</a> <!--?action=new_order-->
             <!--div style="float:right; margin-right: 5px;"-->
             <a id="download" href="/ajax/main.php?action=download<?php if(is_manager()){ echo '&user_id='.$login_user['id']; } ?>" target="_blank" class="btn">Скачать файл заказов</a><!--/div-->
         <?php } ?>

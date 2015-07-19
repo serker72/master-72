@@ -76,9 +76,9 @@ if ($action == 'get_cities') {
 	if($orders){foreach($orders as $one) {
 		if($place != 'account'){
 			if($one['edited'] != 0 && $login_user['rang'] != 'manager'){
-				$onclick = 'onClick="editpost('.$one['id'].', \'admin\');"';
+				$onclick = 'onClick="editpost('.$one['id'].', \'\', \'admin\');"';
 			}elseif($one['edited'] == 0){
-				$onclick = 'onClick="editpost('.$one['id'].', \'admin\');"';
+				$onclick = 'onClick="editpost('.$one['id'].', \'\', \'admin\');"';
 			}else{
 				$onclick = '';
 			}
@@ -258,9 +258,9 @@ if ($action == 'get_cities') {
 				$onclick = 'onClick="editpost('.$one['id'].', \'admin\');"';
 			}elseif($one['edited'] == 0){
 				if($login_user['rang'] != 'manager'){
-					$onclick = 'onClick="editpost('.$one['id'].', \'admin\');"';
+					$onclick = 'onClick="editpost('.$one['id'].', \'done\', \'admin\');"';
 				}else{
-					$onclick = 'onClick="editpost('.$one['id'].', \'manager\');"';
+					$onclick = 'onClick="editpost('.$one['id'].', \'done\', \'manager\');"';
 				}
 			}else{
 				$onclick = '';
@@ -367,9 +367,9 @@ if ($action == 'get_cities') {
 
 		if($place != 'account'){
 			if($one['edited'] != 0 && $login_user['rang'] != 'manager'){
-				$onclick = 'onClick="editpost('.$one['id'].', \'admin\');"';
+				$onclick = 'onClick="editpost('.$one['id'].', \'done\', \'admin\');"';
 			}elseif($one['edited'] == 0){
-				$onclick = 'onClick="editpost('.$one['id'].', \'admin\');"';
+				$onclick = 'onClick="editpost('.$one['id'].', \'done\', \'admin\');"';
 			}else{
 				$onclick = '';
 			}

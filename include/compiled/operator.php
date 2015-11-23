@@ -565,7 +565,7 @@ function PrintEditForm($img_fields_flag) {
                 
 //        if(action == 'add'){
             <?php if($login_user['rang'] != 'admin' && $login_user['rang'] != 'operator'){ ?>
-                if($('#myAddModal #datetime_hope').val() == '' || $('#myAddModal #street').val() == '' || $('#myAddModal #customer-phone').val() == '' || ($('#myAddModal #master-name').val() == '')){
+                if($('#myAddModal #datetime_hope').val() == '' || $('#myAddModal #street').val() == '' || $('#myAddModal #customer-phone').val() == ''){ // || ($('#myAddModal #master-name').val() == '')
                     alert('Перед отправкой заполните все обязательные поля!');
                     return false;
                 }else{
@@ -672,7 +672,8 @@ $(function() {
 
 	//подгружаем селения под город.
 	$('select#city').change(function () {
-		var city_id = $('#city').val();
+		var city_id = $('#myAddModal #city').val();
+                //alert('city_id = '+city_id);
 		$.ajax({
 			type: "GET",
 			url: "/ajax/main.php?action=get_cities&city_id="+city_id,

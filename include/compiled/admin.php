@@ -11,6 +11,30 @@
 	<div style="float:right; margin-right: 5px;"><a href="/logout.php" class="btn">Выйти</a></div>
 	<div style="float:right; margin-right: 5px;"><a href="/operator.php" class="btn">Заказы</a></div>
         
+        <!------------------ Tabs ------------------------->
+        <div style="clear: both;"></div>
+        <div id="tabs">
+            <ul>
+		<li><a href="#tabs-1">Пользователи</a></li>
+		<li><a href="#tabs-2">Города</a></li>
+		<li><a href="#tabs-3">Населенные пункты</a></li>
+		<li><a href="#tabs-4">Улицы</a></li>
+		<li><a href="#tabs-5">З/П менеджеры</a></li>
+		<li><a href="#tabs-6">З/П мастера</a></li>
+		<li><a href="#tabs-7">Выплаты</a></li>
+		<li><a href="#tabs-8">Настройки</a></li>
+            </ul>
+            <div id="tabs-1">tabs-1</div>
+            <div id="tabs-2">tabs-2</div>
+            <div id="tabs-3">tabs-3</div>
+            <div id="tabs-4">tabs-4</div>
+            <div id="tabs-5">tabs-5</div>
+            <div id="tabs-6">tabs-6</div>
+            <div id="tabs-7">tabs-7</div>
+            <div id="tabs-8">tabs-8</div>
+        </div>
+        <!------------------------------------------------->
+        
 	<div class="admin-people" style="margin-top: 20px;">
 		<div class="filtering" style="float: left; margin-left: 20px;">
 		    <form>
@@ -315,6 +339,8 @@
 			}			
 
 			$(document).ready(function () {
+                                $( "#tabs" ).tabs();
+                                
 				$('#city_street').change(function() {
 				  	get_punkts();
 				});

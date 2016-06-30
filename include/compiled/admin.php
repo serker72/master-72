@@ -1,4 +1,24 @@
-<?php 
+<?php
+    global $INI;
+    require_once '/include/classes/jqGridPHP/jqGridLoader.php';
+    //
+    $jq_loader = new jqGridLoader;
+    #Set grid directory
+    $jq_loader->set("grid_path", dirname(__FILE__) . '/grids/');
+
+    #Use PDO for database connection
+    $jq_loader->set("db_driver", "PDO");
+
+    #Set PDO-specific settings
+    $jq_loader->set("pdo_dsn"  , "mysql:dbname=".$INI['db']['name'].";host=".$INI['db']['host']);
+    $jq_loader->set("pdo_user" , $INI['db']['user']);
+    $jq_loader->set("pdo_pass" , $INI['db']['pass']);
+    
+    #Turn on debug output
+    $jq_loader->set('debug_output', true);
+    $jq_loader->autorun();
+    //
+    
     include template("header_admin"); 
 ?>
 	<script type="text/javascript" src="/static/js/datepicker/js/bootstrap-datepicker.js"></script>
@@ -13,7 +33,7 @@
         
         <!------------------ Tabs ------------------------->
         <div style="clear: both;"></div>
-        <div id="tabs">
+        <div id="tabs" style="width: 98%; margin: 0 auto;">
             <ul>
 		<li><a href="#tabs-1">Пользователи</a></li>
 		<li><a href="#tabs-2">Города</a></li>
@@ -24,7 +44,15 @@
 		<li><a href="#tabs-7">Выплаты</a></li>
 		<li><a href="#tabs-8">Настройки</a></li>
             </ul>
-            <div id="tabs-1">tabs-1</div>
+            <div id="tabs-1">
+                <p>tabs-1</p>
+                <?php
+                //$jq_loader->output('jqUser');
+                $rendered_grid = $jq_loader->render('jqUser');
+                //$jq_loader->oper('jqUser', $oper);
+                echo '<script>'.$rendered_grid.'</script>';
+                ?>
+            </div>
             <div id="tabs-2">tabs-2</div>
             <div id="tabs-3">tabs-3</div>
             <div id="tabs-4">tabs-4</div>

@@ -45,13 +45,14 @@
 		<li><a href="#tabs-8">Настройки</a></li>
             </ul>
             <div id="tabs-1">
-                <p>tabs-1</p>
-                <?php
-                //$jq_loader->output('jqUser');
-                $rendered_grid = $jq_loader->render('jqUser');
-                //$jq_loader->oper('jqUser', $oper);
-                echo '<script>'.$rendered_grid.'</script>';
-                ?>
+                <div>
+                    <?php
+                    //$jq_loader->output('jqUser');
+                    $rendered_grid = $jq_loader->render('jqUser');
+                    //$jq_loader->oper('jqUser', $oper);
+                    echo '<script>'.$rendered_grid.'</script>';
+                    ?>
+                </div>
             </div>
             <div id="tabs-2">tabs-2</div>
             <div id="tabs-3">tabs-3</div>

@@ -12,43 +12,86 @@ class jqUser extends jqGrid
 
         #Set columns
         $this->cols = array(
-
             'id' => array('label' => 'ID',
-                'width' => 10,
+                'width' => 30,
                 'align' => 'center',
                 'editable' => false, //id is non-editable
             ),
 
-            'first_name' => array('label' => 'First name',
-                'width' => 35,
+            'username' => array('label' => 'Логин',
+                'width' => 100,
                 'editrules' => array('required' => true),
             ),
 
-            'last_name' => array('label' => 'Last name',
-                'width' => 35,
+            'realname' => array('label' => 'ФИО',
+                'width' => 150,
                 'editrules' => array('required' => true),
             ),
+            
+            'password' => array('label' => 'Пароль',
+                'width' => 150,
+                'hidden' => true,
+                'editable' => true,
+            ),
 
-            'email' => array('label' => 'Email',
-                'width' => 30,
+            'rang' => array('label' => 'Роль',
+                'width' => 80,
                 'editrules' => array('email' => true),
             ),
-
-            'phone' => array('label' => 'Phone',
-                'width' => 25,
+            
+            'phone' => array('label' => 'Телефон',
+                'width' => 100,
                 'align' => 'center',
+                'editrules' => array('required' => true),
             ),
 
-            'discount' => array('label' => 'Discount',
-                'width' => 15,
+            'sms' => array('label' => 'sms',
+                'width' => 10,
+            ),
+
+            'dogovor' => array('label' => 'Договор',
+                'width' => 50,
+            ),
+
+            'address' => array('label' => 'Адресс',
+                'width' => 90,
+                'editrules' => array('required' => true),
+            ),
+
+            'company' => array('label' => 'Компания',
+                'width' => 90,
+            ),
+            
+            'stavka' => array('label' => 'Ставка',
+                'width' => 40,
                 'formatter' => 'numeric',
                 'align' => 'center',
-                'editable' => false,
+                'editrules' => array('required' => true),
             ),
         );
         
+        //
+        $this->options = array(
+            'height' => 500,
+        );
+
         #Set nav
-        $this->nav = array('add' => true, 'edit' => true, 'del' => true);
+        $this->nav = array(
+            'view' => true, 
+            'add' => true, 
+            'edit' => true, 
+            'del' => true,
+            'excel' => true,
+            
+            /*'viewtext' => 'См',
+            'addtext' => 'Доб',
+            'edittext' => 'Изм',
+            'deltext' => 'Удал',
+            'exceltext' => 'Excel',
+            */
+            //'prmAdd' => array('width' => 600),
+            //'prmEdit' => array('width' => 720),
+        );
 
         #Add filter toolbar
         $this->render_filter_toolbar = true;

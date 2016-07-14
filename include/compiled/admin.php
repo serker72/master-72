@@ -5,6 +5,9 @@
     $jq_loader = new jqGridLoader;
     #Set grid directory
     $jq_loader->set("grid_path", dirname(__FILE__) . '/grids/');
+    
+    //set encoding
+    $jq_loader->set('encoding', 'utf-8');
 
     #Use PDO for database connection
     $jq_loader->set("db_driver", "PDO");
@@ -46,17 +49,31 @@
             </ul>
             <div id="tabs-1">
                 <div>
-                    <?php
-                    //$jq_loader->output('jqUser');
-                    $rendered_grid = $jq_loader->render('jqUser');
-                    //$jq_loader->oper('jqUser', $oper);
-                    echo '<script>'.$rendered_grid.'</script>';
-                    ?>
+                    <script>
+                        <?php echo $jq_loader->render('jqUser'); ?>
+                    </script>
                 </div>
             </div>
-            <div id="tabs-2">tabs-2</div>
-            <div id="tabs-3">tabs-3</div>
-            <div id="tabs-4">tabs-4</div>
+            <div id="tabs-2">
+                <div>
+                    <script>
+                        <?php echo $jq_loader->render('jqCity'); ?>
+                    </script>
+                </div>
+            </div>
+            <div id="tabs-3">
+                <div>
+                    <script>
+                        <?php echo $jq_loader->render('jqLocality'); ?>
+                    </script>
+                </div>
+            </div>
+            <div id="tabs-4">
+                <div>
+                    <script>
+                        <?php echo $jq_loader->render('jqStreet'); ?>
+                    </script>
+                </div>
             <div id="tabs-5">tabs-5</div>
             <div id="tabs-6">tabs-6</div>
             <div id="tabs-7">tabs-7</div>
@@ -491,7 +508,7 @@
 					}
 				});
 				//Load person list from server
-				//$('#PeopleTableContainer').jtable('load');
+				$('#PeopleTableContainer').jtable('load');
 				
 				$('#LoadRecordsButton').click(function (e) {
 		            e.preventDefault();

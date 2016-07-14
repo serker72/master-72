@@ -13,7 +13,7 @@ class jqUser extends jqGrid
         #Set columns
         $this->cols = array(
             'id' => array('label' => 'ID',
-                'width' => 30,
+                'width' => 60,
                 'align' => 'center',
                 'editable' => false, //id is non-editable
             ),
@@ -24,48 +24,58 @@ class jqUser extends jqGrid
             ),
 
             'realname' => array('label' => 'ФИО',
-                'width' => 150,
+                'width' => 200,
                 'editrules' => array('required' => true),
             ),
             
             'password' => array('label' => 'Пароль',
                 'width' => 150,
                 'hidden' => true,
-                'editable' => true,
+                //'editable' => true,
+                'editrules' => array('edithidden' => true, 'required' => true),
             ),
 
             'rang' => array('label' => 'Роль',
                 'width' => 80,
-                'editrules' => array('email' => true),
+                'edittype' => 'select',
+                'editoptions' => array('value' => "manager:Менеджер; master:Мастер; admin:Администратор"),
+                'editrules' => array('required' => true),
             ),
             
             'phone' => array('label' => 'Телефон',
-                'width' => 100,
+                'width' => 120,
                 'align' => 'center',
                 'editrules' => array('required' => true),
             ),
 
             'sms' => array('label' => 'sms',
-                'width' => 10,
+                'hidden' => true,
+                //'editable' => true,
+                'editrules' => array('edithidden' => true),
+                'edittype' => 'checkbox',
+                'editoptions' => array('value' => "1:0"),
             ),
 
             'dogovor' => array('label' => 'Договор',
-                'width' => 50,
+                'hidden' => true,
+                //'editable' => true,
+                'editrules' => array('edithidden' => true),
             ),
 
             'address' => array('label' => 'Адресс',
-                'width' => 90,
-                'editrules' => array('required' => true),
+                'hidden' => true,
+                //'editable' => true,
+                'editrules' => array('edithidden' => true, 'required' => true),
             ),
 
             'company' => array('label' => 'Компания',
-                'width' => 90,
+                'width' => 150,
             ),
             
             'stavka' => array('label' => 'Ставка',
-                'width' => 40,
+                'width' => 60,
                 'formatter' => 'numeric',
-                'align' => 'center',
+                'align' => 'right',
                 'editrules' => array('required' => true),
             ),
         );
@@ -81,7 +91,7 @@ class jqUser extends jqGrid
             'add' => true, 
             'edit' => true, 
             'del' => true,
-            'excel' => true,
+            'excel' => false,
             
             /*'viewtext' => 'См',
             'addtext' => 'Доб',
@@ -95,5 +105,18 @@ class jqUser extends jqGrid
 
         #Add filter toolbar
         $this->render_filter_toolbar = true;
+    }
+    
+    protected function operData($data)
+    {
+        $data['password'] = $data['password'] ? md5($data['password']) : null;
+        
+        //Server side error checking
+        if($data['password'] == NULL)
+        {
+            throw new jqGridException('Не указан пароль пользователя !'); //This message goes directly to server response
+        }        
+
+        return $data;
     }
 }

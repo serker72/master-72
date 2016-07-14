@@ -349,6 +349,20 @@ if($action == "list"){
 		$table .= '<option value="'.$one['id'].'">'.$one['name'].'</option>';
 	}
 	echo $table;
+}elseif($action == 'city_gos'){
+	$cityes = DB::GetQueryResult("SELECT * FROM `city` WHERE `parent_id` = 0", false);
+	$table = '';
+	foreach ($cityes as $one) {
+		$table .= '<option value="'.$one['id'].'">'.$one['name'].'</option>';
+	}
+	echo '<select>'.$table.'</select>';
+}elseif($action == 'city_pos'){
+	$cityes = DB::GetQueryResult("SELECT `id`,`name`, `parent_id`, if(`parent_id` = 0, `id`, `parent_id`) as new_parent_id FROM `city` ORDER by new_parent_id, `parent_id`, `name`", false);
+	$table = '';
+	foreach ($cityes as $one) {
+		$table .= '<option value="'.$one['id'].'">'.($one['parent_id'] == 0 ? '### ' : '').$one['name'].($one['parent_id'] == 0 ? ' ###' : '').'</option>';
+	}
+	echo '<select>'.$table.'</select>';
 }elseif($action == 'street_go'){
 	$city=intval($_GET['city']);
 	$cityes = DB::GetQueryResult("SELECT * FROM `city` WHERE `parent_id` = {$city}", false);

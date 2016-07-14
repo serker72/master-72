@@ -17,7 +17,7 @@
         <script src="/static/js/jquery.jqGrid.min.js" type="text/javascript"></script>
         <script src="/static/js/jqgrid-ext.js" type="text/javascript"></script>
         <!--script src="/static/admin/scripts/jquery-ui-1.8.16.custom.min.js" type="text/javascript"></script-->
-        <!--script src="/static/admin/scripts/jtable/jquery.jtable.js" type="text/javascript"></script-->
+        <script src="/static/admin/scripts/jtable/jquery.jtable.js" type="text/javascript"></script>
     </head>
     <body>
         <div class="main-operator">

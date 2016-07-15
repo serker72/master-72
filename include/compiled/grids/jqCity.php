@@ -15,8 +15,8 @@ class jqCity extends jqGrid
         #Set columns
         $this->cols = array(
             'id' => array('label' => 'ID',
-                'width' => 60,
-                'align' => 'center',
+                'width' => 70,
+                'align' => 'right',
                 'editable' => false, //id is non-editable
             ),
 

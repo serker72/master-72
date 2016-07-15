@@ -7,6 +7,6 @@ $INI = array (
     'pass' => '',
     'name' => 'master-72',
   ),
-  'webroot' => NULL,
+  'webroot' => 'http://master-72.su/',
 );
 ?>

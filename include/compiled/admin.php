@@ -1,6 +1,5 @@
 <?php
     global $INI;
-    require_once '/include/classes/jqGridPHP/jqGridLoader.php';
     //
     $jq_loader = new jqGridLoader;
     #Set grid directory
@@ -10,12 +9,18 @@
     $jq_loader->set('encoding', 'utf-8');
 
     #Use PDO for database connection
-    $jq_loader->set("db_driver", "PDO");
+    //$jq_loader->set("db_driver", "Pdo");
+    $jq_loader->set("db_driver", "Mysql");
 
     #Set PDO-specific settings
-    $jq_loader->set("pdo_dsn"  , "mysql:dbname=".$INI['db']['name'].";host=".$INI['db']['host']);
-    $jq_loader->set("pdo_user" , $INI['db']['user']);
-    $jq_loader->set("pdo_pass" , $INI['db']['pass']);
+    //$jq_loader->set("pdo_dsn"  , "Mysql:dbname=".$INI['db']['name'].";host=".$INI['db']['host']);
+    //$jq_loader->set("pdo_user" , $INI['db']['user']);
+    //$jq_loader->set("pdo_pass" , $INI['db']['pass']);
+    
+    $jq_loader->set("db_host"  , $INI['db']['host']);
+    $jq_loader->set("db_name"  , $INI['db']['name']);
+    $jq_loader->set("db_user" , $INI['db']['user']);
+    $jq_loader->set("db_pass" , $INI['db']['pass']);
     
     #Turn on debug output
     $jq_loader->set('debug_output', true);
@@ -36,6 +41,7 @@
         
         <!------------------ Tabs ------------------------->
         <div style="clear: both;"></div>
+        <div><?php  //phpinfo(); ?></div>
         <div id="tabs" style="width: 98%; margin: 0 auto;">
             <ul>
 		<li><a href="#tabs-1">Пользователи</a></li>
@@ -74,10 +80,17 @@
                         <?php echo $jq_loader->render('jqStreet'); ?>
                     </script>
                 </div>
-            <div id="tabs-5">tabs-5</div>
+            <div id="tabs-5">
+                <div>
+                    <script>
+                        <?php echo $jq_loader->render('jqManagerStat'); ?>
+                    </script>
+                </div>
             <div id="tabs-6">tabs-6</div>
             <div id="tabs-7">tabs-7</div>
-            <div id="tabs-8">tabs-8</div>
+            <div id="tabs-8">
+                
+            </div>
         </div>
         <!------------------------------------------------->
         
@@ -93,7 +106,7 @@
 		            <option value="operator">Оператор</option>
 		            <option value="manager">Менеджер</option>
 		            <option value="master">Мастер</option>        
-		        </select><br/>
+		        </select><br/-->
 		        <!--Телефон: <input type="text" name="phone" id="phone" />
 		        Договор: <input type="text" name="dogovor" id="dogovor" />
 		        Адрес: <input type="text" name="address" id="address" />-->
@@ -127,7 +140,7 @@
 			<a href="#myStreet" role="button"  style="font-weight:normal;" class="btn" data-toggle="modal">Добавить</a>
 		</div>
 	</div>		
-	<div class="info-block" style="float:left; width=650px;">
+	<div class="info-block" style="float:left; width:650px;">
 		<div id="table-manager">
 			<h4>Подсчет з/п - Менеджеров</h4>
 			<div class="div-manager-zp">
@@ -161,7 +174,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="info-block" style="float:left; width=650px;">
+	<div class="info-block" style="float:left; width:650px;">
 		<div id="table-master">
 			<h4>Подсчет з/п - Мастеров</h4>
                     <div class="div-master-zp">
@@ -199,6 +212,19 @@
 	</div>	
 	
 		<script type="text/javascript">
+			function onUserStatUpdate(){
+                            $.ajax({
+                                    type: "GET",
+                                    url: "/ajax/admin.php?action=user_stat_update",
+                                    success: function(data){ 
+                                        //$('#table-master').empty().append($(data)); 
+                                        //$('table#table-master tbody').html($(data)); 
+                                    }
+                            });	
+                            
+                            return false;
+			}
+                        
 			function get_xls(rang){
 				/*if(rang == 'manager'){
 					var date1 = $('#date1').val();
@@ -508,7 +534,7 @@
 					}
 				});
 				//Load person list from server
-				$('#PeopleTableContainer').jtable('load');
+				//$('#PeopleTableContainer').jtable('load');
 				
 				$('#LoadRecordsButton').click(function (e) {
 		            e.preventDefault();
@@ -524,11 +550,13 @@
 		        });
  
         		//Load all records when page is first shown
-        		$('#LoadRecordsButton').click();
+        		//$('#LoadRecordsButton').click();
                         
                         // Загружаем данные о з/п при входе
                         onManager();
                         onMaster();
+                        
+                        onUserStatUpdate();
 
 			});
 		</script>

@@ -109,7 +109,8 @@ class jqGridLoader
 
         if(!is_file($file))
         {
-            throw new jqGrid_Exception_Render($name . ' not found!');
+            //throw new jqGrid_Exception_Render($name . ' not found!');
+            throw new jqGrid_Exception_Render($file . ' not found!');
         }
 
         require_once $file;
@@ -205,6 +206,8 @@ class jqGridLoader
         {
             $path = $this->root_path . implode(DIRECTORY_SEPARATOR, array_slice($parts, 1)) . '.php';
         }
+        
+        //echo '<p>autoload path='.$path.'</p><br>';
 
         #Do not interfere with other autoloads
         if(file_exists($path))

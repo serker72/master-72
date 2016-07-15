@@ -34,7 +34,7 @@ class jqStreet extends jqGrid
             'city_id' => array('label' => 'Название города/населенного пункта',
                 'hidden' => true,
                 'edittype' => 'select',
-                'editoptions' => array('dataUrl' => '/ajax/admin.php?action=city_pos'),
+                'editoptions' => array('dataUrl' => WEB_ROOT . 'ajax/admin.php?action=city_pos'),
                 'editrules' => array('edithidden' => true, 'required' => true),
             ),
 
@@ -76,16 +76,9 @@ class jqStreet extends jqGrid
         $this->render_filter_toolbar = true;
     }
     
-    /*protected function operData($data)
+    protected function opEdit($id, $upd)
     {
-        $data['password'] = $data['password'] ? md5($data['password']) : null;
-        
-        //Server side error checking
-        if($data['password'] == NULL)
-        {
-            throw new jqGridException('Не указан пароль пользователя !'); //This message goes directly to server response
-        }        
-
-        return $data;
-    }*/
+        #Save other vars to items table
+        $this->DB->update('street', $upd, array('id' => $id));
+    }
 }

@@ -13,8 +13,8 @@ class jqUser extends jqGrid
         #Set columns
         $this->cols = array(
             'id' => array('label' => 'ID',
-                'width' => 60,
-                'align' => 'center',
+                'width' => 50,
+                'align' => 'right',
                 'editable' => false, //id is non-editable
             ),
 
@@ -24,7 +24,7 @@ class jqUser extends jqGrid
             ),
 
             'realname' => array('label' => 'ФИО',
-                'width' => 200,
+                'width' => 300,
                 'editrules' => array('required' => true),
             ),
             
@@ -36,21 +36,22 @@ class jqUser extends jqGrid
             ),
 
             'rang' => array('label' => 'Роль',
-                'width' => 80,
+                'width' => 110,
                 'edittype' => 'select',
                 'editoptions' => array('value' => "manager:Менеджер; master:Мастер; admin:Администратор"),
                 'editrules' => array('required' => true),
+                'stype' => 'select',
+                'searchoptions' => array('value' => "manager:Менеджер; master:Мастер; admin:Администратор"),
             ),
             
             'phone' => array('label' => 'Телефон',
-                'width' => 120,
-                'align' => 'center',
+                'width' => 140,
+                //'align' => 'center',
                 'editrules' => array('required' => true),
             ),
 
             'sms' => array('label' => 'sms',
                 'hidden' => true,
-                //'editable' => true,
                 'editrules' => array('edithidden' => true),
                 'edittype' => 'checkbox',
                 'editoptions' => array('value' => "1:0"),
@@ -58,18 +59,17 @@ class jqUser extends jqGrid
 
             'dogovor' => array('label' => 'Договор',
                 'hidden' => true,
-                //'editable' => true,
                 'editrules' => array('edithidden' => true),
             ),
 
             'address' => array('label' => 'Адресс',
                 'hidden' => true,
-                //'editable' => true,
                 'editrules' => array('edithidden' => true, 'required' => true),
             ),
 
             'company' => array('label' => 'Компания',
-                'width' => 150,
+                'hidden' => true,
+                'editrules' => array('edithidden' => true),
             ),
             
             'stavka' => array('label' => 'Ставка',

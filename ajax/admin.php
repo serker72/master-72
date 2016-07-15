@@ -355,7 +355,8 @@ if($action == "list"){
 	foreach ($cityes as $one) {
 		$table .= '<option value="'.$one['id'].'">'.$one['name'].'</option>';
 	}
-	echo '<select>'.$table.'</select>';
+	//echo '<select>'.$table.'</select>';
+	die('<select>'.$table.'</select>');
 }elseif($action == 'city_pos'){
 	$cityes = DB::GetQueryResult("SELECT `id`,`name`, `parent_id`, if(`parent_id` = 0, `id`, `parent_id`) as new_parent_id FROM `city` ORDER by new_parent_id, `parent_id`, `name`", false);
 	$table = '';
@@ -418,6 +419,36 @@ if($action == "list"){
        
 
 	die($html);
+}elseif($action == 'user_stat_update'){
+    $result = DB::Query("DELETE FROM `user_stat`");
+    
+    $result = DB::Query("
+INSERT INTO `user_stat`
+SELECT u.`id`, u.`username`, u.`realname`, u.`rang`, u.`stavka`,
+  (SELECT SUM(o.`cost`) FROM `order` o WHERE o.`user_id` = u.`id` AND o.`cost` <> 0),
+  (SELECT ROUND(SUM(o.`cost`)*u.`stavka`/100, 2) FROM `order` o WHERE o.`user_id` = u.`id` AND o.`cost` <> 0) AS zp_calc,
+  (SELECT SUM(p.`cost`) FROM `pay` p WHERE p.`user_id` = u.`id` AND p.`cost` <> 0),
+  0
+  FROM `user` u
+  WHERE u.`rang` = 'manager'
+  AND u.`stavka` > 0
+  HAVING zp_calc > 0");
+    
+    $result = DB::Query("
+INSERT INTO `user_stat`
+SELECT u.`id`, u.`username`, u.`realname`, u.`rang`, u.`stavka`,
+  (SELECT SUM(o.`cost`) FROM `order` o WHERE o.`master_name` = u.`id` AND o.`cost` <> 0),
+  (SELECT ROUND(SUM(o.`cost`)*u.`stavka`/100, 2) FROM `order` o WHERE o.`master_name` = u.`id` AND o.`cost` <> 0) AS zp_calc,
+  (SELECT SUM(p.`cost`) FROM `pay` p WHERE p.`user_id` = u.`id` AND p.`cost` <> 0),
+  0
+  FROM `user` u
+  WHERE u.`rang` = 'master'
+  AND u.`stavka` > 0
+  HAVING zp_calc > 0");
+    
+    $result = DB::Query("UPDATE `user_stat` SET `zp_pay` = 0 WHERE `zp_pay` IS NULL");
+    
+    $result = DB::Query("UPDATE `user_stat` SET `zp` = `zp_calc` - `zp_pay`");
 }
 
 

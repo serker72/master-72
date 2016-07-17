@@ -77,12 +77,14 @@ class jqUser extends jqGrid
                 'formatter' => 'numeric',
                 'align' => 'right',
                 'editrules' => array('required' => true),
+                'formatter' => 'number',
             ),
         );
         
         //
         $this->options = array(
-            'height' => 500,
+            'rowNum' => 15,
+            'height' => 350,
         );
 
         #Set nav
@@ -91,7 +93,8 @@ class jqUser extends jqGrid
             'add' => true, 
             'edit' => true, 
             'del' => true,
-            'excel' => false,
+            'excel' => true,
+            'exceltitle' => 'Экспортировать в Excel',
             
             /*'viewtext' => 'См',
             'addtext' => 'Доб',

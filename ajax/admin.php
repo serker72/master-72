@@ -6,6 +6,7 @@ ini_set('error_reporting', E_ALL);
 
 require_once(dirname(dirname(__FILE__)) . '/app.php');
 require_once(dirname(dirname(__FILE__)) . '/lib/ksk_functions.php');
+require_once(dirname(dirname(__FILE__)) . '/include/classes/PHPExcel.php');
 
 function GenPassword($p) {
 	return md5($p.'@4!@#$%@');
@@ -449,6 +450,80 @@ SELECT u.`id`, u.`username`, u.`realname`, u.`rang`, u.`stavka`,
     $result = DB::Query("UPDATE `user_stat` SET `zp_pay` = 0 WHERE `zp_pay` IS NULL");
     
     $result = DB::Query("UPDATE `user_stat` SET `zp` = `zp_calc` - `zp_pay`");
+}elseif($action == 'user_list'){
+	$users = DB::GetQueryResult("SELECT * FROM `user` WHERE `id` != 0 ORDER by `realname`", false);
+	$table = '';
+	foreach ($users as $one) {
+		$table .= '<option value="'.$one['id'].'">'.$one['username'].' - '.$one['realname'].'</option>';
+	}
+	echo '<select>'.$table.'</select>';
+}elseif($action == 'street_xls_import'){
+    $ret_msg = '';
+    $uploaddir = getcwd() . '/../static/uploads/';
+    $uploadfile = $uploaddir . basename($_FILES['street_xls']['name']);
+    
+    if (is_writable($uploaddir)) {
+        if (copy($_FILES['street_xls']['tmp_name'], $uploadfile))
+        {
+            // Сформируем массив имеющихся улиц для поиска
+            $streets = DB::GetQueryResult("SELECT * FROM `street` ORDER by `city_id`, `name`", false);
+            $street_array = array();
+            foreach ($streets as $one) {
+                $street_array[$one['id']] = $one['city_id'] . '-' . $one['name'];
+            }
+            
+            // Чтение Excel
+            // Создаем новый экземпляр Reader
+            $objReader = PHPExcel_IOFactory::createReader(PHPExcel_IOFactory::identify($uploadfile));
+
+            $spreadsheetInfo = $objReader->listWorksheetInfo($uploadfile);
+            
+            // Загружаем файл XLS
+            $objPHPExcel = $objReader->load($uploadfile);
+            
+            $objPHPExcel->setActiveSheetIndex($objPHPExcel->getActiveSheetIndex());
+            
+            // Считываем значения
+            $sheetData = $objPHPExcel->getActiveSheet()->toArray(null, true, true, false);
+            
+            // Закрываем файл
+            $objPHPExcel->disconnectWorksheets();
+            
+            $out_str = "";
+            $add_rec = 0;
+            $query = "INSERT INTO `street`(`city_id`, `name`) VALUES (#AAAA#, '#BBBB#')";
+            
+            for ($i = 0; $i < count($sheetData); $i++) {
+                if (($sheetData[$i][0] != '') && ($sheetData[$i][1] != '')) {
+                    // Поиск артикула в массиве товаров
+                    $search_reference = array_search($sheetData[$i][0].'-'.$sheetData[$i][1], $street_array, true);
+                    if ($search_reference !== false) {
+                        
+                    } else {
+                        $out_str = str_replace('#AAAA#', $sheetData[$i][0], str_replace('#BBBB#', $sheetData[$i][1], $query)) . PHP_EOL;
+                        $result = DB::Query($out_str);
+                        if ($result) $add_rec++;
+                    }
+                }
+            }
+            
+            /*if ($out_str !== "") {
+                $result = DB::Query($out_str);
+                $ret_msg = "Успешно добавлено $add_rec строк в таблицу !"; 
+            }*/
+            if ($add_rec > 0) {
+                $ret_msg = "Успешно добавлено $add_rec строк в таблицу !"; 
+            }
+        }
+        else { 
+            $ret_msg = "Ошибка! Не удалось загрузить файл на сервер !"; 
+        }
+    } else {
+        $ret_msg = 'Нет доступа на запись в каталог ' . $uploaddir;
+    }
+    
+    //echo json_encode($ret_msg);
+    echo $ret_msg;
 }
 
 

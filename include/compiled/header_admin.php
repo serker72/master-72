@@ -12,7 +12,9 @@
         <!--link href="/static/admin/scripts/jtable/themes/lightcolor/blue/jtable.css" rel="stylesheet" type="text/css" /-->
         <!--script type="text/javascript" src="/static/js/jquery.js"></script-->
         <script type="text/javascript" src="/static/js/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="/static/js/jquery-migrate-1.0.0.js"></script>
         <script type="text/javascript" src="/static/js/jquery-ui.js"></script>
+        <script src="/static/js/i18n/jquery.ui.datepicker-ru.js" type="text/javascript"></script>
         <script src="/static/js/i18n/grid.locale-ru.js" type="text/javascript"></script>
         <script src="/static/js/jquery.jqGrid.min.js" type="text/javascript"></script>
         <script src="/static/js/jqgrid-ext.js" type="text/javascript"></script>

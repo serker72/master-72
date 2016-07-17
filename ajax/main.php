@@ -639,4 +639,52 @@ if ($action == 'get_cities') {
 	}
 
 	die($html);
+}elseif($action == 'get_contacts_messages'){
+	$html = '';
+	$mail = DB::GetQueryResult("SELECT u.`id`, u.`username`, u.`realname`,
+(SELECT count(m.`id`) FROM `message` m WHERE m.`user_id`=u.`id` AND m.`is_read`=0) as count_send_not_read_msg,
+(SELECT count(m.`id`) FROM `message` m WHERE m.`user_id`=u.`id`) as count_send_msg,
+(SELECT count(m.`id`) FROM `message` m WHERE m.`for_user`=u.`id`) as count_recieve_msg
+FROM `user` u
+WHERE u.`id`<>{$login_user['id']}
+HAVING count_send_not_read_msg>0 OR count_send_msg>0 OR count_recieve_msg>0
+ORDER BY 4 DESC,5 DESC,6 DESC, 2 ASC", false);
+
+	foreach ($mail as $one) {
+            $html .= '<li id="href_contact_messages_'.$one['id'].'"><a href="" onclick="get_contact_messages('.$one['id'].', \''.$one['username'].'\'); return false;">'.$one['username'].'<br>'.$one['realname'];
+            if ($one['count_send_not_read_msg'] > 0) $html .= ' ('.$one['count_send_not_read_msg'].')';
+            $html .= '</a></li>';
+	}
+        
+        if ($html !== '') $html = '<ul>'.$html.'</ul>';
+
+	die($html);
+}elseif($action == 'get_contact_messages'){
+	$html = '';
+
+	$id = $_GET['id'];
+
+	$mail = DB::GetQueryResult("SELECT * FROM message WHERE for_user = 100000 AND user_id = {$id} OR for_user = {$id}", false);
+	foreach ($mail as $one) {
+		$user_name = DB::GetQueryResult("SELECT realname, username FROM user WHERE id = {$one['user_id']}", true);
+
+		if($one['user_id'] == 100000){
+                    $name = 'Администратор';
+                    $html .= '<div class="div-send-message">';
+                } else {
+                    $name = $user_name['realname'].'('.$user_name['username'].')';
+                    $html .= '<div class="div-recieve-message'.($one['is_read'] == 0 ? ' div-recieve-message-unread' : '').'">';
+                }
+                
+		$html .= '<strong>'.$name.' '.$one['date'].'</strong><hr>';
+                $html .= $one['message'];
+		$html .='</div>';
+                
+                // Отмечаем как прочитанные сообщения
+                if ($one['is_read'] == 0) {
+                    $result = DB::Query("UPDATE `message` SET `is_read` = 1 WHERE `id` = {$one['id']}");
+                }
+	}
+
+	die($html);
 }

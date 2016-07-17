@@ -18,11 +18,11 @@ function PrintEditForm($img_fields_flag) {
 			<td style="width:280px;">
 				<div style="float:left;">
 					<div class="title">Дата</div>
-					<input type="text" id="datetime" name="date" style="width: 100px;" <?php if(is_manager()){ echo 'disabled'; } ?>>
+					<input type="text" id="datetime" name="date" style="width: 100px;" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>
 				</div>
 				<div style="float:left; margin-left: 5px;">
 					<div class="title">Время</div>
-					<input type="text" id="time" name="time" style="width: 60px;" <?php if(is_manager()){ echo 'disabled'; } ?>>
+					<input type="text" id="time" name="time" style="width: 60px;" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>
 				</div>
 			</td>
 			<td>
@@ -120,21 +120,21 @@ function PrintEditForm($img_fields_flag) {
 			<td>
 				<div <?php if(is_manager()){ echo 'style="display:none;"'; } ?>>
 					<div class="title">ФИО мастера 1</div>
-					<select id="master-name" name="master-name" <?php if(is_manager()){ echo 'disabled'; } ?>>
+					<select id="master-name" name="master-name" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>
 						<option value="" selected="selected">Выбрать</option>
 						<?php foreach($users_master as $one){
 							echo '<option value="'.$one['id'].'">'.$one['realname'].'</option>';
 						} ?>
 					</select>
 					<div class="title">ФИО мастера 2</div>
-					<select id="master-name-two" name="master-name-two" <?php if(is_manager()){ echo 'disabled'; } ?>>
+					<select id="master-name-two" name="master-name-two" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>
 						<option value="" selected="selected">Выбрать</option>
 						<?php foreach($users_master as $one){
 							echo '<option value="'.$one['id'].'">'.$one['realname'].'</option>';
 						} ?>
 					</select>	
 					<div class="title">ФИО мастера 2</div>
-					<select id="master-name-th" name="master-name-th" <?php if(is_manager()){ echo 'disabled'; } ?>>
+					<select id="master-name-th" name="master-name-th" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>
 						<option value="" selected="selected">Выбрать</option>
 						<?php foreach($users_master as $one){
 							echo '<option value="'.$one['id'].'">'.$one['realname'].'</option>';
@@ -147,11 +147,11 @@ function PrintEditForm($img_fields_flag) {
 		<tr>
 			<td>
 				<div class="title">Номер акта</div>
-				<input type="text" id="offer-number" name="offer-number" <?php if(is_manager()){ echo 'disabled'; } ?>>
+				<input type="text" id="offer-number" name="offer-number" disabled="disabled" <?php //if(is_manager()){ echo ' disabled="disabled"'; } ?>>
 			</td>
 			<td>
 				<div class="title">Сумма заказа</div>
-				<input type="text" id="cost" name="cost" <?php if(is_manager()){ echo 'disabled'; } ?>>
+				<input type="text" id="cost" name="cost" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>
 			</td>
 			<td>
                             <?php if ($img_fields_flag) { ?>
@@ -170,7 +170,7 @@ function PrintEditForm($img_fields_flag) {
 			<td>
 				<div id="note_div" <?php if(is_manager()){ echo 'style="display:none;"'; } ?>>
 					<div class="title">Примечания</div>
-					<input type="text" id="note" name="note" <?php if(is_manager()){ echo 'disabled'; } ?>>
+					<input type="text" id="note" name="note" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>
 				</div>				
 			</td>
 			<td>
@@ -574,8 +574,10 @@ function PrintEditForm($img_fields_flag) {
                     return true;
                 }
             <?php }else{ ?>
-                if ($('#myAddModal #master-name').val() == '') {
-                    alert('Необходимо выбрать мастера');
+                //if ($('#myAddModal #master-name').val() == '') {
+                if($('#myAddModal #datetime_hope').val() == '' || $('#myAddModal #street').val() == '' || $('#myAddModal #customer-phone').val() == '' || $('#myAddModal #master-name').val() == ''){ // || ($('#myAddModal #master-name').val() == '')
+                    //alert('Необходимо выбрать мастера');
+                    alert('Перед отправкой заполните все обязательные поля!');
                     return false;
 		}else{
                     $('#myAddModal #form_add').ajaxSubmit(options); 

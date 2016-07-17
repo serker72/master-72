@@ -188,3 +188,49 @@ table.jtable{
     width: 100%;
     display: none;
 }
+
+.div-recieve-message {
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    background-color: #F0F4F8;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.div-recieve-message-unread {
+    color: #ff0033;
+}
+
+.div-send-message {
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    background-color: #E5F7FD;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+#contacts_messages ul {
+    margin-left: 0;
+    padding-left: 0;
+}
+
+#contacts_messages li {
+    list-style-type: none;
+    margin-bottom: 5px;
+}
+
+#contacts_messages li a, #contacts_messages li a:hover, #contacts_messages li a:visited, 
+#contacts_messages li a:link, #contacts_messages li a:active {
+    text-decoration: none;
+    outline: none;
+}
+
+.li-contacts-messages-active {
+    background-color: #E5F7FD;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}

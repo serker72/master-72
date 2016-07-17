@@ -28,7 +28,8 @@ class jqCity extends jqGrid
         
         //
         $this->options = array(
-            'height' => 500,
+            'rowNum' => 15,
+            'height' => 350,
         );
 
         #Set nav
@@ -37,7 +38,8 @@ class jqCity extends jqGrid
             'add' => true, 
             'edit' => true, 
             'del' => true,
-            'excel' => false,
+            'excel' => true,
+            'exceltitle' => 'Экспортировать в Excel',
             
             /*'viewtext' => 'См',
             'addtext' => 'Доб',

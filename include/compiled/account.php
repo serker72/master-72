@@ -13,11 +13,12 @@
 	<a href="/logout.php" class="btn">Выйти</a>
 </div>
 <form method="post" action="/ajax/post.php" class="validator" id="form">
-	<div class="info-block" style="width: 254;">
+	<div class="info-block" style="margin-top: 100px;">
 		<input type="hidden" id="action" name="action" value="update_account" />
-		ФИО: <input id="fio" name="fio" style="width:200px; border: none; background: transparent; text-decoration: none;cursor: pointer;" value="<?=$login_user['realname'];?>"> <br/>
-		Телефон: <input id="phone" name="phone" style="width:200px; border: none; background: transparent; text-decoration: none;cursor: pointer;" value="<?=$login_user['phone'];?>"> <br/>
-		Адрес: <input id="address" name="address" style="width:200px; border: none; background: transparent; text-decoration: none;cursor: pointer;" value="<?=$login_user['address'];?>"> <br/>
+		ФИО: <input id="fio" name="fio" style="width:200px; background: transparent; text-decoration: none;cursor: pointer;" value="<?=$login_user['realname'];?>"> &nbsp;&nbsp;&nbsp;
+		Телефон: <input id="phone" name="phone" style="width:200px; background: transparent; text-decoration: none;cursor: pointer;" value="<?=$login_user['phone'];?>"> <br/><br/>
+		Адрес: <input id="address" name="address" style="width:200px; background: transparent; text-decoration: none;cursor: pointer;" value="<?=$login_user['address'];?>"> &nbsp;&nbsp;&nbsp;
+                Пароль: <input type="password" id="password" name="password" style="width:200px; background: transparent; text-decoration: none;cursor: pointer;" value=""> <br/><br/>
 		<a href="#" onClick="update_account(); return false;" class="btn">Обновить</a>
 	</div>	
 </form>
@@ -172,9 +173,10 @@ function update_account(){
 	var fio = $('#fio').val();
 	var phone = $('#phone').val();
 	var address = $('#address').val();
+	var password = $('#password').val();
 	$.ajax({
 		type: "POST",
-		data: "action=update_account&user_id=<?=$login_user['id'];?>&fio="+fio+"&phone="+phone+"&address="+address,
+		data: "action=update_account&user_id=<?=$login_user['id'];?>&fio="+fio+"&phone="+phone+"&address="+address+"&password="+password,
 		url: "/ajax/post.php",
 		success: function(data){
 			alert('Информация успешно обновлена!');

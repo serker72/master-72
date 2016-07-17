@@ -5,7 +5,11 @@ ini_set("display_startup_errors","1");
 ini_set('error_reporting', E_ALL);
 
 require_once(dirname(dirname(__FILE__)) . '/app.php');
-include_once '../lib/function.php';
+include_once(dirname(dirname(__FILE__)) . '/lib/function.php');
+
+function GenPassword($p) {
+	return md5($p.'@4!@#$%@');
+}
 
 $order_status = array(
     "1" => "Выполнен",
@@ -714,7 +718,8 @@ if ($_POST) {
 			Table::UpdateCache('user', $id, array(
 				'realname' => $_POST['fio'],
 				'phone' => $_POST['phone'],
-				'address' => $_POST['address']
+				'address' => $_POST['address'],
+                                'password' => GenPassword($_POST['password'])
 			));
 		}		
 	}elseif($_POST['action'] == 'add_message'){
@@ -734,7 +739,8 @@ if ($_POST) {
 				$order_id = DB::Insert('message', array(
 					'user_id' => 100000,
 					'message' => $message,
-					'for_user' => $user
+					'for_user' => $user,
+                                        'is_read' => 0
 				));			
 			}	
 		}else{
@@ -743,7 +749,8 @@ if ($_POST) {
 				$order_id = DB::Insert('message', array(
 					'user_id' => 100000,
 					'message' => $message,
-					'for_user' => $one['id']
+					'for_user' => $one['id'],
+                                        'is_read' => 0
 				));				
 			}
 		}		

@@ -7,10 +7,10 @@ class jqManagerStat extends jqGrid
         #Set database table
         $this->table = 'user_stat';
 
-        //$this->where[] = "rang = 'manager'";
+        $this->where[] = "rang = 'manager'";
         
         #Make all columns editable by default
-        //$this->cols_default = array('editable' => false);
+        $this->cols_default = array('editable' => false);
 
         #Set columns
         $this->cols = array(
@@ -20,37 +20,48 @@ class jqManagerStat extends jqGrid
             ),
 
             'username' => array('label' => 'Логин',
-                'width' => 100,
+                'width' => 90,
             ),
 
             'realname' => array('label' => 'ФИО',
-                'width' => 300,
+                'width' => 200,
             ),
             
             'stavka' => array('label' => 'Ставка',
-                'width' => 60,
+                'width' => 55,
+                'align' => 'right',
+                'formatter' => 'number',
             ),
             
             'zp_calc_sum' => array('label' => 'Сумма счетов',
-                'width' => 80,
+                'width' => 90,
+                'align' => 'right',
+                'formatter' => 'number',
             ),
             
             'zp_calc' => array('label' => 'Рассчитано',
-                'width' => 80,
+                'width' => 90,
+                'align' => 'right',
+                'formatter' => 'number',
             ),
             
             'zp_pay' => array('label' => 'Выплачено',
-                'width' => 80,
+                'width' => 90,
+                'align' => 'right',
+                'formatter' => 'number',
             ),
             
             'zp' => array('label' => 'З/П',
-                'width' => 80,
+                'width' => 90,
+                'align' => 'right',
+                'formatter' => 'number',
             ),
         );
         
         //
         $this->options = array(
-            'height' => 500,
+            'rowNum' => 15,
+            'height' => 350,
         );
 
         #Set nav
@@ -59,7 +70,8 @@ class jqManagerStat extends jqGrid
             'add' => false, 
             'edit' => false, 
             'del' => false,
-            'excel' => false,
+            'excel' => true,
+            'exceltitle' => 'Экспортировать в Excel',
             
             /*'viewtext' => 'См',
             'addtext' => 'Доб',

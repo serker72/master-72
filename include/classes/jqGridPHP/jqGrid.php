@@ -1245,7 +1245,7 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
             #Excel button
             if(isset($data['nav']['excel']) and $data['nav']['excel'])
             {
-                $code .= "\$grid.jqGrid('navButtonAdd', pager, {caption: '{$data['nav']['exceltext']}', title: '{$data['nav']['exceltext']}', icon: 'ui-extlink', onClickButton: function(){ \$(this).jqGrid('extExport', {'export' : 'ExcelHtml', 'rows': -1}); }});\n";
+                $code .= "\$grid.jqGrid('navButtonAdd', pager, {caption: '{$data['nav']['exceltext']}', title: '{$data['nav']['exceltitle']}', icon: 'ui-extlink', onClickButton: function(){ \$(this).jqGrid('extExport', {'export' : 'ExcelHtml', 'rows': -1}); }});\n";
             }
         }
 

@@ -26,7 +26,7 @@ class jqStreet extends jqGrid
         #Set columns
         $this->cols = array(
             'id' => array('label' => 'ID',
-                'width' => 60,
+                'width' => 80,
                 'align' => 'center',
                 'editable' => false, //id is non-editable
             ),
@@ -51,7 +51,8 @@ class jqStreet extends jqGrid
         
         //
         $this->options = array(
-            'height' => 500,
+            'rowNum' => 15,
+            'height' => 350,
         );
 
         #Set nav
@@ -60,7 +61,8 @@ class jqStreet extends jqGrid
             'add' => true, 
             'edit' => true, 
             'del' => true,
-            'excel' => false,
+            'excel' => true,
+            'exceltitle' => 'Экспортировать в Excel',
             
             /*'viewtext' => 'См',
             'addtext' => 'Доб',

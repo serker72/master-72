@@ -328,7 +328,8 @@ function PrintEditForm($img_fields_flag) {
 							echo '<option value="'.$one['id'].'">'.$one['realname'].'</option>';
 						} ?>
 				</select>
-				<a id="filter-order-done" href="#" onClick="dofilter('order-done'); return false;" class="btn">Поиск</a>			
+				<a id="filter-order-done" href="#" onClick="dofilter('order-done'); return false;" class="btn">Поиск</a>
+				<!--button id="filter-order-done" onClick="dofilter('order-done'); return false;" class="btn">Поиск</button-->
 			</div>
 			<?php }else{ ?>
 			<div>

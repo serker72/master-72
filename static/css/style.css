@@ -212,6 +212,16 @@ table.jtable{
     border-radius: 6px;
 }
 
+#contacts_messages {
+    height: 550px;
+    overflow-y: auto;
+}
+
+#contact_messages {
+    height: 500px;
+    overflow-y: auto;
+}
+
 #contacts_messages ul {
     margin-left: 0;
     padding-left: 0;
@@ -230,6 +240,21 @@ table.jtable{
 
 .li-contacts-messages-active {
     background-color: #E5F7FD;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.btn {
+    vertical-align: top;
+}
+
+.button-all-messages {
+    display: none;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    background-color: #82a0b0;
     -webkit-border-radius: 6px;
     -moz-border-radius: 6px;
     border-radius: 6px;

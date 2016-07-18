@@ -18,6 +18,7 @@ $y_now = date('Y');
 $m_now = date('m');
 
 $sms_api_options = get_sms_api_options();
+$settings = get_settings();
 
 $start_time = mysql_real_escape_string($d_start.'.'.$m_now.'.'.$y_now);
 $end_time = mysql_real_escape_string($d_end.'.'.$m_now.'.'.$y_now);

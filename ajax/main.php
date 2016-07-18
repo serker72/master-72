@@ -5,6 +5,7 @@ ini_set("display_startup_errors","1");
 ini_set('error_reporting', E_ALL);
 
 require_once(dirname(dirname(__FILE__)) . '/app.php');
+require_once(dirname(dirname(__FILE__)) . '/lib/ksk_functions.php');
 
 $order_status = array(
     "1" => "Выполнен",
@@ -663,15 +664,28 @@ ORDER BY 4 DESC,5 DESC,6 DESC, 2 ASC", false);
 	$html = '';
 
 	$id = $_GET['id'];
+        $last_message = $_GET['last_message'];
+        
+        $settings = get_settings();
 
-	$mail = DB::GetQueryResult("SELECT * FROM message WHERE for_user = 100000 AND user_id = {$id} OR for_user = {$id}", false);
+	$mail_count = DB::GetQueryResult("SELECT count(*) as cnt FROM message WHERE for_user = 100000 AND user_id = {$id} OR for_user = {$id}", true);
+        
+        if (($last_message == '1') && ((int)$mail_count['cnt'] > (int)$settings['msg_record_show_cnt'])) {
+            $query = "SELECT * FROM (
+                SELECT * FROM message WHERE for_user = 100000 AND user_id = {$id} OR for_user = {$id} ORDER BY `date` DESC LIMIT " . $settings['msg_record_show_cnt'] . "
+                ) AS `table` ORDER by `date` ASC";
+        } else {
+            $query = "SELECT * FROM message WHERE for_user = 100000 AND user_id = {$id} OR for_user = {$id}";
+        }
+        
+        $mail = DB::GetQueryResult($query, false);
+        
 	foreach ($mail as $one) {
-		$user_name = DB::GetQueryResult("SELECT realname, username FROM user WHERE id = {$one['user_id']}", true);
-
 		if($one['user_id'] == 100000){
                     $name = 'Администратор';
                     $html .= '<div class="div-send-message">';
                 } else {
+                    $user_name = DB::GetQueryResult("SELECT realname, username FROM user WHERE id = {$one['user_id']}", true);
                     $name = $user_name['realname'].'('.$user_name['username'].')';
                     $html .= '<div class="div-recieve-message'.($one['is_read'] == 0 ? ' div-recieve-message-unread' : '').'">';
                 }
@@ -686,5 +700,8 @@ ORDER BY 4 DESC,5 DESC,6 DESC, 2 ASC", false);
                 }
 	}
 
-	die($html);
+	die(json_encode(array(
+            'html' => $html,
+            'hide_msg' => ($last_message == '1') && ((int)$mail_count['cnt'] > (int)$settings['msg_record_show_cnt']),
+        )));
 }

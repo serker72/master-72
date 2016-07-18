@@ -524,6 +524,25 @@ SELECT u.`id`, u.`username`, u.`realname`, u.`rang`, u.`stavka`,
     
     //echo json_encode($ret_msg);
     echo $ret_msg;
+}elseif($action == 'save_settings'){
+    $err_array = array();
+    foreach ($_POST as $key => $value) {
+        $fl = DB::Update('settings', $key, array('var' => $value), 'name');
+        if (!$fl) {
+            $err_array[] = 'Ошибка обновления значения параметра '.$key;
+        }
+    }
+    
+    if (count($err_array) > 0) {
+        $ret_msg = implode('<br>', $err_array);
+    } else {
+        $ret_msg = 'Настройки успешно сохранены...';
+    }
+    
+    echo json_encode(array(
+        'err_count' => count($err_array),
+        'ret_msg' => $ret_msg,
+    ));
 }
 
 

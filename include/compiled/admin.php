@@ -133,11 +133,24 @@
                 </div>
             </div>
             <div id="tabs-10">
-		<div id="sms-api-manager">
-			<h4>SMS API</h4>
-                        <div id="sms-api-manager-table"></div><br>
-			<a href="#mySmsApiOptions" role="button"  style="font-weight:normal;" class="btn" data-toggle="modal">Изменить</a>
-		</div>
+                <div>
+                    <form id="settings-form" method="post">
+                        <label for="sms_master">Текст сообщения для мастера:</label>
+                        <textarea id="sms_master" name="sms_master" rows="3" style="width: 520px;"><?php echo $settings['sms_master']; ?></textarea><br>
+                        <label for="sms_client">Текст сообщения для мастера:</label>
+                        <textarea id="sms_client" name="sms_client" rows="3" style="width: 520px;"><?php echo $settings['sms_client']; ?></textarea><br>
+                        <label for="sms_api_username">SMS API Логин:</label>
+                        <input type="text" id="sms_api_username" name="sms_api_username" value="<?php echo $settings['sms_api_username']; ?>"><br>
+                        <label for="sms_api_password">SMS API Пароль:</label>
+                        <input type="text" id="sms_api_password" name="sms_api_password" value="<?php echo $settings['sms_api_password']; ?>"><br>
+                        <label for="sms_api_phone">SMS API Номер телефона:</label>
+                        <input type="text" id="sms_api_phone" name="sms_api_phone" value="<?php echo $settings['sms_api_phone']; ?>"><br>
+                        <label for="msg_record_show_cnt">Количество отображаемых сообщений:</label>
+                        <input type="text" id="msg_record_show_cnt" name="msg_record_show_cnt" value="<?php echo $settings['msg_record_show_cnt']; ?>"><br><br>
+			<a href="#" class="btn" onClick="onSaveSettings(); return false;">Сохранить изменения</a>
+                    </form>
+                    <div id="save_settings_status"></div>
+                </div>
             </div>
         </div>
         <!------------------------------------------------->
@@ -182,29 +195,44 @@
                             return false;                            
                         }
                         
-                        function onSmsApiOptionsChange() {
-				var sms_api_username = $('#sms_api_username').val();
-				var sms_api_password = $('#sms_api_password').val();
-				var sms_api_phone = $('#sms_api_phone').val();
-
-				if ((sms_api_username == '') || (sms_api_password == '') || (sms_api_phone == '')) {
-					alert('Заполните все поля');
-				}else{
-					$.ajax({
-						type: "GET",
-						url: "/ajax/admin.php?action=sms_api_options_change&sms_api_username="+sms_api_username+'&sms_api_password='+sms_api_password+'&sms_api_phone='+sms_api_phone,
-						success: function(data){ 
-                                                    //alert("Успешно изменены параметры SMS API !");
-                                                    $("#sms-api-manager-table").html($(data));
-                                                }
-					});
-                                        $("#mySmsApiOptions").modal('hide');
-				}
-				return false;
+                        function onSaveSettings() {
+                            var form = document.getElementById('settings-form');
+                            var formElements = form.elements;
+                            
+                            // в цикле перебираем элементы формы
+                            for (var j=0; j<formElements.length; j++) {
+                                if (formElements[j].value == '') {
+                                    alert("Заполните все поля формы !");
+                                    document.getElementById(formElements[j].id).focus();
+                                    return false;
+                                }
+                            }
+                            
+                            var formData = new FormData(form);
+                            
+                            $.ajax({
+                                url: '<?php echo WEB_ROOT . 'ajax/admin.php?action=save_settings'; ?>',
+                                type: 'POST',
+                                data: formData,
+                                dataType: 'json',
+                                async: false,
+                                success: function (data) {
+                                    $("#save_settings_status").html(data.ret_msg);
+                                    if (data.err_count > 0) {
+                                        $("#save_settings_status").removeClass('text-success');
+                                        $("#save_settings_status").addClass('text-error');
+                                    } else {
+                                        $("#save_settings_status").removeClass('text-error');
+                                        $("#save_settings_status").addClass('text-success');
+                                    }
+                                    //alert(data.ret_msg);
+                                },
+                                cache: false,
+                                contentType: false,
+                                processData: false
+                            });
                         }
                         
-
-
 			$(document).ready(function () {
                             // Tab initialization
                             $('#tabs').tabs({
@@ -261,21 +289,5 @@
                     });
 		</script>
 		 
-		<!-- Modal -->
-		<div id="mySmsApiOptions" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		  <div class="modal-header">
-		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		    <h4 id="myModalLabel">Изменить настройки API для отправки SMS</h4>
-		  </div>
-		  <div class="modal-body">
-                      <p>Логин: <input type="text" id="sms_api_username" name="sms_api_username" value="<?php echo $sms_api_options['sms_api_username']; ?>"></p>
-		    <p>Пароль: <input type="text" id="sms_api_password" name="sms_api_password" value="<?php echo $sms_api_options['sms_api_password']; ?>"></p>
-		    <p>Номер телефона: <input type="text" id="sms_api_phone" name="sms_api_phone" value="<?php echo $sms_api_options['sms_api_phone']; ?>"></p>
-		  </div>
-		  <div class="modal-footer">
-		    <button class="btn btn-primary" onClick="onSmsApiOptionsChange();">Изменить</button>
-		  </div>
-		</div>
-
 
 <?php include template("footer"); ?>

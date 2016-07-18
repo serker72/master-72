@@ -718,8 +718,7 @@ if ($_POST) {
 			Table::UpdateCache('user', $id, array(
 				'realname' => $_POST['fio'],
 				'phone' => $_POST['phone'],
-				'address' => $_POST['address'],
-                                'password' => GenPassword($_POST['password'])
+				'address' => $_POST['address']
 			));
 		}		
 	}elseif($_POST['action'] == 'add_message'){
@@ -754,5 +753,32 @@ if ($_POST) {
 				));				
 			}
 		}		
+	}elseif($_POST['action'] == 'change_password'){
+            $ret_array = array('status' => false, 'msg' => '');
+            
+            $id = intval($_POST['user_id']);
+            $old_password = $_POST['old_password'];
+            $new_password1 = $_POST['new_password1'];
+            $new_password2 = $_POST['new_password2'];
+            
+            if (GenPassword($old_password) !== $login_user['password']) {
+                $ret_array['msg'] = 'Неверно указан текущий пароль !';
+            } elseif ($new_password1 !== $new_password2) {
+                $ret_array['msg'] = 'Укажите одинаковые значения нового пароля в обоих полях !';
+            } else {
+                $fl = Table::UpdateCache('user', $id, array(
+                        'password' => GenPassword($new_password1)
+                ));
+                
+                if ($fl) {
+                    $ret_array['msg'] = 'Пароль успешно изменен !';
+                } else {
+                    $ret_array['msg'] = 'Возникла ошибка при изменении пароля пользователя !';
+                }
+                
+                $ret_array['status'] = $fl;
+           }
+            
+            die(json_encode($ret_array));
 	}
 }

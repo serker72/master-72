@@ -38,3 +38,15 @@ function set_sms_api_options($sms_api_username, $sms_api_password, $sms_api_phon
     }
     
 }
+
+// Чтение из БД параметров
+function get_settings() {
+    $ret = array();
+    $settings = DB::GetQueryResult("SELECT * FROM `settings`", false);
+    
+    foreach ($settings as $value) {
+        $ret[$value['name']] = $value['var'];
+    }
+    
+    return $ret;
+}

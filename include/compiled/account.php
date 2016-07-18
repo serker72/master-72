@@ -1,4 +1,5 @@
 <?php include template("header"); ?>
+<script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>
 <script type="text/javascript" src="/static/js/jquery.form.js"></script>
 <link href="/static/js/datepicker/css/datepicker.css" rel="stylesheet">
 <script type="text/javascript" src="/static/js/datepicker/js/bootstrap-datepicker.js"></script>
@@ -18,8 +19,9 @@
 		ФИО: <input id="fio" name="fio" style="width:200px; background: transparent; text-decoration: none;cursor: pointer;" value="<?=$login_user['realname'];?>"> &nbsp;&nbsp;&nbsp;
 		Телефон: <input id="phone" name="phone" style="width:200px; background: transparent; text-decoration: none;cursor: pointer;" value="<?=$login_user['phone'];?>"> <br/><br/>
 		Адрес: <input id="address" name="address" style="width:200px; background: transparent; text-decoration: none;cursor: pointer;" value="<?=$login_user['address'];?>"> &nbsp;&nbsp;&nbsp;
-                Пароль: <input type="password" id="password" name="password" style="width:200px; background: transparent; text-decoration: none;cursor: pointer;" value=""> <br/><br/>
+                <!--Пароль: <input type="password" id="password" name="password" style="width:200px; background: transparent; text-decoration: none;cursor: pointer;" value=""> <br/><br/-->
 		<a href="#" onClick="update_account(); return false;" class="btn">Обновить</a>
+                <a href="#myChangePassword" role="button"  style="font-weight:normal;" class="btn" data-toggle="modal">Изменить пароль</a>
 	</div>	
 </form>
 <div class="info-block">
@@ -59,6 +61,25 @@
 	</div>
 	<div id="img_done"></div>
 </div>
+
+<!-- Modal -->
+<div id="myChangePassword" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h4 id="myModalLabel">Изменить пароль пользователя</h4>
+  </div>
+  <div class="modal-body">
+    <p>Текущий пароль: <input type="text" id="old_password" name="old_password" value=""></p>
+    <p>Новый пароль: <input type="text" id="new_password1" name="new_password1" value=""></p>
+    <p>Повтор нового пароля: <input type="text" id="new_password2" name="new_password2" value=""></p>
+    <p id="change_password_status"></p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" onClick="onChangePassword();">Изменить</button>
+  </div>
+</div>
+
+
 <script type="text/javascript">  
 //Отправка формы
 $(document).ready(function(){
@@ -103,9 +124,9 @@ function dofilter(type){
 		$.ajax({
 			type: "GET",
 			<?php if($login_user['rang'] != 'master'){ ?>
-				url: "/ajax/main.php?action=get_orders_done&user_id=<?=$login_user['id'];?>&place=account&filter_date="+filter_date+"&filter_date2="+filter_date2,
+				url: "<?php echo WEB_ROOT; ?>/ajax/main.php?action=get_orders_done&user_id=<?=$login_user['id'];?>&place=account&filter_date="+filter_date+"&filter_date2="+filter_date2,
 			<?php }else{ ?>
-				url: "/ajax/main.php?action=get_orders_master&user_id=<?=$login_user['id'];?>&place=account&filter_date="+filter_date+"&filter_date2="+filter_date2,
+				url: "<?php echo WEB_ROOT; ?>/ajax/main.php?action=get_orders_master&user_id=<?=$login_user['id'];?>&place=account&filter_date="+filter_date+"&filter_date2="+filter_date2,
 			<?php } ?>
 			success: function(data){ 
 				$('#orders_done').empty().append($(data)); 
@@ -118,7 +139,7 @@ function dofilter(type){
 	function get_order(){
 		$.ajax({
 			type: "GET",
-			url: "/ajax/main.php?action=get_orders&user_id=<?=$login_user['id'];?>&place=account",
+			url: "<?php echo WEB_ROOT; ?>/ajax/main.php?action=get_orders&user_id=<?=$login_user['id'];?>&place=account",
 			success: function(data){ $('#orders').empty().append($(data)); }
 		});		
 	}
@@ -126,7 +147,7 @@ function dofilter(type){
 	function get_order_done(){
 		$.ajax({
 			type: "GET",
-			url: "/ajax/main.php?action=get_orders_done&user_id=<?=$login_user['id'];?>&place=account",
+			url: "<?php echo WEB_ROOT; ?>/ajax/main.php?action=get_orders_done&user_id=<?=$login_user['id'];?>&place=account",
 			success: function(data){ $('#orders_done').empty().append($(data)); }
 		});		
 	}
@@ -134,7 +155,7 @@ function dofilter(type){
 	function get_order_master(){
 		$.ajax({
 			type: "GET",
-			url: "/ajax/main.php?action=get_orders_master&user_id=<?=$login_user['id'];?>&place=account",
+			url: "<?php echo WEB_ROOT; ?>/ajax/main.php?action=get_orders_master&user_id=<?=$login_user['id'];?>&place=account",
 			success: function(data){ $('#orders_done').empty().append($(data)); }
 		});		
 	}
@@ -145,7 +166,7 @@ function give_img(id){
 	$("#orders_done table tr#tr_id_"+id+" td").addClass("activetd");
 	$.ajax({
 		type: "GET",
-		url: "/ajax/main.php?action=get_imgs&id="+id,
+		url: "<?php echo WEB_ROOT; ?>/ajax/main.php?action=get_imgs&id="+id,
 		success: function(data){ $('#img_done').empty().append($(data)); $('#acts').show(); }
 	});		
 }
@@ -161,7 +182,7 @@ function get_zp(dt3_flag){
 	}else{
 		$.ajax({
 			type: "GET",
-			url: "/ajax/main.php?action=get_zp&user_id=<?=$login_user['id'];?>&date_one="+date_one+"&date_two="+date_two+"&date_three="+date_three,
+			url: "<?php echo WEB_ROOT; ?>/ajax/main.php?action=get_zp&user_id=<?=$login_user['id'];?>&date_one="+date_one+"&date_two="+date_two+"&date_three="+date_three,
 			success: function(data){ $('#zp_dates').empty().append($(data));}
 		});		
 	}
@@ -177,12 +198,54 @@ function update_account(){
 	$.ajax({
 		type: "POST",
 		data: "action=update_account&user_id=<?=$login_user['id'];?>&fio="+fio+"&phone="+phone+"&address="+address+"&password="+password,
-		url: "/ajax/post.php",
+		url: "<?php echo WEB_ROOT; ?>/ajax/post.php",
 		success: function(data){
 			alert('Информация успешно обновлена!');
 		}
 	});	
 	return false;	
 }
+
+function onChangePassword() {
+    var old_password = $('#old_password').val();
+    var new_password1 = $('#new_password1').val();
+    var new_password2 = $('#new_password2').val();
+
+    if ((old_password == '') || (new_password1 == '') || (new_password2 == '')) {
+        $("#change_password_status").html('Заполните все поля !');
+        $("#change_password_status").removeClass('text-success');
+        $("#change_password_status").addClass('text-error');
+        //alert('Заполните все поля !');
+    } else if (new_password1 !== new_password2) {
+        $("#change_password_status").html('Укажите одинаковые значения нового пароля в обоих полях !');
+        $("#change_password_status").removeClass('text-success');
+        $("#change_password_status").addClass('text-error');
+        //alert('Укажите одинаковые значения нового пароля в обоих полях !');
+    } else {
+        $.ajax({
+            type: "POST",
+            data: "action=change_password&user_id=<?=$login_user['id'];?>&old_password="+old_password+"&new_password1="+new_password1+"&new_password2="+new_password2,
+            url: "<?php echo WEB_ROOT; ?>/ajax/post.php",
+            dataType: 'json',
+            success: function(data){ 
+                //alert("Успешно изменены параметры SMS API !");
+                if (data.status) {
+                    $("#change_password_status").html(data.msg);
+                    $("#change_password_status").removeClass('text-error');
+                    $("#change_password_status").addClass('text-success');
+                    alert(data.msg);
+                    $("#myChangePassword").modal('hide');
+                } else {
+                    $("#change_password_status").html(data.msg);
+                    $("#change_password_status").removeClass('text-success');
+                    $("#change_password_status").addClass('text-error');
+                }
+            }
+        });
+    }
+    return false;
+}
+                        
+
 </script>
 <?php include template("footer"); ?>

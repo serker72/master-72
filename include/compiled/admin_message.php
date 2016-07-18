@@ -4,7 +4,7 @@
     <a href="/operator.php?action=new_order" class="btn">Добавить заказ</a>
     <a href="/logout.php" class="btn">Выйти</a>
 </div>
-<div class="info-block" style="float: left; width: 100%;">
+<div class="info-block" style="float: left; width: 100%; margin-bottom: 0px;">
 	<h2>Написать Сообщение</h2>
 	<textarea rows="3" style="width: 520px;" name="message" id="text-message"></textarea><br/>
 	<select id="user" name="user">
@@ -21,7 +21,10 @@
         <div id="contacts_messages">&nbsp;</div>
     </div>
     <div style="float:left; width: 70%;">
-        <h3 id="title_contact_messages">&nbsp;</h3>
+        <div>
+            <h3 id="title_contact_messages">&nbsp;</h3>
+            <button id="button-all-messages" class="button-all-messages">Показать всю переписку</button>
+        </div>
         <div id="contact_messages">&nbsp;</div>
     </div>
 </div>
@@ -35,18 +38,26 @@ function get_contacts_messages(){
 	});		
 }
 
-function get_contact_messages(id, username){
+function get_contact_messages(id, username, last_message=1){
         get_contacts_messages();
         
 	$.ajax({
 		type: "GET",
-		url: "/ajax/main.php?action=get_contact_messages&id="+id,
+		url: "/ajax/main.php?action=get_contact_messages&id=" + id + "&last_message=" + last_message,
+                dataType: 'json',
 		success: function(data){ 
                     $('#title_contact_messages').html('Переписка с '+username); 
-                    $('#contact_messages').empty().append($(data));
+                    $('#contact_messages').empty().append($(data.html));
+                    $('#contact_messages').scrollTop($('#contact_messages').prop("scrollHeight"));
                     $("html,body").scrollTop($('#title_contact_messages').offset().top);
                     $('#contacts_messages ul li.li-contacts-messages-active').removeClass('li-contacts-messages-active');
                     $("#href_contact_messages_" + id).addClass('li-contacts-messages-active');
+                    if (data.hide_msg) {
+                        document.getElementById("button-all-messages").onclick = function () { get_contact_messages(id, username, 0); };
+                        $("#button-all-messages").show();
+                    } else {
+                        $("#button-all-messages").hide();
+                    }
                 }
 	});		
 }

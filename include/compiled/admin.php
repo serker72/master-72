@@ -145,6 +145,8 @@
                         <input type="text" id="sms_api_password" name="sms_api_password" value="<?php echo $settings['sms_api_password']; ?>"><br>
                         <label for="sms_api_phone">SMS API Номер телефона:</label>
                         <input type="text" id="sms_api_phone" name="sms_api_phone" value="<?php echo $settings['sms_api_phone']; ?>"><br>
+                        <label for="sms_api_min_balance">SMS API Минимальный баланс, при достижении которого отправлять уведомление:</label>
+                        <input type="text" id="sms_api_min_balance" name="sms_api_min_balance" value="<?php echo $settings['sms_api_min_balance']; ?>"><br>
                         <label for="msg_record_show_cnt">Количество отображаемых сообщений:</label>
                         <input type="text" id="msg_record_show_cnt" name="msg_record_show_cnt" value="<?php echo $settings['msg_record_show_cnt']; ?>"><br><br>
 			<a href="#" class="btn" onClick="onSaveSettings(); return false;">Сохранить изменения</a>

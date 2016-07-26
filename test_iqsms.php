@@ -6,7 +6,7 @@ include_once(dirname(__FILE__) . '/lib/iqsms_JsonGate.php');
 $gate = new iqsms_JsonGate('z1469184353311', '948621');
 
 var_dump($gate->credits()); // узнаем текущий баланс
-//var_dump($gate->senders()); // получаем список доступных подписей
+var_dump($gate->senders()); // получаем список доступных подписей
 
 $messages = array(
             array(

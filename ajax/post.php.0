@@ -5,7 +5,7 @@ ini_set("display_startup_errors","1");
 ini_set('error_reporting', E_ALL);
 
 require_once(dirname(dirname(__FILE__)) . '/app.php');
-include_once(dirname(dirname(__FILE__)) . '/lib/iqsms_function.php');
+include_once(dirname(dirname(__FILE__)) . '/lib/function.php');
 
 function GenPassword($p) {
 	return md5($p.'@4!@#$%@');
@@ -177,13 +177,13 @@ if ($_POST) {
 				$date_f = date_diff_f($time_now, $date);
 				if($date_f <= 82000 && $date_f >= 0){
 					//Отправляем смс
-					prepare_sms_master($order_id);
-					prepare_sms_client($order_id, $phone, $client_fio, 3);
+					send_sms_master($order_id);
+					send_sms_client($order_id, $phone, $client_fio);
 					if(isset($_POST['sms2']) && $_POST['sms2'] == 'on'){
-						prepare_sms_client($order_id, $phone2, $client_fio2, 4);
+						send_sms_client($order_id, $phone2, $client_fio2);
 					}
 					if(isset($_POST['sms3']) && $_POST['sms3'] == 'on'){
-						prepare_sms_client($order_id, $phone3, $client_fio3, 5);
+						send_sms_client($order_id, $phone3, $client_fio3);
 					}
 
 				}
@@ -191,7 +191,7 @@ if ($_POST) {
 		}
 
 		if($login_user['rang'] != 'admin' && $login_user['rang'] != 'operator'){
-			prepare_sms_admin($order_id);
+			send_sms_admin($order_id);
 		}
 
 		if($master_name_two != ''){
@@ -241,14 +241,14 @@ if ($_POST) {
 					$time_now = date('d-m-Y');
 					$date_f = date_diff_f($time_now, $date);
 					if($date_f <= 82000 && $date_f >= 0){
-						prepare_sms_client($order_id_two, $phone, $client_fio, 3);
+						send_sms_client($order_id_two, $phone, $client_fio);
 						//Отправляем смс
-						prepare_sms_master($order_id_two);
+						send_sms_master($order_id_two);
 						if(isset($_POST['sms2']) && $_POST['sms2'] == 'on'){
-							prepare_sms_client($order_id_two, $phone2, $client_fio2, 4);
+							send_sms_client($order_id_two, $phone2, $client_fio2);
 						}
 						if(isset($_POST['sms3']) && $_POST['sms3'] == 'on'){
-							prepare_sms_client($order_id_two, $phone3, $client_fio3, 5);
+							send_sms_client($order_id_two, $phone3, $client_fio3);
 						}
 					}					
 				}
@@ -305,14 +305,14 @@ if ($_POST) {
 						$time_now = date('d-m-Y');
 						$date_f = date_diff_f($time_now, $date);
 						if($date_f <= 82000 && $date_f >= 0){
-							prepare_sms_client($order_id_th, $phone, $client_fio, 3);
+							send_sms_client($order_id_th, $phone3, $client_fio3);
 							//Отправляем смс
-							prepare_sms_master($order_id_th);
+							send_sms_master($order_id_th);
 							if(isset($_POST['sms2']) && $_POST['sms2'] == 'on'){
-								prepare_sms_client($order_id_th, $phone2, $client_fio2, 4);
+								send_sms_client($order_id_th, $phone2, $client_fio2);
 							}
 							if(isset($_POST['sms3']) && $_POST['sms3'] == 'on'){
-								prepare_sms_client($order_id_th, $phone3, $client_fio3, 5);
+								send_sms_client($order_id_th, $phone3, $client_fio3);
 							}							
 						}
 					}		

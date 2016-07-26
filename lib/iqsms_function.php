@@ -128,20 +128,30 @@ function prepare_sms_client($order_id, $number, $client_name, $sms_type=3){
 }
 
 /* Создание СМС администрации */
-function prepare_sms_admin($order_id=0){
+function prepare_sms_admin($order_id, $msg_text=''){
     //$settings = get_settings();
     
     //$from_sms_send = '79224717444';
     //$from_sms_send = $sms_api_options['sms_api_phone'];
-
-    $sms_sended = DB::GetQueryResult("SELECT * FROM `iqsms_msg` WHERE order_id = ".$order_id." AND `type` = 1", true);
+    
+    if (($msg_text == '') && ($order_id == 0)) {
+        return false;
+    } else if ($order_id == 0) {
+        $sms_sended = false;
+    } else {
+        $sms_sended = DB::GetQueryResult("SELECT * FROM `iqsms_msg` WHERE order_id = ".$order_id." AND `type` = 1", true);
+    }
     
     if(!$sms_sended){
         $user_for_send = DB::GetQueryResult("SELECT * FROM `user` WHERE `rang` = 'admin' OR `rang` = 'operator' AND sms = 1", false);
         //$send = new Sms($sms_api_options['sms_api_username'], $sms_api_options['sms_api_password']);
         foreach ($user_for_send as $one) {
             if($one['phone'] != '' && strlen($one['phone']) > 5){
-                $sms_body = 'В системе заказов новый необработанный заказ или сообщение';
+                if ($msg_text == '') {
+                    $sms_body = 'TEST..В системе заказов новый необработанный заказ или сообщение';
+                } else {
+                    $sms_body = $msg_text;
+                }
                 $text_admin_send = iconv('utf-8', 'utf-8', $sms_body);
                 //Отправляем смс если она не была отправлена ранее
                 //$result = $send->send_sms($text_admin_send, $one['phone'], $from_sms_send);
@@ -153,6 +163,7 @@ function prepare_sms_admin($order_id=0){
 
 // Отправка сообщений
 function send_sms_msg($order_id=0){
+    $packet_msg_count = 200;
     $settings = get_settings();
     
     if (($settings['sms_api_username'] == '') || ($settings['sms_api_password'] == '')) {
@@ -167,7 +178,7 @@ function send_sms_msg($order_id=0){
     }
     
     // Получим список неотправленных или отправленных с ошибкой СМС
-    $sms_not_sended = DB::GetQueryResult($query);
+    $sms_not_sended = DB::GetQueryResult($query, false);
     if(!$sms_not_sended){
         return false;
     }
@@ -180,9 +191,9 @@ function send_sms_msg($order_id=0){
     // Проверим текущий баланс
     if ($gate_credits['credits'] == 0) {
         echo '<p>Для отправки СМС необходимо пополнить баланс !</p>';
-        return false;
+        //return false;
     } else if ($gate_credits['credits'] <= (int)$settings['sms_api_min_balance']) {
-        
+        prepare_sms_admin(0, 'Баланс в сервисе IQSMS достиг минимума, пополните баланс.');
     }
     
     // получаем список доступных подписей
@@ -190,6 +201,39 @@ function send_sms_msg($order_id=0){
     
     // Проверим доступность подписи из настроек
     if ($settings['sms_api_phone'] != '') {
-        
+        if (!in_array($settings['sms_api_phone'], $gate_senders['senders'])) {
+            echo '<p>Неверная (незарегистрированная) подпись отправителя !</p>';
+            return false;
+        }
     }
+    
+    // Отправим неотправленные сообщения
+    $messages = array();
+    $message_count = 0;
+    foreach ($sms_not_sended as $one) {
+        $messages[] = array(
+           "clientId" => $one['id'],
+           "phone"=> $one['phone'],
+           "text"=> $one['text'],
+           //"sender"=> "TEST" 
+        );
+        
+        if ($settings['sms_api_phone'] != '') {
+           $messages[$message_count]['sender'] = $settings['sms_api_phone'];
+        }
+        
+        $message_count++;
+        
+        if ($message_count == $packet_msg_count) {
+            
+        }
+    }
+    
+    var_dump($messages);
+    // отправляем пакет sms
+    $ret_messages = $gate->send($messages, 'testQueue');
+    var_dump($ret_messages);
+    
+    // status == 'ok'
+    // messages
 }

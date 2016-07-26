@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `user_stat` (
   `zp_calc_sum` float(15,2) DEFAULT 0,
   `zp_calc` float(15,2) DEFAULT 0,
   `zp_pay` float(15,2) DEFAULT 0,
-  `zp float`(15,2) DEFAULT 0,
+  `zp` float(15,2) DEFAULT 0,
   PRIMARY KEY(`id`)
 )
 ENGINE = MYISAM
@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS `iqsms_msg` (
   `type` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `id_status` int(10) unsigned NOT NULL DEFAULT '0',
   `dt_status` timestamp NULL DEFAULT '0000-00-00 00:00:00',
+  `smscid` bigint(20) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (id)
 ) 
 ENGINE = MyISAM 

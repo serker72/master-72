@@ -5,7 +5,7 @@ ini_set("display_startup_errors","1");
 ini_set('error_reporting', E_ALL);
 
 require_once(dirname(__FILE__) . '/app.php');
-require_once(dirname(__FILE__) . '/lib/function.php');
+require_once(dirname(__FILE__) . '/lib/iqsms_function.php');
 
 function date_diff_f($date1, $date2){
     $diff = strtotime($date2) - strtotime($date1);
@@ -13,6 +13,9 @@ function date_diff_f($date1, $date2){
 }
 
 $now = date("Y-m-d");
+
+send_sms_msg();
+return;
 
 $orders = DB::GetQueryResult("SELECT * FROM `order` WHERE time_date != '' AND time_time != '' AND master_name != 0 AND street != ''", false);
 

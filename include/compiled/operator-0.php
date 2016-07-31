@@ -251,75 +251,6 @@ function PrintEditForm($img_fields_flag) {
     </div>
 <?php    
 }
-
-//
-function PrintNewEditForm() {
-    global $login_user, $work_types, $master, $city, $users_master;
-    
-    $form_type = 'add';
-    
-    ?>
-    <div id="add-form-wrapper">
-        <form method="post" action="/ajax/post.php" class="validator" id="form_<?php echo $form_type; ?>" style="float:left;">	
-            <input type="hidden" id="action" name="action" value="<?php echo $form_type; ?>" />
-            <input type="hidden" id="order_id" name="order_id" value="0" />
-            <input type="hidden" id="step" name="step" value="1" />
-            
-            <div id="form_add_step1" style="display: block;">
-                <h3>Шаг 1. Информация о заказчике:</h3>
-                <label for="customer-name">Фамилия Имя Отчество</label>
-		<input type="text" id="customer-name" name="customer-name"><br>
-                <label for="custom-phone">Контактный номер телефона заказчика (мобильный)</label>
-		<input type="text" class="custom-phone" id="customer-phone" name="customer-phone"><br>
-                <label for="">Дополнительные контакты (если необходимо)</label>
-                <input type="text" id="customer-name2" name="customer-name2" placeholder="Фамилия Имя Отчество">
-		<input type="text" class="custom-phone" id="customer-phone2" name="customer-phone2" placeholder="Номер телефона"><br>
-                <label for="sms2"><input type="checkbox" id="sms2" name="sms2"/>&nbsp;Если нужно СМС информирование по дополнительному номеру поставьте галочку</label>
-		<input type="text" id="customer-name3" name="customer-name3" placeholder="Фамилия Имя Отчество">
-		<input type="text" class="custom-phone" id="customer-phone3" name="customer-phone3" placeholder="Номер телефона"><br>
-                <label for="sms3"><input type="checkbox" id="sms3" name="sms3"/>&nbsp;Если нужно СМС информирование по дополнительному номеру поставьте галочку</label>
-            </div>
-            
-            <div id="form_add_step2" style="display: none;">
-                <h3>Шаг 2. Добавьте адрес выполнения заказа:</h3>
-                <label for="">Город</label>
-                <select name="city" id="city">
-                        <option value="" selected="selected">Выбрать</option>
-                        <?php foreach ($city as $one) {
-                                echo '<option value="'.$one['id'].'">'.$one['name'].'</option>';
-                        } ?>
-                </select>
-                <label for="">Населенный пункт (не обязательно)</label>
-                <select name="city2" id="city2">
-                        <option value="" selected="selected">Не выбран город</option>
-                </select>
-                <table>
-                    <tr>
-                        <td>
-                            <label for="street">Улица</label>
-                            <input type="text" id="street" name="street">
-                        </td>
-                        <td>
-                            <label for="house">Дом</label>
-                            <input type="text" id="house" name="house" style="width: 50px;">
-                        </td>
-                        <td>
-                            <label for="corpus">Корпус</label>
-                            <input type="text" id="corpus" name="corpus" style="width: 50px;">
-                        </td>
-                        <td>
-                            <label for="flat">Квартира</label>
-                            <input type="text" id="flat" name="flat" style="width: 50px;">
-                        </td>
-                    </tr>
-                </table>
-                <label for="customer-details">Если это требуется укажите комментарий, его увидит оператор, обрабатывающий заказ:</label>
-                <textarea cols="38" rows="5" id="customer-details" name="customer-details" style="margin-left: 0px; margin-right: 0px; width: 600px; margin-top: 0px; margin-bottom: 0px; height: 85px; padding: 3px;" placeholder="Комментарий к заказу"></textarea>
-            </div>
-        </form>
-    </div>
-<?php    
-}
 ?>
 
 <?php include template("header"); ?>
@@ -570,16 +501,14 @@ function PrintNewEditForm() {
     <div id="myAddModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width: 96%; margin-left: -48%; top: 3%;">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <!--h3 id="myModalLabel">Добавление нового заказа</h3-->
-            <h3 id="myModalLabel">Добро пожаловать в форму добавления нового заказа</h3>
+            <h3 id="myModalLabel">Добавление нового заказа</h3>
         </div>
         <div class="modal-body" style="max-height: 450px;">
-            <?php PrintNewEditForm();//PrintEditForm(false); ?>
+            <?php PrintEditForm(false); ?>
         </div>
         <div class="modal-footer">
             <button class="btn btn-inverse" onClick="ksk_onSearchClear('add');">Очистить</button>
-            <button class="btn btn-primary" id="btn_prev" onClick="ksk_onAdd();" style="display: none;">Назад</button>
-            <button class="btn btn-primary" id="btn_next" onClick="ksk_onAdd();">Далее</button>
+            <button class="btn btn-primary" onClick="ksk_onAdd();">Добавить заказ</button>
         </div>
     </div>
 <!--------------------------------------------------------------------------------------->
@@ -616,19 +545,6 @@ function PrintNewEditForm() {
     }
     
     function ksk_onAdd() {
-        var step = $('#step').val();
-        
-        if (step == 1) {
-            $('#btn_prev').hide();
-        } else if (step < 3) {
-            $('#form_add_step' + step).hide();
-            step++;
-            $('#btn_prev').show();
-            $('#form_add_step' + step).show();
-        } 
-        
-        return false;
-        
         $('#status-bar-edit').hide();
         $('#edit-form-wrapper').hide();
     $("#orders table tr td").removeClass("activetd");

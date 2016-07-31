@@ -41,7 +41,7 @@ function prepare_sms_master($order_id){
                 $offer_num = str_pad($offer_num['offer_id'], 7, '0', STR_PAD_LEFT) . PHP_EOL;
                 $order['offer_number'] = $offer_num;				
 
-                $sms_body = str_replace("%date%", $order['time_date'], $options_master['var']);
+                $sms_body = str_replace("%date%", $order['time_date'], $options_master);
                 $sms_body = str_replace("%time%", $order['time_time'], $sms_body);
                 $sms_body = str_replace("%work_type%", $works[$order['work_type']]['name'], $sms_body);
                 $sms_body = str_replace("%act%", $order['offer_number'], $sms_body);
@@ -104,7 +104,7 @@ function prepare_sms_client($order_id, $number, $client_name, $sms_type=3){
         if($order){
             //$send = new Sms($sms_api_options['sms_api_username'], $sms_api_options['sms_api_password']);
             //СМС - КЛИЕНТУ
-            $sms_body_client = str_replace("%date%", $order['time_date'], $options_client['var']);
+            $sms_body_client = str_replace("%date%", $order['time_date'], $options_client);
             $sms_body_client = str_replace("%time%", $order['time_time'], $sms_body_client);
             $sms_body_client = str_replace("%name%", $client_name, $sms_body_client);
             $sms_body_client = str_replace("%work_type%", $works[$order['work_type']]['name'], $sms_body_client);
@@ -159,6 +159,21 @@ function prepare_sms_admin($order_id, $msg_text=''){
             }
         }
     }
+}
+
+//
+function get_sms_statuses() {
+    $sms_statuses = array();
+    
+    $sms_statuses_q = DB::GetQueryResult("SELECT * FROM `iqsms_status`", false);
+    
+    if($sms_statuses_q){
+        foreach ($sms_statuses_q as $one) {
+            $sms_statuses[$one['id']] = $one['name'];
+        }
+    }
+    
+    return $sms_statuses;
 }
 
 // Отправка сообщений
@@ -225,15 +240,144 @@ function send_sms_msg($order_id=0){
         $message_count++;
         
         if ($message_count == $packet_msg_count) {
+            $ret_flag = send_sms_packet($gate, 'testQueue', $messages);
+            if (!$ret_flag) {
+                return false;
+            }
             
+            $messages = array();
+            $message_count = 0;
         }
+    }
+    
+    $ret_flag = send_sms_packet($gate, 'testQueue', $messages);
+    
+    // status == 'ok'
+    // messages
+}
+
+// Отправка пакета сообщений
+function send_sms_packet($gate, $queuename, $messages) {
+    if (($gate == NULL) || ($queuename == '') || (count($messages) < 1)) {
+        return false;
     }
     
     var_dump($messages);
     // отправляем пакет sms
-    $ret_messages = $gate->send($messages, 'testQueue');
+    $ret_messages = $gate->send($messages, $queuename);
     var_dump($ret_messages);
     
-    // status == 'ok'
-    // messages
+    set_sms_msg_status($ret_messages);
+    
+    return true;
+}
+
+// Запись статусов отправленных сообщений
+function set_sms_msg_status($messages) {
+    $now = date("Y-m-d H:i:s");
+    
+    $sms_statuses = get_sms_statuses();
+    
+    foreach ($messages['messages'] as $key => $value) {
+        $msg = DB::GetQueryResult("SELECT * FROM `iqsms_msg` WHERE `id` = " . $value['clientId'], true);
+        if (!$msg) continue;
+        
+        $val_array = array();
+        
+        if ($msg['smscid'] !== $value['smscId']) {
+            $val_array['smscid'] = $value['smscId'];
+        }
+        
+        $st = array_search($value['status'], $sms_statuses);
+        
+        if ($msg['id_status'] !== $st) {
+            $val_array['id_status'] = $st;
+            $val_array['dt_status'] = $now;
+            
+            $st_id = DB::Insert('iqsms_msg_status', array(
+                'id_msg' => $value['clientId'],
+                'id_status' => $st,
+                'dt_status' => $now,
+            ));
+        }
+        
+        if (count($val_array) > 0) {
+            Table::UpdateCache('iqsms_msg', $value['clientId'], $val_array);
+        }
+    }
+
+}
+
+
+// Отправка сообщений
+function check_sms_msg_status($order_id=0){
+    $packet_msg_count = 200;
+    $settings = get_settings();
+    
+    if (($settings['sms_api_username'] == '') || ($settings['sms_api_password'] == '')) {
+        echo '<p>Не указаны параметры для отправки СМС !</p>';
+        return false;
+    }
+    
+    $query = "SELECT * FROM `iqsms_msg` WHERE id_status IN (1,9,12)";
+    
+    if ($order_id > 0) {
+        $query .= " AND order_id = ".$order_id;
+    }
+    
+    // Получим список отправленных СМС
+    $sms_sended = DB::GetQueryResult($query, false);
+    if(!$sms_sended){
+        return false;
+    }
+    
+    $gate = new iqsms_JsonGate($settings['sms_api_username'], $settings['sms_api_password']);
+    
+    // узнаем текущий баланс
+    $gate_credits = $gate->credits();
+    
+    // Проверим текущий баланс
+    if ($gate_credits['credits'] == 0) {
+        echo '<p>Для отправки СМС необходимо пополнить баланс !</p>';
+        //return false;
+    } else if ($gate_credits['credits'] <= (int)$settings['sms_api_min_balance']) {
+        //prepare_sms_admin(0, 'Баланс в сервисе IQSMS достиг минимума, пополните баланс.');
+    }
+    
+    // получаем список доступных подписей
+    /*$gate_senders = $gate->senders();
+    
+    // Проверим доступность подписи из настроек
+    if ($settings['sms_api_phone'] != '') {
+        if (!in_array($settings['sms_api_phone'], $gate_senders['senders'])) {
+            echo '<p>Неверная (незарегистрированная) подпись отправителя !</p>';
+            return false;
+        }
+    }*/
+    
+    // Проверим статус отправленных сообщений
+    $messages = array();
+    $message_count = 0;
+    foreach ($sms_sended as $one) {
+        $messages[] = array(
+           "clientId" => $one['id'],
+           "smscId"=> $one['smscid'],
+        );
+        
+        $message_count++;
+        
+        if ($message_count == $packet_msg_count) {
+            $ret_messages = $gate->status($messages);
+            var_dump($ret_messages);
+            
+            set_sms_msg_status($ret_messages);
+            
+            $messages = array();
+            $message_count = 0;
+        }
+    }
+    
+    $ret_messages = $gate->status($messages);
+    var_dump($ret_messages);
+    set_sms_msg_status($ret_messages);
 }

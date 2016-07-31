@@ -320,6 +320,8 @@ if ($_POST) {
 	
 		}
 
+                // Отправка SMS
+                send_sms_msg($order_id);
 		//die($order_id);
                 die();
 	} elseif($_POST['action'] == 'search'){

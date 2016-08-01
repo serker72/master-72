@@ -266,7 +266,7 @@ function PrintNewEditForm() {
             <input type="hidden" id="step" name="step" value="1" />
             
             <div id="form_add_step1" style="display: block;">
-                <h3>Шаг 1. Информация о заказчике:</h3>
+                <h4>Шаг 1. Информация о заказчике:</h4>
                 <label for="customer-name">Фамилия Имя Отчество</label>
 		<input type="text" id="customer-name" name="customer-name"><br>
                 <label for="custom-phone">Контактный номер телефона заказчика (мобильный)</label>
@@ -281,7 +281,7 @@ function PrintNewEditForm() {
             </div>
             
             <div id="form_add_step2" style="display: none;">
-                <h3>Шаг 2. Добавьте адрес выполнения заказа:</h3>
+                <h4>Шаг 2. Добавьте адрес выполнения заказа:</h4>
                 <label for="">Город</label>
                 <select name="city" id="city">
                         <option value="" selected="selected">Выбрать</option>
@@ -293,7 +293,7 @@ function PrintNewEditForm() {
                 <select name="city2" id="city2">
                         <option value="" selected="selected">Не выбран город</option>
                 </select>
-                <table>
+                <table style="margin: 0 0;">
                     <tr>
                         <td>
                             <label for="street">Улица</label>
@@ -316,8 +316,71 @@ function PrintNewEditForm() {
                 <label for="customer-details">Если это требуется укажите комментарий, его увидит оператор, обрабатывающий заказ:</label>
                 <textarea cols="38" rows="5" id="customer-details" name="customer-details" style="margin-left: 0px; margin-right: 0px; width: 600px; margin-top: 0px; margin-bottom: 0px; height: 85px; padding: 3px;" placeholder="Комментарий к заказу"></textarea>
             </div>
+            
+            <div id="form_add_step3" style="display: none;">
+                <h4>Шаг 3. Информация о заказе, выбор мастера:</h4>
+		<?php if ($login_user['rang'] == 'admin' || $login_user['rang'] == 'operator') { ?>
+                    <label for="datetime">Укажите время приезда мастера:</label>
+                    <input type="text" id="datetime" name="date" style="width: 100px;" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>&nbsp;&nbsp;
+                    <input type="text" id="time" name="time" style="width: 60px;" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>
+                <?php } else { ?>
+                    <label for="datetime_hope">Выберите желаемое время приезда мастера:</label>
+                    <input type="text" id="datetime_hope" name="date_hope" style="width: 100px;">&nbsp;&nbsp;
+                    <input type="text" id="time_hope" name="time_hope" style="width: 60px;">
+                <?php } ?>
+                <label for="work_type">Тип работ (укажите цель вызова мастера, для выполнения каких работ):</label>
+                <select name="work_type" id="work_type">
+                    <option value="" selected="selected">Выбрать</option>
+                    <?php foreach ($work_types as $one) {
+                        echo '<option value="'.$one['id'].'">'.$one['name'].'</option>';
+                    } ?>
+                </select>
+                <label for="master">Выберите специализацию мастера:</label>
+                <select name="master" id="master">
+                    <option value="" selected="selected">Выбрать</option>
+                    <?php foreach ($master as $one) {
+                        echo '<option value="'.$one['id'].'">'.$one['name'].'</option>';
+                    } ?>
+                </select>
+                <label for="note">Если требуется, укажите комментарий, который мастер получит в СМС:</label>
+		<input type="text" id="note" name="note" <?php //if(is_manager()){ echo ' disabled="disabled"'; } ?>>
+		<?php if ($login_user['rang'] == 'admin' || $login_user['rang'] == 'operator') { ?>
+                <table style="margin: 0 0;">
+                    <tr>
+                        <td>
+                            <label for="note">ФИО мастера 1</label>
+                            <select id="master-name" name="master-name" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>
+                                <option value="" selected="selected">Выбрать</option>
+                                <?php foreach($users_master as $one){
+                                        echo '<option value="'.$one['id'].'">'.$one['realname'].'</option>';
+                                } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <label for="note">ФИО мастера 2</label>
+                            <select id="master-name-two" name="master-name-two" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>
+                                <option value="" selected="selected">Выбрать</option>
+                                <?php foreach($users_master as $one){
+                                        echo '<option value="'.$one['id'].'">'.$one['realname'].'</option>';
+                                } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <label for="note">ФИО мастера 3</label>
+                            <select id="master-name-th" name="master-name-th" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>
+                                <option value="" selected="selected">Выбрать</option>
+                                <?php foreach($users_master as $one){
+                                        echo '<option value="'.$one['id'].'">'.$one['realname'].'</option>';
+                                } ?>
+                            </select>										
+                        </td>
+                    </tr>
+                </table>
+                <?php } ?>
+            </div>
         </form>
     </div>
+    <div id="form_info" style="color: #ff0705;"></div>
 <?php    
 }
 ?>
@@ -577,9 +640,9 @@ function PrintNewEditForm() {
             <?php PrintNewEditForm();//PrintEditForm(false); ?>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-inverse" onClick="ksk_onSearchClear('add');">Очистить</button>
-            <button class="btn btn-primary" id="btn_prev" onClick="ksk_onAdd();" style="display: none;">Назад</button>
-            <button class="btn btn-primary" id="btn_next" onClick="ksk_onAdd();">Далее</button>
+            <!--button class="btn btn-inverse" onClick="ksk_onSearchClear('add');">Очистить</button-->
+            <button class="btn btn-primary" id="btn_prev" onClick="ksk_onAdd('L');" style="display: none;">Назад</button>
+            <button class="btn btn-primary" id="btn_next" onClick="ksk_onAdd('R');">Далее</button>
         </div>
     </div>
 <!--------------------------------------------------------------------------------------->
@@ -615,18 +678,68 @@ function PrintNewEditForm() {
         resetForm("form[id='form_" + form_type + "']");
     }
     
-    function ksk_onAdd() {
+    function ksk_onAdd(route) {
         var step = $('#step').val();
-        
+        var step_count = 3;
+        var err_msg1 = '<strong>Заполните следующие поля:</strong><ul>';
+        var err_msg2 = '';
+
         if (step == 1) {
-            $('#btn_prev').hide();
-        } else if (step < 3) {
-            $('#form_add_step' + step).hide();
-            step++;
-            $('#btn_prev').show();
-            $('#form_add_step' + step).show();
-        } 
+            if ($('#myAddModal #customer-name').val() == '') err_msg2 += '<li>Фамилия Имя Отчество</li>';
+            if ($('#myAddModal #customer-phone').val() == '') err_msg2 += '<li>Контактный номер телефона заказчика (мобильный)</li>';
+        } else if (step == 2) {
+            if ($('#myAddModal #city').val() == '') err_msg2 += '<li>Город</li>';
+            if ($('#myAddModal #street').val() == '') err_msg2 += '<li>Улица</li>';
+            if ($('#myAddModal #house').val() == '') err_msg2 += '<li>Дом</li>';
+        } else if (step == 3) {
+            <?php if ($login_user['rang'] == 'admin' || $login_user['rang'] == 'operator') { ?>
+            if ($('#myAddModal #datetime').val() == '') err_msg2 += '<li>Дата приезда мастера</li>';
+            if ($('#myAddModal #time').val() == '') err_msg2 += '<li>Время приезда мастера</li>';
+            <?php } else { ?>
+            if ($('#myAddModal #datetime_hope').val() == '') err_msg2 += '<li>Желаемая дата приезда мастера</li>';
+            if ($('#myAddModal #time_hope').val() == '') err_msg2 += '<li>Желаемое время приезда мастера</li>';
+            <?php } ?>
+            if ($('#myAddModal #work_type').val() == '') err_msg2 += '<li>Тип работ</li>';
+            if ($('#myAddModal #master').val() == '') err_msg2 += '<li>Специализация мастера</li>';
+        } else {
+            
+        }
         
+        if (err_msg2 !== '') {
+            $("#form_info").html(err_msg1 + err_msg2 + '</ul>');
+            return false;
+        } else {
+            $("#form_info").html('');
+        }
+        
+        if (route == 'L') {
+            if (step == 1) return false;
+            $('#form_add_step' + step).hide();
+            step--;
+            $('#form_add_step' + step).show();
+            if (step == 1) $('#btn_prev').hide();
+            else $('#btn_prev').show();
+            if (step == step_count) $('#btn_next').text('Добавить');
+            else $('#btn_next').text('Далее');
+            
+            $('#step').val(step)
+            return false;
+        } else if (route == 'R') {
+            if (step < step_count) {
+                $('#form_add_step' + step).hide();
+                step++;
+                $('#btn_prev').show();
+                $('#form_add_step' + step).show();
+                if (step == step_count) $('#btn_next').text('Добавить');
+                else $('#btn_next').text('Далее');
+                
+                $('#step').val(step)
+                return false;
+            }
+        } else {
+            return false;
+        }
+            
         return false;
         
         $('#status-bar-edit').hide();

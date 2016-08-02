@@ -60,10 +60,19 @@ ALTER TABLE `message` ADD `is_read` TINYINT NOT NULL DEFAULT '0' AFTER `for_user
 
 UPDATE `message` SET `is_read` = 1;
 
-/* Количество отображаемых по умолчанию записей в сообщениях */
+/* 
+ * Новые параметры:
+ * sms_api_min_balance - минимальная сумма на счету, при достижении которой отправляется СМС
+ * msg_record_show_cnt - количество отображаемых по умолчанию записей в сообщениях
+ */
 INSERT INTO `settings`(`name`, `var`) VALUES 
 ('sms_api_min_balance', '50'),
 ('msg_record_show_cnt', '3');
+
+/* Обновим параметры для IQSMS */
+UPDATE `settings` SET `var` = 'z1469184353311' WHERE `name` = 'sms_api_username';
+UPDATE `settings` SET `var` = '948621' WHERE `name` = 'sms_api_password';
+UPDATE `settings` SET `var` = '' WHERE `name` = 'sms_api_phone';
 
 /* Список статусов сервиса IQSMS */
 INSERT INTO `iqsms_status` (`id`, `name`, `name_r`, `type`, `is_reply`) VALUES

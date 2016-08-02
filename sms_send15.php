@@ -39,6 +39,6 @@ foreach ($orders as $one) {
 send_sms_msg();
 
 // Проверим статус ранее отправленных SMS
-//check_sms_msg_status();
+check_sms_msg_status();
 
 ?>

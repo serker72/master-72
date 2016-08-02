@@ -259,3 +259,18 @@ table.jtable{
     -moz-border-radius: 6px;
     border-radius: 6px;
 }
+
+#iqsms_msg_status {
+    margin-top: 15px;
+    font-size: small;
+    background-color: #EEEEEE;
+}
+#iqsms_msg_status th {
+    padding: 10px 10px;
+    background-color: #E3EEF8;
+    border-bottom: 1px #fff solid;
+}
+#iqsms_msg_status td {
+    padding: 5px 10px;
+    border-bottom: 1px #fff solid;
+}

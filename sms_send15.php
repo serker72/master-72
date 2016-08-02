@@ -19,7 +19,7 @@ check_sms_msg_status();
 
 //$orders = DB::GetQueryResult("SELECT * FROM `order` WHERE time_date != '' AND time_time != '' AND master_name != 0 AND street != ''", false);
 // TEST
-$orders = DB::GetQueryResult("SELECT * FROM `order` WHERE id > 980 AND time_date != '' AND time_time != '' AND master_name != 0 AND street != ''", false);
+$orders = DB::GetQueryResult("SELECT * FROM `order` WHERE id > 974 AND time_date != '' AND time_time != '' AND master_name != 0 AND street != ''", false);
 
 foreach ($orders as $one) {
 	$date_f = date_diff_f($now, $one['time_date']);
@@ -36,7 +36,7 @@ foreach ($orders as $one) {
 }
 
 // Отправим SMS
-//send_sms_msg();
+send_sms_msg();
 
 // Проверим статус ранее отправленных SMS
 //check_sms_msg_status();

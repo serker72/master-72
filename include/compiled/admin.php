@@ -143,7 +143,7 @@
                         <input type="text" id="sms_api_username" name="sms_api_username" value="<?php echo $settings['sms_api_username']; ?>"><br>
                         <label for="sms_api_password">SMS API Пароль:</label>
                         <input type="text" id="sms_api_password" name="sms_api_password" value="<?php echo $settings['sms_api_password']; ?>"><br>
-                        <label for="sms_api_phone">SMS API Номер телефона:</label>
+                        <label for="sms_api_phone">SMS API Зарегистрированная подпись:</label>
                         <input type="text" id="sms_api_phone" name="sms_api_phone" value="<?php echo $settings['sms_api_phone']; ?>"><br>
                         <label for="sms_api_min_balance">SMS API Минимальный баланс, при достижении которого отправлять уведомление:</label>
                         <input type="text" id="sms_api_min_balance" name="sms_api_min_balance" value="<?php echo $settings['sms_api_min_balance']; ?>"><br>
@@ -203,7 +203,7 @@
                             
                             // в цикле перебираем элементы формы
                             for (var j=0; j<formElements.length; j++) {
-                                if (formElements[j].value == '') {
+                                if ((formElements[j].value == '') && (formElements[j].name != "sms_api_phone")) {
                                     alert("Заполните все поля формы !");
                                     document.getElementById(formElements[j].id).focus();
                                     return false;

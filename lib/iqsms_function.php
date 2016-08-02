@@ -12,6 +12,7 @@ require_once('ksk_functions.php');
  * 3 - client phone 1
  * 4 - client phone 2
  * 5 - client phone 3
+ * 6 - admin balans add funds
  */
 
 /* Создание СМС мастеру */
@@ -89,8 +90,12 @@ function prepare_sms_client($order_id, $number, $client_name, $sms_type=3){
     // Проверим и добавим + к номеру
     //if (substr($number, 0, 1) !== '+') $number_to = '+'.$number;
     //else $number_to = $number;
+    //
+    // Проверим и elfkbv + из номера
+    if (substr($number, 0, 1) == '+') $number_to = str_replace('+', '', $number);
+    else $number_to = $number;
 
-    $sms_sended = DB::GetQueryResult("SELECT * FROM `iqsms_msg` WHERE order_id = ".$order_id." AND phone = '".$number."' AND `type` = ".$sms_type, true);
+    $sms_sended = DB::GetQueryResult("SELECT * FROM `iqsms_msg` WHERE order_id = ".$order_id." AND phone = '".$number_to."' AND `type` = ".$sms_type, true);
 
     if(!$sms_sended){
         $order = DB::GetQueryResult("SELECT * FROM `order` WHERE id = ".$order_id." LIMIT 1", true);
@@ -111,16 +116,16 @@ function prepare_sms_client($order_id, $number, $client_name, $sms_type=3){
 
             $text_client_send = iconv('utf-8', 'utf-8', $sms_body_client);
 
-            //$sms_sended_client = DB::GetQueryResult("SELECT * FROM `sms_sended` WHERE `number` LIKE '{$number}' ORDER BY `id` DESC LIMIT 1", true);
+            //$sms_sended_client = DB::GetQueryResult("SELECT * FROM `sms_sended` WHERE `number` LIKE '{$number_to}' ORDER BY `id` DESC LIMIT 1", true);
             //$time_now = time();
             //$time_order = strtotime($sms_sended_client['date']);
             //$razn = $time_now - $time_order;
 
             //if($razn >= 60){
-                if($number != ''){
-                    //$result = $send->send_sms($text_client_send, $number, $from_sms_send);
-                    //$res = DB::GetQueryResult("INSERT INTO `sms_sended` (`id`, `date`, `number`, `text`, `order_id`, `type`) VALUES (NULL, CURRENT_TIMESTAMP, '{$number}', '{$sms_body_client}', '{$order_id}', '2');", true);
-                    $res = DB::GetQueryResult("INSERT INTO `iqsms_msg` (`id`, `order_id`, `dt_create`, `phone`, `text`, `type`) VALUES (NULL, '{$order_id}', CURRENT_TIMESTAMP, '{$number}', '{$sms_body_client}', '{$sms_type}');", true);
+                if($number_to != ''){
+                    //$result = $send->send_sms($text_client_send, $number_to, $from_sms_send);
+                    //$res = DB::GetQueryResult("INSERT INTO `sms_sended` (`id`, `date`, `number`, `text`, `order_id`, `type`) VALUES (NULL, CURRENT_TIMESTAMP, '{$number_to}', '{$sms_body_client}', '{$order_id}', '2');", true);
+                    $res = DB::GetQueryResult("INSERT INTO `iqsms_msg` (`id`, `order_id`, `dt_create`, `phone`, `text`, `type`) VALUES (NULL, '{$order_id}', CURRENT_TIMESTAMP, '{$number_to}', '{$sms_body_client}', '{$sms_type}');", true);
                 }
             //}
         }
@@ -128,7 +133,7 @@ function prepare_sms_client($order_id, $number, $client_name, $sms_type=3){
 }
 
 /* Создание СМС администрации */
-function prepare_sms_admin($order_id, $msg_text=''){
+function prepare_sms_admin($order_id, $msg_text='', $sms_type=1){
     //$settings = get_settings();
     
     //$from_sms_send = '79224717444';
@@ -138,6 +143,8 @@ function prepare_sms_admin($order_id, $msg_text=''){
         return false;
     } else if ($order_id == 0) {
         $sms_sended = false;
+    } else if ($sms_type == 6) {
+        $sms_sended = DB::GetQueryResult("SELECT * FROM `iqsms_msg` WHERE date(`dt_create`) = date(now()) AND `type` = 6", true);
     } else {
         $sms_sended = DB::GetQueryResult("SELECT * FROM `iqsms_msg` WHERE order_id = ".$order_id." AND `type` = 1", true);
     }
@@ -148,7 +155,7 @@ function prepare_sms_admin($order_id, $msg_text=''){
         foreach ($user_for_send as $one) {
             if($one['phone'] != '' && strlen($one['phone']) > 5){
                 if ($msg_text == '') {
-                    $sms_body = 'TEST..В системе заказов новый необработанный заказ или сообщение';
+                    $sms_body = 'TEST..В системе заказов новый необработанный заказ '.($order_id == 0 ? 'или сообщение' : '№'.$order_id);
                 } else {
                     $sms_body = $msg_text;
                 }
@@ -186,7 +193,7 @@ function send_sms_msg($order_id=0){
         return false;
     }
     
-    $query = "SELECT * FROM `iqsms_msg` WHERE id_status IN (0,1)";
+    $query = "SELECT * FROM `iqsms_msg` WHERE id_status IN (0,2,3,4,5,6,7,8)";
     
     if ($order_id > 0) {
         $query .= " AND order_id = ".$order_id;
@@ -208,7 +215,7 @@ function send_sms_msg($order_id=0){
         echo '<p>Для отправки СМС необходимо пополнить баланс !</p>';
         //return false;
     } else if ($gate_credits['credits'] <= (int)$settings['sms_api_min_balance']) {
-        prepare_sms_admin(0, 'Баланс в сервисе IQSMS достиг минимума, пополните баланс.');
+        prepare_sms_admin(0, 'Баланс в сервисе IQSMS достиг минимума, пополните баланс.', 6);
     }
     
     // получаем список доступных подписей
@@ -221,6 +228,9 @@ function send_sms_msg($order_id=0){
             return false;
         }
     }
+    
+    //test
+    //return false;
     
     // Отправим неотправленные сообщения
     $messages = array();
@@ -250,10 +260,12 @@ function send_sms_msg($order_id=0){
         }
     }
     
-    $ret_flag = send_sms_packet($gate, 'testQueue', $messages);
-    
-    // status == 'ok'
-    // messages
+    if ($message_count > 0) {
+        $ret_flag = send_sms_packet($gate, 'testQueue', $messages);
+        if (!$ret_flag) return false;
+        else return true;
+    }
+    else return true;
 }
 
 // Отправка пакета сообщений
@@ -290,19 +302,28 @@ function set_sms_msg_status($messages) {
         
         $st = array_search($value['status'], $sms_statuses);
         
-        if ($msg['id_status'] !== $st) {
+        if ($msg['id_status'] != $st) {
             $val_array['id_status'] = $st;
             $val_array['dt_status'] = $now;
             
-            $st_id = DB::Insert('iqsms_msg_status', array(
+            // Проверка наличия записей
+            $rec_exist = DB::Exist('iqsms_msg_status', array(
                 'id_msg' => $value['clientId'],
                 'id_status' => $st,
-                'dt_status' => $now,
             ));
+            
+            if (!$rec_exist) {            
+                $st_id = DB::Insert('iqsms_msg_status', array(
+                    'id_msg' => $value['clientId'],
+                    'id_status' => $st,
+                    'dt_status' => $now,
+                ));
+            }
         }
         
         if (count($val_array) > 0) {
-            Table::UpdateCache('iqsms_msg', $value['clientId'], $val_array);
+            //Table::UpdateCache('iqsms_msg', $value['clientId'], $val_array);
+            Table::Update('iqsms_msg', $value['clientId'], $val_array);
         }
     }
 

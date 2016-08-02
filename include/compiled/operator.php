@@ -173,9 +173,19 @@ function PrintEditForm($img_fields_flag) {
 					<input type="text" id="note" name="note" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>
 				</div>				
 			</td>
-			<td>
-			</td>
-			<td>
+                        <td colspan="2">
+                            <div>
+                                <table id="iqsms_msg_status">
+                                    <thead>
+                                        <tr>
+                                            <th>Тип СМС сообщения</th>
+                                            <th>Статус СМС сообщения</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
 			</td>
 		</tr>
 		<?php if ($img_fields_flag && ($login_user['rang'] == 'admin' || $login_user['rang'] == 'operator')) { ?>
@@ -272,11 +282,11 @@ function PrintNewEditForm() {
                 <label for="custom-phone">Контактный номер телефона заказчика (мобильный)</label>
 		<input type="text" class="custom-phone" id="customer-phone" name="customer-phone"><br>
                 <label for="">Дополнительные контакты (если необходимо)</label>
-                <input type="text" id="customer-name2" name="customer-name2" placeholder="Фамилия Имя Отчество">
-		<input type="text" class="custom-phone" id="customer-phone2" name="customer-phone2" placeholder="Номер телефона"><br>
+                <input type="text" id="customer-name2" name="customer-name2" placeholder="Фамилия Имя Отчество 2" disabled="disabled">
+		<input type="text" class="custom-phone" id="customer-phone2" name="customer-phone2" placeholder="Номер телефона 2" disabled="disabled"><br>
                 <label for="sms2"><input type="checkbox" id="sms2" name="sms2"/>&nbsp;Если нужно СМС информирование по дополнительному номеру поставьте галочку</label>
-		<input type="text" id="customer-name3" name="customer-name3" placeholder="Фамилия Имя Отчество">
-		<input type="text" class="custom-phone" id="customer-phone3" name="customer-phone3" placeholder="Номер телефона"><br>
+		<input type="text" id="customer-name3" name="customer-name3" placeholder="Фамилия Имя Отчество 3" disabled="disabled">
+		<input type="text" class="custom-phone" id="customer-phone3" name="customer-phone3" placeholder="Номер телефона 3" disabled="disabled"><br>
                 <label for="sms3"><input type="checkbox" id="sms3" name="sms3"/>&nbsp;Если нужно СМС информирование по дополнительному номеру поставьте галочку</label>
             </div>
             
@@ -681,12 +691,24 @@ function PrintNewEditForm() {
     function ksk_onAdd(route) {
         var step = $('#step').val();
         var step_count = 3;
-        var err_msg1 = '<strong>Заполните следующие поля:</strong><ul>';
+        var err_msg1 = '<strong>Устраните следующие ошибки:</strong><ul>';
         var err_msg2 = '';
 
         if (step == 1) {
             if ($('#myAddModal #customer-name').val() == '') err_msg2 += '<li>Фамилия Имя Отчество</li>';
             if ($('#myAddModal #customer-phone').val() == '') err_msg2 += '<li>Контактный номер телефона заказчика (мобильный)</li>';
+            if ($('#myAddModal #sms2').is(':checked')) {
+                if ($('#myAddModal #customer-name2').val() == '') err_msg2 += '<li>Фамилия Имя Отчество 2</li>';
+                if ($('#myAddModal #customer-phone2').val() == '') err_msg2 += '<li>Номер телефона 2</li>';
+                if (($('#myAddModal #customer-phone2').val() !== '') && ($('#myAddModal #customer-phone2').val() == $('#myAddModal #customer-phone').val())) err_msg2 += '<li>Номер телефона 2 совпадает с основным номером телефона</li>';
+                if (($('#myAddModal #customer-phone2').val() !== '') && $('#myAddModal #sms3').is(':checked') && ($('#myAddModal #customer-phone2').val() == $('#myAddModal #customer-phone3').val())) err_msg2 += '<li>Номер телефона 2 совпадает с номером телефона 3</li>';
+            }
+            if ($('#myAddModal #sms3').is(':checked')) {
+                if ($('#myAddModal #customer-name3').val() == '') err_msg2 += '<li>Фамилия Имя Отчество 3</li>';
+                if ($('#myAddModal #customer-phone3').val() == '') err_msg2 += '<li>Номер телефона 3</li>';
+                if (($('#myAddModal #customer-phone3').val() !== '') && ($('#myAddModal #customer-phone3').val() == $('#myAddModal #customer-phone').val())) err_msg2 += '<li>Номер телефона 2 совпадает с основным номером телефона</li>';
+                if (($('#myAddModal #customer-phone3').val() !== '') && $('#myAddModal #sms2').is(':checked') && ($('#myAddModal #customer-phone3').val() == $('#myAddModal #customer-phone2').val())) err_msg2 += '<li>Номер телефона 3 совпадает с номером телефона 2</li>';
+            }
         } else if (step == 2) {
             if ($('#myAddModal #city').val() == '') err_msg2 += '<li>Город</li>';
             if ($('#myAddModal #street').val() == '') err_msg2 += '<li>Улица</li>';
@@ -740,7 +762,7 @@ function PrintNewEditForm() {
             return false;
         }
             
-        return false;
+        //return false;
         
         $('#status-bar-edit').hide();
         $('#edit-form-wrapper').hide();
@@ -940,6 +962,38 @@ $(document).ready(function(){
     });
     $('#myAddModalButton').on('click', function() { 
         ksk_onSearchClear('add');
+        
+        // Для новой формы заказа
+        <?php if ($login_user['rang'] == 'admin' || $login_user['rang'] == 'operator') { ?>
+        <?php } else { ?>
+        <?php } ?>
+            $('#step').val(1);
+            $('#btn_prev').hide();
+            $('#btn_next').text('Далее');
+            $('#form_add_step1').show();
+            $('#form_add_step2').hide();
+            $('#form_add_step3').hide();
+            $("#form_info").html('');
+    });
+    $("#myAddModal #sms2").on('click', function() {
+        if ($('#myAddModal #sms2').is(':checked')) {
+            $('#myAddModal #customer-name2').removeAttr('disabled');
+            $('#myAddModal #customer-phone2').removeAttr('disabled');
+        } else {
+            $('#myAddModal #customer-name2').attr('disabled', 'disabled');
+            $('#myAddModal #customer-phone2').attr('disabled', 'disabled');
+            $('#myAddModal #customer-name2').val('');
+            $('#myAddModal #customer-phone2').val('');
+        }
+    });
+    $("#myAddModal #sms3").on('click', function() {
+        if ($('#myAddModal #sms3').is(':checked')) {
+            $('#myAddModal #customer-name3').removeAttr('disabled');
+            $('#myAddModal #customer-phone3').removeAttr('disabled');
+        } else {
+            $('#myAddModal #customer-name3').attr('disabled', 'disabled');
+            $('#myAddModal #customer-phone3').attr('disabled', 'disabled');
+        }
     });
     $("#mySearchModalCloseButton").on('click', function() { ksk_onSearchClose(); });
     $("#submit").on('click', function(event) {  ksk_onSubmitClick(event); });
@@ -1359,6 +1413,8 @@ function editpost(id, table_type, type){
 				$('#delete-order').hide();
 			}
 
+			$('#iqsms_msg_status tbody').html(oData.iqsms_msg_status);
+                        
 			$('#copy-order').show();
 			$('#copy-order').attr('onClick','copythis('+oData.id+')');
 

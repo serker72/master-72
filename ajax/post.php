@@ -665,6 +665,8 @@ if ($_POST) {
 		$id = intval($_POST['order_id']);
 		if($id){
 			$order=DB::Query("DELETE FROM `order` WHERE `id` = ".$id, true);
+                        // Удалим неотправленные СМС, если они есть
+			$order=DB::Query("DELETE FROM `iqsms_msg` WHERE `order_id` = ".$id." AND id_status = 0", true);
 			//die('success');
 		}
 	}elseif($_POST['action'] == 'copy_order'){

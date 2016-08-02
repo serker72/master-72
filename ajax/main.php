@@ -157,6 +157,26 @@ if ($action == 'get_cities') {
 	$offer_num = DB::GetQueryResult("SELECT * FROM `order_offers` WHERE order_id = ".$order['id'], true);
 	$offer_num = str_pad($offer_num['offer_id'], 7, '0', STR_PAD_LEFT) . PHP_EOL;
 	$order['offer_number'] = $offer_num;
+        
+        // Вывод статусов СМС
+        $query = "SELECT m.*,
+CASE 
+    WHEN m.`type` = 1 THEN 'СМС на телефон администратора'
+    WHEN m.`type` = 2 THEN 'СМС на телефон мастера'
+    WHEN m.`type` = 3 THEN 'СМС на основной телефон клиента'
+    WHEN m.`type` = 4 THEN 'СМС на 2-й телефон клиента'
+    WHEN m.`type` = 5 THEN 'СМС на 3-й телефон клиента'
+    ELSE ''
+END AS type_name,
+IF(m.`id_status` = 0, 'Сообщение еще не отправлено', s.`name_r`) AS status_name
+FROM `iqsms_msg` m
+LEFT JOIN `iqsms_status` as s ON s.`id` = m.`id_status`
+WHERE `order_id` = ".$id;
+	$sms = DB::GetQueryResult($query, false);
+        $order['iqsms_msg_status'] = '';
+        foreach($sms as $one) {
+            $order['iqsms_msg_status'] .= '<tr><td>' .$one['type_name'] .'</td><td>' . $one['status_name'] . '</td></tr>';
+        }
 
 	die(json_encode($order));
 }elseif($action == 'download'){

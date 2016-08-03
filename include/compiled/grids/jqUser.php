@@ -24,7 +24,7 @@ class jqUser extends jqGrid
             ),
 
             'realname' => array('label' => 'ФИО',
-                'width' => 300,
+                'width' => 290,
                 'editrules' => array('required' => true),
             ),
             
@@ -36,16 +36,16 @@ class jqUser extends jqGrid
             ),
 
             'rang' => array('label' => 'Роль',
-                'width' => 110,
+                'width' => 140,
                 'edittype' => 'select',
-                'editoptions' => array('value' => "manager:Менеджер; master:Мастер; admin:Администратор"),
+                'editoptions' => array('value' => "manager:Менеджер;master:Мастер;operator:Оператор;admin:Администратор"),
                 'editrules' => array('required' => true),
                 'stype' => 'select',
-                'searchoptions' => array('value' => "manager:Менеджер; master:Мастер; admin:Администратор"),
+                'searchoptions' => array('value' => "manager:Менеджер;master:Мастер;operator:Оператор;admin:Администратор"),
             ),
             
             'phone' => array('label' => 'Телефон',
-                'width' => 140,
+                'width' => 130,
                 //'align' => 'center',
                 'editrules' => array('required' => true),
             ),
@@ -78,6 +78,14 @@ class jqUser extends jqGrid
                 'align' => 'right',
                 'editrules' => array('required' => true),
                 'formatter' => 'number',
+            ),
+
+            'add_order_form' => array('label' => 'Вид формы',
+                'width' => 110,
+                'edittype' => 'select',
+                'editoptions' => array('value' => "1:Полная форма;2:Пошаговая форма"),
+                'hidden' => true,
+                'editrules' => array('edithidden' => true),
             ),
         );
         

@@ -41,9 +41,9 @@
 	<div class="info-block" id="status-bar-add" style="display:block; float: left;">
             <strong>Панель управления</strong>
         </div>
-	<div style="float:right; margin-right: 5px;"><a href="/logout.php" class="btn">Выйти</a></div>
-	<div style="float:right; margin-right: 5px;"><a href="/operator.php" class="btn">Заказы</a></div>
-	<div style="float:right; margin-right: 15px;"><a href="/" class="btn">Главная</a></div>
+	<div style="float:right; margin-right: 5px; margin-top: 5px;"><a href="/logout.php" class="btn">Выйти</a></div>
+	<div style="float:right; margin-right: 5px; margin-top: 5px;"><a href="/operator.php" class="btn">Заказы</a></div>
+	<div style="float:right; margin-right: 15px; margin-top: 5px;"><a href="/" class="btn">Главная</a></div>
         
         <!------------------ Tabs ------------------------->
         <div style="clear: both;"></div>

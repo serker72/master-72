@@ -161,11 +161,11 @@ if ($action == 'get_cities') {
         // Вывод статусов СМС
         $query = "SELECT m.*,
 CASE 
-    WHEN m.`type` = 1 THEN 'СМС на телефон администратора'
-    WHEN m.`type` = 2 THEN 'СМС на телефон мастера'
-    WHEN m.`type` = 3 THEN 'СМС на основной телефон клиента'
-    WHEN m.`type` = 4 THEN 'СМС на 2-й телефон клиента'
-    WHEN m.`type` = 5 THEN 'СМС на 3-й телефон клиента'
+    WHEN m.`type` = 1 THEN 'На телефон администратора'
+    WHEN m.`type` = 2 THEN 'На телефон мастера'
+    WHEN m.`type` = 3 THEN 'На основной телефон клиента'
+    WHEN m.`type` = 4 THEN 'На 2-й телефон клиента'
+    WHEN m.`type` = 5 THEN 'На 3-й телефон клиента'
     ELSE ''
 END AS type_name,
 IF(m.`id_status` = 0, 'Сообщение еще не отправлено', s.`name_r`) AS status_name

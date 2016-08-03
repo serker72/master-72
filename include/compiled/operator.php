@@ -352,13 +352,17 @@ function PrintNewEditForm() {
                         echo '<option value="'.$one['id'].'">'.$one['name'].'</option>';
                     } ?>
                 </select>
-                <label for="note">Если требуется, укажите комментарий, который мастер получит в СМС:</label>
-		<input type="text" id="note" name="note" <?php //if(is_manager()){ echo ' disabled="disabled"'; } ?>>
 		<?php if ($login_user['rang'] == 'admin' || $login_user['rang'] == 'operator') { ?>
+                <label for="note">Если требуется, укажите комментарий, который мастер получит в СМС:</label>
+		<input type="text" id="note" name="note" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>
+                
+                <div class="title">Сумма заказа</div>
+                <input type="text" id="cost" name="cost" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>
+                                
                 <table style="margin: 0 0;">
                     <tr>
                         <td>
-                            <label for="note">ФИО мастера 1</label>
+                            <label for="master-name">ФИО мастера 1</label>
                             <select id="master-name" name="master-name" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>
                                 <option value="" selected="selected">Выбрать</option>
                                 <?php foreach($users_master as $one){
@@ -367,7 +371,7 @@ function PrintNewEditForm() {
                             </select>
                         </td>
                         <td>
-                            <label for="note">ФИО мастера 2</label>
+                            <label for="master-name-two">ФИО мастера 2</label>
                             <select id="master-name-two" name="master-name-two" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>
                                 <option value="" selected="selected">Выбрать</option>
                                 <?php foreach($users_master as $one){
@@ -376,7 +380,7 @@ function PrintNewEditForm() {
                             </select>
                         </td>
                         <td>
-                            <label for="note">ФИО мастера 3</label>
+                            <label for="master-name-th">ФИО мастера 3</label>
                             <select id="master-name-th" name="master-name-th" <?php if(is_manager()){ echo ' disabled="disabled"'; } ?>>
                                 <option value="" selected="selected">Выбрать</option>
                                 <?php foreach($users_master as $one){
@@ -433,13 +437,25 @@ function PrintNewEditForm() {
 	}
 </style>
 <div id="top-menu-wrapper">
-    <div style="float:right; margin-right: 5px;"><a href="/logout.php" class="btn">Выйти</a></div>
-    <div style="float:right; margin-right: 5px;"><a href="/message.php" class="btn">Сообщения</a></div>
-    <div style="float:right; margin-right: 5px;"><a id="mySearchModalButton" href="#mySearchModal" class="btn" role="button" data-toggle="modal">Поиск</a></div>
-    <div style="float:right; margin-right: 5px;"><a id="myAddModalButton" href="#myAddModal" class="btn" role="button" data-toggle="modal">Добавить заказ</a></div>
+    <div style="float:right; margin-right: 5px; margin-top: 5px;"><a href="/logout.php" class="btn">Выйти</a></div>
+    <div style="float:right; margin-right: 5px; margin-top: 5px;"><a href="/message.php" class="btn">Сообщения</a></div>
+    <div style="float:right; margin-right: 5px; margin-top: 5px;"><a id="mySearchModalButton" href="#mySearchModal" class="btn" role="button" data-toggle="modal">Поиск</a></div>
+    <div style="float:right; margin-right: 5px; margin-top: 5px;"><a id="myAddModalButton" href="#myAddModal" class="btn" role="button" data-toggle="modal">Добавить заказ</a></div>
 
-    <?php if($login_user['rang'] == 'admin'){ ?><div style="float:right; margin-right: 5px;"><a href="/admin.php" class="btn">Админка</a></div><?php } ?>
-    <?php if($login_user['rang'] == 'manager'){ ?><div style="float:right; margin-right: 5px;"><a href="/account.php" class="btn">Личный кабинет</a></div><?php } ?>
+    <?php if($login_user['rang'] == 'admin'){ ?><div style="float:right; margin-right: 5px; margin-top: 5px;"><a href="/admin.php" class="btn">Админка</a></div><?php } ?>
+    <?php if($login_user['rang'] == 'manager'){ ?><div style="float:right; margin-right: 5px; margin-top: 5px;"><a href="/account.php" class="btn">Личный кабинет</a></div><?php } ?>
+    <div style="float:right; margin-right: 15px; margin-top: 5px;"><a href="/" class="btn">Главная</a></div>
+
+    <!--------------------------------------------------------------------------------------------------->
+    <div style="float:right; margin-right: 5px; margin-top: 5px;">
+        <!--label for="add_order_form">Форма добавления заказа</label-->
+        <select id="add_order_form" name="add_order_form" style="width: 170px;">
+            <option value="0" <?php if($login_user['add_order_form'] == 0){ ?>selected="selected"<?php } ?>>Выбрать вид формы</option>
+            <option value="1" <?php if($login_user['add_order_form'] == 1){ ?>selected="selected"<?php } ?>>Полная форма</option>
+            <option value="2" <?php if($login_user['add_order_form'] == 2){ ?>selected="selected"<?php } ?>>Пошаговая форма</option>
+        </select>
+    </div>
+    <!--------------------------------------------------------------------------------------------------->
     
     <div id="ajax_load_1">
         <img src="/static/img/ajax.gif"/>
@@ -647,7 +663,10 @@ function PrintNewEditForm() {
             <h3 id="myModalLabel">Добро пожаловать в форму добавления нового заказа</h3>
         </div>
         <div class="modal-body" style="max-height: 450px;">
-            <?php PrintNewEditForm();//PrintEditForm(false); ?>
+            <?php
+            if($login_user['add_order_form'] == 2) PrintNewEditForm();
+            else PrintEditForm(false);
+            ?>
         </div>
         <div class="modal-footer">
             <!--button class="btn btn-inverse" onClick="ksk_onSearchClear('add');">Очистить</button-->
@@ -785,7 +804,9 @@ function PrintNewEditForm() {
                 
 //        if(action == 'add'){
             <?php if($login_user['rang'] != 'admin' && $login_user['rang'] != 'operator'){ ?>
-                if($('#myAddModal #datetime_hope').val() == '' || $('#myAddModal #street').val() == '' || $('#myAddModal #customer-phone').val() == ''){ // || ($('#myAddModal #master-name').val() == '')
+                if (($('#myAddModal #datetime').val() == '') || ($('#myAddModal #time').val() == '') || 
+                    ($('#myAddModal #street').val() == '') || ($('#myAddModal #customer-name').val() == '') ||
+                    ($('#myAddModal #customer-phone').val() == '')){ // || ($('#myAddModal #master-name').val() == '')
                     alert('Перед отправкой заполните все обязательные поля!');
                     return false;
                 }else{
@@ -818,9 +839,54 @@ function PrintNewEditForm() {
 
     function ksk_onSaveOrder() {
 	var rang = $('#rang_user').val();	
-	if ((rang == "admin" || rang == "operator") && ($('#master-name').val() == '')) {
-            alert('Необходимо выбрать мастера');
-            return false;
+	if (rang == "admin" || rang == "operator") {
+            if ($('#master-name').val() == '') {
+                $('#master-name').focus();
+                alert('Необходимо выбрать мастера');
+                return false;
+            }
+            
+            if ($('#datetime').val() == '') {
+                $('#datetime').focus();
+                alert('Необходимо указать дату приезда мастера');
+                return false;
+            }
+            
+            if ($('#time').val() == '') {
+                $('#time').focus();
+                alert('Необходимо указать время приезда мастера');
+                return false;
+            }
+            
+            if ($('#city').val() == '') {
+                $('#city').focus();
+                alert('Необходимо указать город');
+                return false;
+            }
+            
+            if ($('#street').val() == '') {
+                $('#street').focus();
+                alert('Необходимо указать улицу');
+                return false;
+            }
+            
+            if ($('#house').val() == '') {
+                $('#house').focus();
+                alert('Необходимо указать номер дома');
+                return false;
+            }
+            
+            if ($('#customer-name').val() == '') {
+                $('#customer-name').focus();
+                alert('Необходимо указать ФИО клиента');
+                return false;
+            }
+            
+            if ($('#customer-name').val() == '') {
+                $('#customer-name').focus();
+                alert('Необходимо указать телефон клиента');
+                return false;
+            }
         }
 //////////////////
         var options = { 
@@ -956,10 +1022,24 @@ $(document).ready(function(){
             autoclose: true
     });
     
+    $('#add_order_form').on('change', function() { 
+        $('#ajax_load').show();
+        $.ajax({
+                type: "POST",
+                data: "action=update_add_order_form&user_id=<?=$login_user['id'];?>&add_order_form="+$('#add_order_form').val(),
+                url: "/ajax/post.php",
+                success: function(data){ 
+                    $('#ajax_load').hide();
+                    location.reload();
+                }
+        });		   
+    });
+    
     $('#mySearchModalButton').on('click', function() { 
         //ksk_onSearchClear('search'); 
         //dosearch(); 
     });
+    
     $('#myAddModalButton').on('click', function() { 
         ksk_onSearchClear('add');
         
@@ -975,6 +1055,7 @@ $(document).ready(function(){
             $('#form_add_step3').hide();
             $("#form_info").html('');
     });
+    
     $("#myAddModal #sms2").on('click', function() {
         if ($('#myAddModal #sms2').is(':checked')) {
             $('#myAddModal #customer-name2').removeAttr('disabled');

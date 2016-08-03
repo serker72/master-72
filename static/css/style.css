@@ -274,3 +274,7 @@ table.jtable{
     padding: 5px 10px;
     border-bottom: 1px #fff solid;
 }
+
+#gs_rang {
+    width: 100px;
+}

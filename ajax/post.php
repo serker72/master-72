@@ -725,6 +725,13 @@ if ($_POST) {
 				'address' => $_POST['address']
 			));
 		}		
+	}elseif($_POST['action'] == 'update_add_order_form'){
+		$id = intval($_POST['user_id']);
+		if($id){
+			Table::UpdateCache('user', $id, array(
+				'add_order_form' => $_POST['add_order_form']
+			));
+		}		
 	}elseif($_POST['action'] == 'add_message'){
 		$message = strval($_POST['message']);
 		if($message){

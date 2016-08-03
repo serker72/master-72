@@ -54,11 +54,18 @@ CREATE TABLE IF NOT EXISTS `iqsms_msg_status` (
 ENGINE = MyISAM 
 CHARACTER SET utf8
 COLLATE utf8_general_ci
-COMMENT = 'Список сообщений, отправленных с помощью сервиса IQSMS';
+COMMENT = 'Список статусов сообщений, отправленных с помощью сервиса IQSMS';
 
 ALTER TABLE `message` ADD `is_read` TINYINT NOT NULL DEFAULT '0' AFTER `for_user`;
 
 UPDATE `message` SET `is_read` = 1;
+
+/* Новое поле для выбора вида формы добавления заказа
+ * 1 - старый вид формы
+ * 2 - новый вид формы - пошаговый
+ */
+ALTER TABLE `user` ADD `add_order_form` TINYINT UNSIGNED NOT NULL DEFAULT '1' AFTER `company`;
+
 
 /* 
  * Новые параметры:

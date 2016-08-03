@@ -212,8 +212,8 @@ function send_sms_msg($order_id=0){
     
     // Проверим текущий баланс
     if ($gate_credits['credits'] == 0) {
-        echo '<p>Для отправки СМС необходимо пополнить баланс !</p>';
-        //return false;
+        //echo '<p>Для отправки СМС необходимо пополнить баланс !</p>';
+        return false;
     } else if ($gate_credits['credits'] <= (int)$settings['sms_api_min_balance']) {
         prepare_sms_admin(0, 'Баланс в сервисе IQSMS достиг минимума, пополните баланс.', 6);
     }
@@ -274,10 +274,10 @@ function send_sms_packet($gate, $queuename, $messages) {
         return false;
     }
     
-    var_dump($messages);
+    //var_dump($messages);
     // отправляем пакет sms
     $ret_messages = $gate->send($messages, $queuename);
-    var_dump($ret_messages);
+    //var_dump($ret_messages);
     
     set_sms_msg_status($ret_messages);
     
@@ -296,7 +296,7 @@ function set_sms_msg_status($messages) {
         
         $val_array = array();
         
-        if ($msg['smscid'] !== $value['smscId']) {
+        if (isset($value['smscId']) && ($msg['smscid'] !== $value['smscId'])) {
             $val_array['smscid'] = $value['smscId'];
         }
         
@@ -359,8 +359,8 @@ function check_sms_msg_status($order_id=0){
     
     // Проверим текущий баланс
     if ($gate_credits['credits'] == 0) {
-        echo '<p>Для отправки СМС необходимо пополнить баланс !</p>';
-        //return false;
+        //echo '<p>Для отправки СМС необходимо пополнить баланс !</p>';
+        return false;
     } else if ($gate_credits['credits'] <= (int)$settings['sms_api_min_balance']) {
         //prepare_sms_admin(0, 'Баланс в сервисе IQSMS достиг минимума, пополните баланс.');
     }
@@ -389,7 +389,7 @@ function check_sms_msg_status($order_id=0){
         
         if ($message_count == $packet_msg_count) {
             $ret_messages = $gate->status($messages);
-            var_dump($ret_messages);
+            //var_dump($ret_messages);
             
             set_sms_msg_status($ret_messages);
             
@@ -399,6 +399,6 @@ function check_sms_msg_status($order_id=0){
     }
     
     $ret_messages = $gate->status($messages);
-    var_dump($ret_messages);
+    //var_dump($ret_messages);
     set_sms_msg_status($ret_messages);
 }

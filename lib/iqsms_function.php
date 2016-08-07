@@ -155,7 +155,7 @@ function prepare_sms_admin($order_id, $msg_text='', $sms_type=1){
         foreach ($user_for_send as $one) {
             if($one['phone'] != '' && strlen($one['phone']) > 5){
                 if ($msg_text == '') {
-                    $sms_body = 'TEST..В системе заказов новый необработанный заказ '.($order_id == 0 ? 'или сообщение' : '№'.$order_id);
+                    $sms_body = 'В системе заказов новый необработанный заказ '.($order_id == 0 ? 'или сообщение' : '№'.$order_id);
                 } else {
                     $sms_body = $msg_text;
                 }

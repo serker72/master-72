@@ -1,6 +1,7 @@
 <?php
 header('Content-type:text/html; charset=utf-8');
 require_once(dirname(dirname(__FILE__)) . '/app.php');
+include_once(dirname(dirname(__FILE__)) . '/include/library/Utility.class.php');
 
 require_once('iqsms_JsonGate.php');
 require_once('ksk_functions.php');
@@ -14,6 +15,32 @@ require_once('ksk_functions.php');
  * 5 - client phone 3
  * 6 - admin balans add funds
  */
+
+// Проверка текущего баланса REST, так как JSON возвращает 0
+function check_balans_rest() {
+    $settings = get_settings();
+    
+    if (($settings['sms_api_username'] == '') || ($settings['sms_api_password'] == '')) {
+        //echo '<p>Не указаны параметры для отправки СМС !</p>';
+        return false;
+    }
+    
+    $rest_credits = Utility::HttpRequest('http://api.iqsms.ru/messages/v2/balance/', array(
+        'login' => $settings['sms_api_username'],
+        'password' => $settings['sms_api_password']
+    ));
+    
+    if ($rest_credits) {
+        $rest_credits_ar = explode(';', $rest_credits);
+        if (($rest_credits_ar[0] == 'RUB') && isset($rest_credits_ar[1])) {
+            return (int)$rest_credits_ar[1];
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
 
 /* Создание СМС мастеру */
 function prepare_sms_master($order_id){
@@ -155,7 +182,7 @@ function prepare_sms_admin($order_id, $msg_text='', $sms_type=1){
         foreach ($user_for_send as $one) {
             if($one['phone'] != '' && strlen($one['phone']) > 5){
                 if ($msg_text == '') {
-                    $sms_body = 'TEST..В системе заказов новый необработанный заказ '.($order_id == 0 ? 'или сообщение' : '№'.$order_id);
+                    $sms_body = 'В системе заказов новый необработанный заказ '.($order_id == 0 ? 'или сообщение' : '№'.$order_id);
                 } else {
                     $sms_body = $msg_text;
                 }
@@ -208,13 +235,16 @@ function send_sms_msg($order_id=0){
     $gate = new iqsms_JsonGate($settings['sms_api_username'], $settings['sms_api_password']);
     
     // узнаем текущий баланс
-    $gate_credits = $gate->credits();
+    //$gate_credits = $gate->credits();
+    $gate_credits = check_balans_rest();
     
     // Проверим текущий баланс
-    if ($gate_credits['credits'] == 0) {
+    //if ($gate_credits['credits'] == 0) {
+    //} else if ($gate_credits['credits'] <= (int)$settings['sms_api_min_balance']) {
+    if (($gate_credits === false) || ($gate_credits == 0)) {
         //echo '<p>Для отправки СМС необходимо пополнить баланс !</p>';
         return false;
-    } else if ($gate_credits['credits'] <= (int)$settings['sms_api_min_balance']) {
+    } else if ($gate_credits <= (int)$settings['sms_api_min_balance']) {
         prepare_sms_admin(0, 'Баланс в сервисе IQSMS достиг минимума, пополните баланс.', 6);
     }
     
@@ -240,7 +270,6 @@ function send_sms_msg($order_id=0){
            "clientId" => $one['id'],
            "phone"=> $one['phone'],
            "text"=> $one['text'],
-           //"sender"=> "TEST" 
         );
         
         if ($settings['sms_api_phone'] != '') {
@@ -287,6 +316,9 @@ function send_sms_packet($gate, $queuename, $messages) {
 // Запись статусов отправленных сообщений
 function set_sms_msg_status($messages) {
     $now = date("Y-m-d H:i:s");
+    //$dateTime = new DateTime("now", new DateTimeZone('GMT'));
+    //$dateTime = new DateTime("now", new DateTimeZone(date_default_timezone_get()));
+    //$now = $dateTime->format("Y-m-d H:i:s");
     
     $sms_statuses = get_sms_statuses();
     
@@ -296,7 +328,7 @@ function set_sms_msg_status($messages) {
         
         $val_array = array();
         
-        if (isset($value['smscId']) && ($msg['smscid'] !== $value['smscId'])) {
+        if (isset($value['smscId']) && ((int)$msg['smscid'] !== $value['smscId'])) {
             $val_array['smscid'] = $value['smscId'];
         }
         
@@ -322,8 +354,8 @@ function set_sms_msg_status($messages) {
         }
         
         if (count($val_array) > 0) {
-            //Table::UpdateCache('iqsms_msg', $value['clientId'], $val_array);
-            Table::Update('iqsms_msg', $value['clientId'], $val_array);
+            Table::UpdateCache('iqsms_msg', $value['clientId'], $val_array);
+            //Table::Update('iqsms_msg', $value['clientId'], $val_array);
         }
     }
 
@@ -355,14 +387,16 @@ function check_sms_msg_status($order_id=0){
     $gate = new iqsms_JsonGate($settings['sms_api_username'], $settings['sms_api_password']);
     
     // узнаем текущий баланс
-    $gate_credits = $gate->credits();
+    //$gate_credits = $gate->credits();
+    $gate_credits = check_balans_rest();
     
     // Проверим текущий баланс
-    if ($gate_credits['credits'] == 0) {
+    //if ($gate_credits['credits'] == 0) {
+    if (($gate_credits === false) || ($gate_credits == 0)) {
         //echo '<p>Для отправки СМС необходимо пополнить баланс !</p>';
-        return false;
-    } else if ($gate_credits['credits'] <= (int)$settings['sms_api_min_balance']) {
-        //prepare_sms_admin(0, 'Баланс в сервисе IQSMS достиг минимума, пополните баланс.');
+        //return false;
+    } else if ($gate_credits <= (int)$settings['sms_api_min_balance']) {
+        prepare_sms_admin(0, 'Баланс в сервисе IQSMS достиг минимума, пополните баланс.', 6);
     }
     
     // получаем список доступных подписей

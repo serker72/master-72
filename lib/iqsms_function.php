@@ -138,7 +138,7 @@ function prepare_sms_client($order_id, $number, $client_name, $sms_type=3){
             //СМС - КЛИЕНТУ
             $sms_body_client = str_replace("%date%", $order['time_date'], $options_client);
             $sms_body_client = str_replace("%time%", $order['time_time'], $sms_body_client);
-            $sms_body_client = str_replace("%name%", $client_name, $sms_body_client);
+            $sms_body_client = str_replace("%name%", ($client_name == '' ? 'клиент' : $client_name), $sms_body_client);
             $sms_body_client = str_replace("%work_type%", $works[$order['work_type']]['name'], $sms_body_client);
 
             $text_client_send = iconv('utf-8', 'utf-8', $sms_body_client);

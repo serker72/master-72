@@ -55,16 +55,26 @@ class jqCity extends jqGrid
         $this->render_filter_toolbar = true;
     }
     
-    /*protected function operData($data)
+    protected function opDel($id)
     {
-        $data['password'] = $data['password'] ? md5($data['password']) : null;
+        $st = $this->DB->query('SELECT * FROM city WHERE parent_id = '.$id);
+        $st_cnt = $this->DB->rowCount($st);
         
-        //Server side error checking
-        if($data['password'] == NULL)
+        if($st_cnt > 0)
         {
-            throw new jqGridException('Не указан пароль пользователя !'); //This message goes directly to server response
-        }        
-
-        return $data;
-    }*/
+            throw new jqGridException('Невозможно удалить город: имеются связанные населенные пункты !'); //This message goes directly to server response
+        } 
+        
+        $st = $this->DB->query('SELECT * FROM street WHERE city_id = '.$id);
+        $st_cnt = $this->DB->rowCount($st);
+        
+        if($st_cnt > 0)
+        {
+            throw new jqGridException('Невозможно удалить город: имеются связанные улицы !'); //This message goes directly to server response
+        } 
+        
+        # Delete records
+        $this->DB->delete('city', array('id' => $id));
+    }
+    
 }

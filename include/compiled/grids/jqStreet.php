@@ -77,10 +77,28 @@ class jqStreet extends jqGrid
         #Add filter toolbar
         $this->render_filter_toolbar = true;
     }
-    
-    protected function opEdit($id, $upd)
+     
+    protected function opAdd($data)
     {
         #Save other vars to items table
-        $this->DB->update('street', $upd, array('id' => $id));
+        $response = $this->DB->insert('street', $data);
+
+        return $response;        
+    }
+   
+    protected function opEdit($id, $data)
+    {
+        #Save other vars to items table
+        $response = $this->DB->update('street', $data, array('id' => $id));
+
+        return $response;        
+    }
+    
+    protected function opDel($id)
+    {
+        # Delete records
+        $response = $this->DB->delete('street', array('id' => $id));
+
+        return $response;        
     }
 }

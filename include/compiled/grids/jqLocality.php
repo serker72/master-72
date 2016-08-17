@@ -80,11 +80,23 @@ class jqLocality extends jqGrid
         $this->render_filter_toolbar = true;
     }
     
-    protected function opEdit($id, $upd)
+    protected function opAdd($data)
     {
-        $st = $this->DB->query('SELECT * FROM street WHERE city_id = '.$id);
         #Save other vars to items table
-        $this->DB->update('city', $upd, array('id' => $id));
+        $response = $this->DB->insert('city', $data);
+
+        return $response;        
+    }
+    
+    protected function opEdit($id, $data)
+    {
+        #Save other vars to items table
+        $response = $this->DB->update('city', $data, array('id' => $id));
+        //$response = parent::opEdit($id, $data); // exec orginial oper
+        //cache::drop($id);                       // after oper
+        //$response['cache_dropped'] = 1;         // modify original response
+
+        return $response;        
     }
     
     protected function opDel($id)
@@ -107,6 +119,8 @@ class jqLocality extends jqGrid
         } 
         
         # Delete records
-        $this->DB->delete('city', array('id' => $id));
+        $response = $this->DB->delete('city', array('id' => $id));
+
+        return $response;        
     }
 }

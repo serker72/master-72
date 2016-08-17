@@ -94,7 +94,7 @@ class jqLocality extends jqGrid
         
         if($st_cnt > 0)
         {
-            throw new jqGridException('Невозможно удалить населенный пункт: имеются связанные пункты !'); //This message goes directly to server response
+            throw new jqGrid_Exception('Невозможно удалить населенный пункт: имеются связанные пункты !'); //This message goes directly to server response
         } 
         
         $st = $this->DB->query('SELECT * FROM street WHERE city_id = '.$id);
@@ -102,7 +102,8 @@ class jqLocality extends jqGrid
         
         if($st_cnt > 0)
         {
-            throw new jqGridException('Невозможно удалить населенный пункт: имеются связанные улицы !'); //This message goes directly to server response
+            throw new jqGrid_Exception('Невозможно удалить населенный пункт: имеются связанные улицы !'); //This message goes directly to server response
+            //die('Невозможно удалить населенный пункт: имеются связанные улицы !');
         } 
         
         # Delete records

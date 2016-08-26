@@ -118,7 +118,7 @@ class jqUser extends jqGrid
         $this->render_filter_toolbar = true;
     }
     
-    protected function operData($data)
+    /*protected function operData($data)
     {
         $data['password'] = $data['password'] ? md5($data['password']) : null;
         
@@ -129,5 +129,41 @@ class jqUser extends jqGrid
         }        
 
         return $data;
+    }*/
+    
+    protected function opAdd($data)
+    {
+        $data['password'] = $data['password'] ? md5($data['password'].'@4!@#$%@') : null;
+        
+        //Server side error checking
+        if($data['password'] == NULL)
+        {
+            throw new jqGridException('Не указан пароль пользователя !'); //This message goes directly to server response
+        }
+        
+        #Save other vars to items table
+        $response = $this->DB->insert('user', $data);
+
+        return $response;        
     }
+    
+    protected function opEdit($id, $data)
+    {
+        $data['password'] = $data['password'] ? md5($data['password'].'@4!@#$%@') : null;
+        
+        //Server side error checking
+        if($data['password'] == NULL)
+        {
+            throw new jqGridException('Не указан пароль пользователя !'); //This message goes directly to server response
+        }
+        
+        #Save other vars to items table
+        $response = $this->DB->update('user', $data, array('id' => $id));
+        //$response = parent::opEdit($id, $data); // exec orginial oper
+        //cache::drop($id);                       // after oper
+        //$response['cache_dropped'] = 1;         // modify original response
+
+        return $response;        
+    }
+    
 }

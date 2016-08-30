@@ -804,27 +804,87 @@ function PrintNewEditForm() {
                 
 //        if(action == 'add'){
             <?php if($login_user['rang'] != 'admin' && $login_user['rang'] != 'operator'){ ?>
-                if (($('#myAddModal #datetime').val() == '') || ($('#myAddModal #time').val() == '') || 
+                if ($('#myAddModal #datetime_hope').val() == '') {
+                    $('#myAddModal #datetime_hope').focus();
+                    alert('Перед отправкой необходимо заполнить поле "Желаемая Дата" !');
+                    return false;
+                }
+                
+                if ($('#myAddModal #time_hope').val() == '') {
+                    $('#myAddModal #time_hope').focus();
+                    alert('Перед отправкой необходимо заполнить поле "Желаемое Время" !');
+                    return false;
+                }
+                
+                if ($('#myAddModal #street').val() == '') {
+                    $('#myAddModal #street').focus();
+                    alert('Перед отправкой необходимо заполнить поле "Улица" !');
+                    return false;
+                }
+                
+                if ($('#myAddModal #customer-name').val() == '') {
+                    $('#myAddModal #customer-name').focus();
+                    alert('Перед отправкой необходимо заполнить поле "ФИО заказчика" !');
+                    return false;
+                }
+                
+                if ($('#myAddModal #customer-phone').val() == '') {
+                    $('#myAddModal #customer-phone').focus();
+                    alert('Перед отправкой необходимо заполнить поле "Телефон заказчика" !');
+                    return false;
+                }
+                
+                /*if (($('#myAddModal #datetime').val() == '') || ($('#myAddModal #time').val() == '') || 
                     ($('#myAddModal #street').val() == '') || ($('#myAddModal #customer-name').val() == '') ||
                     ($('#myAddModal #customer-phone').val() == '')){ // || ($('#myAddModal #master-name').val() == '')
                     alert('Перед отправкой заполните все обязательные поля!');
                     return false;
-                }else{
+                }else{*/
                     $('#myAddModal #form_add').ajaxSubmit(options); 
                     $("#myAddModal").modal('hide');
                     return true;
-                }
+                //}
             <?php }else{ ?>
                 //if ($('#myAddModal #master-name').val() == '') {
-                if($('#myAddModal #datetime_hope').val() == '' || $('#myAddModal #street').val() == '' || $('#myAddModal #customer-phone').val() == '' || $('#myAddModal #master-name').val() == ''){ // || ($('#myAddModal #master-name').val() == '')
+                if ($('#myAddModal #datetime').val() == '') {
+                    $('#myAddModal #datetime').focus();
+                    alert('Перед отправкой необходимо заполнить поле "Дата" !');
+                    return false;
+                }
+                
+                if ($('#myAddModal #time').val() == '') {
+                    $('#myAddModal #time').focus();
+                    alert('Перед отправкой необходимо заполнить поле "Время" !');
+                    return false;
+                }
+                
+                if ($('#myAddModal #street').val() == '') {
+                    $('#myAddModal #street').focus();
+                    alert('Перед отправкой необходимо заполнить поле "Улица" !');
+                    return false;
+                }
+                
+                if ($('#myAddModal #master-name').val() == '') {
+                    $('#myAddModal #master-name').focus();
+                    alert('Перед отправкой необходимо заполнить поле "ФИО мастера 1" !');
+                    return false;
+                }
+                
+                if ($('#myAddModal #customer-phone').val() == '') {
+                    $('#myAddModal #customer-phone').focus();
+                    alert('Перед отправкой необходимо заполнить поле "Телефон заказчика" !');
+                    return false;
+                }
+                
+                /*if($('#myAddModal #datetime_hope').val() == '' || $('#myAddModal #street').val() == '' || $('#myAddModal #customer-phone').val() == '' || $('#myAddModal #master-name').val() == ''){
                     //alert('Необходимо выбрать мастера');
                     alert('Перед отправкой заполните все обязательные поля!');
                     return false;
-		}else{
+		}else{*/
                     $('#myAddModal #form_add').ajaxSubmit(options); 
                     $("#myAddModal").modal('hide');
                     return true;
-                }
+                //}
             <?php } ?>
 //        }
     }
